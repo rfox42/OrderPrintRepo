@@ -37,6 +37,8 @@ namespace OrderPrint
         static Timer timer;
         public static int flagActive;
 
+        //List<InvoiceForm> invoice = new List<InvoiceForm>();
+
         static void Main(string[] args)
         {
             // Temporarily Prevent new instances of Excel from using this applications workbook
@@ -192,17 +194,13 @@ namespace OrderPrint
             string[] arrNotes = new string[10];
 
             // Copy all invoices from Addsum not listed in wmsOrders table
-            string strConnection = "DSN=Ranshu";
+            string strConnection = "DSN=Ranshu20190831";
             OdbcConnection pSqlConn = null;
             using (pSqlConn = new OdbcConnection(strConnection))
             {
-                string sqlInvoice = "SELECT BKAR_INV_NUM, " +
-                        " invoice_num" +
+                string sqlInvoice = "SELECT BKAR_INV_NUM" +
                         " FROM BKARHINV" +
-                        " LEFT JOIN wmsOrders" +
-                        " ON BKAR_INV_NUM = invoice_num" +
-                        " WHERE BKAR_INV_INVDTE > '2019-11-10'" +
-                        " AND invoice_num IS NULL";
+                        " WHERE BKAR_INV_INVDTE <= '0001-12-31 16:00:00.000'";
                 OdbcCommand sqlCommandINV = new OdbcCommand(sqlInvoice, pSqlConn);
                 sqlCommandINV.CommandTimeout = 90;
                 pSqlConn.Open();
@@ -575,12 +573,16 @@ namespace OrderPrint
                             
                         }
 
-                        strCurrentDateTime = DateTime.Now.ToString("MM/dd/yyyy hh:mm tt");
+                        strCurrentDateTime = DateTime.Now.ToString("MM/dd/yyyy hh:mm");
 
-                        sqlUpdateList = "INSERT INTO wmsOrders (invoice_num,printed,printer) VALUES ('" + readerINV["BKAR_INV_NUM"] + "','" + strCurrentDateTime.ToString() + "','" + xlApp.ActivePrinter.ToString() + "')";
-                        using (OdbcCommand cmd = new OdbcCommand(sqlUpdateList, pSqlConn))
+                        using (OdbcCommand cmd = new OdbcCommand("order_printed", pSqlConn))
                         {
-                            cmd.ExecuteNonQuery();
+                            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                            cmd.Parameters.AddWithValue(":in_inv_num", readerINV["BKAR_INV_NUM"]);
+                            cmd.Parameters.AddWithValue(":in_time", strCurrentDateTime.ToString());
+                            cmd.Parameters.AddWithValue(":in_printer", xlApp.ActivePrinter.ToString());
+
+                            cmd.ExecuteScalar();
                         }
 
 
@@ -677,4 +679,6 @@ namespace OrderPrint
             return flagPrinterFound;
         }
     }    
+
+
 }
