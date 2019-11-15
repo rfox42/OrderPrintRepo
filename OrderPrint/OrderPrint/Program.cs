@@ -130,7 +130,7 @@ namespace OrderPrint
             xlsheet.Cells[24, 9].Value = "Description";
 
 
-            timer = new Timer(30000);
+            timer = new Timer(10000);
             timer.Elapsed += new ElapsedEventHandler(timerProgram);
             timer.Enabled = true;
             timer.Start();
@@ -183,6 +183,7 @@ namespace OrderPrint
 
         static void newOrders()
         {
+            int test = 0;
             flagActive = 1;
 
             string sqlUpdateList;
@@ -198,31 +199,62 @@ namespace OrderPrint
             OdbcConnection pSqlConn = null;
             using (pSqlConn = new OdbcConnection(strConnection))
             {
-                string sqlInvoice = "SELECT BKAR_INV_NUM, " +
-                        " invoice_num" +
-                        " FROM BKARHINV" +
-                        " LEFT JOIN wmsOrders" +
-                        " ON BKAR_INV_NUM = invoice_num" +
-                        " WHERE BKAR_INV_INVDTE > '2019-11-10'" +
-                        " AND invoice_num IS NULL";
-                /*"SELECT BKAR_INV_NUM" +
+                string sqlInvoice =
+                "SELECT BKAR_INV_NUM, BKAR_INV_INVDTE, BKAR_INV_CUSCOD, BKAR_INV_CUSNME, BKAR_INV_CUSA1, BKAR_INV_CUSA2, BKAR_INV_CUSCTY, BKAR_INV_CUSST, BKAR_INV_CUSZIP, BKAR_INV_CUSCUN, BKAR_INV_SHPNME, BKAR_INV_SHPA1, BKAR_INV_SHPA2, BKAR_INV_SHPCTY, BKAR_INV_SHPST, BKAR_INV_SHPZIP, BKAR_INV_SHPCUN, BKAR_INV_LOC, BKAR_INV_CUSORD, BKAR_INV_SHPVIA, BKAR_INV_TERMD, BKAR_INV_ENTBY" +
                 " FROM BKARHINV" +
-                " WHERE BKAR_INV_INVDTE <= '0001-12-31 16:00:00.000'";*/
+                " WHERE BKAR_INV_TIME = '0001-12-31 16:00:00.000'";
                 OdbcCommand sqlCommandINV = new OdbcCommand(sqlInvoice, pSqlConn);
                 sqlCommandINV.CommandTimeout = 90;
                 pSqlConn.Open();
                 OdbcDataReader readerINV = sqlCommandINV.ExecuteReader();
                 if (readerINV.HasRows)
                 {
-                    while (readerINV.Read())
+                    while (readerINV.Read() && test < 10)
                     {
+                        test++;
+
+                        Order order = new Order(Convert.ToInt32(readerINV["BKAR_INV_NUM"].ToString()));
+                        order.date = String.Format("{0:MM/dd/yyyy}", readerINV["BKAR_INV_INVDTE"]);
+                        order.customerCode = readerINV["BKAR_INV_CUSCOD"].ToString();
+
+                        //populate shipping address
+                        order.billAddress.name = readerINV["BKAR_INV_CUSNME"].ToString();
+                        order.billAddress.line1 = readerINV["BKAR_INV_CUSA1"].ToString();
+                        order.billAddress.line2 = readerINV["BKAR_INV_CUSA2"].ToString();
+                        order.billAddress.city = readerINV["BKAR_INV_CUSCTY"].ToString();
+                        order.billAddress.state = readerINV["BKAR_INV_CUSST"].ToString();
+                        order.billAddress.zipcode = Convert.ToInt32(readerINV["BKAR_INV_CUSZIP"].ToString());
+                        order.billAddress.country = readerINV["BKAR_INV_CUSCUN"].ToString();
+
+                        //populate billing address
+                        order.shipAddress.name = readerINV["BKAR_INV_SHPNME"].ToString();
+                        order.shipAddress.line1 = readerINV["BKAR_INV_SHPA1"].ToString();
+                        order.shipAddress.line2 = readerINV["BKAR_INV_SHPA2"].ToString();
+                        order.shipAddress.city = readerINV["BKAR_INV_SHPCTY"].ToString();
+                        order.shipAddress.state = readerINV["BKAR_INV_SHPST"].ToString();
+                        order.shipAddress.zipcode = Convert.ToInt32(readerINV["BKAR_INV_SHPZIP"].ToString());
+                        order.shipAddress.country = readerINV["BKAR_INV_SHPCUN"].ToString();
+
+                        //populate details
+                        order.location = readerINV["BKAR_INV_LOC"].ToString(); //never used
+                        order.customerPO = readerINV["BKAR_INV_CUSORD"].ToString();
+                        order.deliveryMethod = readerINV["BKAR_INV_SHPVIA"].ToString();
+                        order.paymentTerms = readerINV["BKAR_INV_TERMD"].ToString();
+                        order.enteredBy = readerINV["BKAR_INV_ENTBY"].ToString();
+
+                        if(order.paymentTerms.Contains("COD"))
+                        {
+                            arrNotes[0] = order.paymentTerms;
+                        }
 
                         Array.Clear(arrOrder, 0, arrOrder.Length);
 
                         int numRow = 0;
                         int numNotes = 0;
                         int flagPrint = 1;
-                        string sqlItems = "SELECT BKAR_INV_NUM, BKAR_INV_INVDTE, BKAR_INV_CUSCOD, BKAR_INV_CUSNME, BKAR_INV_CUSA1, BKAR_INV_CUSA2, BKAR_INV_CUSCTY, BKAR_INV_CUSST, BKAR_INV_CUSZIP, BKAR_INV_CUSCUN, BKAR_INV_SHPNME, BKAR_INV_SHPA1, BKAR_INV_SHPA2, BKAR_INV_SHPCTY, BKAR_INV_SHPST, BKAR_INV_SHPZIP, BKAR_INV_SHPCUN, BKAR_INV_LOC, BKAR_INV_CUSORD, BKAR_INV_SHPVIA, BKAR_INV_TERMD, BKAR_INV_ENTBY, BKAR_INVL_PCODE, BKAR_INVL_ITYPE, BKAR_INVL_PQTY, BKAR_INVL_PDESC, BKAR_INVL_LOC, BKAR_INVL_MSG, BKIC_VND_PART FROM BKARHINV INNER JOIN BKARHIVL ON BKAR_INV_NUM = BKAR_INVL_INVNM LEFT JOIN BKICCUST ON (BKAR_INVL_PCODE = BKIC_VND_PCODE AND BKAR_INV_CUSCOD = BKIC_VND_VENDOR) WHERE BKAR_INV_NUM = '" + readerINV["BKAR_INV_NUM"] + "'";
+                        string sqlItems = "SELECT BKAR_INVL_PCODE, BKAR_INVL_ITYPE, BKAR_INVL_PQTY, BKAR_INVL_PDESC, BKAR_INVL_LOC, BKAR_INVL_MSG, BKIC_VND_PART " +
+                            "FROM BKARHINV INNER JOIN BKARHIVL ON BKAR_INV_NUM = BKAR_INVL_INVNM " +
+                            "LEFT JOIN BKICCUST ON (BKAR_INVL_PCODE = BKIC_VND_PCODE AND BKAR_INV_CUSCOD = BKIC_VND_VENDOR) WHERE BKAR_INV_NUM = '" + readerINV["BKAR_INV_NUM"] + "'";
                         using (OdbcCommand sqlCommandItems = new OdbcCommand(sqlItems, pSqlConn))
                         {
                             OdbcDataReader readerItems = sqlCommandItems.ExecuteReader();
@@ -230,52 +262,28 @@ namespace OrderPrint
                             {
                                 while (readerItems.Read())
                                 {
+                                    Item item = new Item();
+                                    /*arrOrder[numRow, 22]*/item.partCode = readerItems["BKAR_INVL_PCODE"].ToString();
+                                    /*arrOrder[numRow, 23]*/item.itemType = readerItems["BKAR_INVL_ITYPE"].ToString();
+                                    /*arrOrder[numRow, 24]*/item.quantity = Convert.ToInt32( readerItems["BKAR_INVL_PQTY"].ToString());
+                                    /*arrOrder[numRow, 25]*/item.description = readerItems["BKAR_INVL_PDESC"].ToString();
+                                    /*arrOrder[numRow, 26]*/item.message = readerItems["BKAR_INVL_MSG"].ToString();
+                                    /*arrOrder[numRow, 27]*/item.locationCode = readerItems["BKAR_INVL_LOC"].ToString().TrimEnd();
+                                    /*arrOrder[numRow, 28]*/item.vendorPart = readerItems["BKIC_VND_PART"].ToString();
+                                    /*arrOrder[numRow, 29]*/item.location = "A12-08-05-2";
 
-                                    arrOrder[numRow, 0] = readerItems["BKAR_INV_NUM"].ToString();
-                                    arrOrder[numRow, 1] = String.Format("{0:MM/dd/yyyy}", readerItems["BKAR_INV_INVDTE"]);
-                                    arrOrder[numRow, 2] = readerItems["BKAR_INV_CUSCOD"].ToString();
-                                    arrOrder[numRow, 3] = readerItems["BKAR_INV_CUSNME"].ToString();
-                                    arrOrder[numRow, 4] = readerItems["BKAR_INV_CUSA1"].ToString();
-                                    arrOrder[numRow, 5] = readerItems["BKAR_INV_CUSA2"].ToString();
-                                    arrOrder[numRow, 6] = readerItems["BKAR_INV_CUSCTY"].ToString();
-                                    arrOrder[numRow, 7] = readerItems["BKAR_INV_CUSST"].ToString();
-                                    arrOrder[numRow, 8] = readerItems["BKAR_INV_CUSZIP"].ToString();
-                                    arrOrder[numRow, 9] = readerItems["BKAR_INV_CUSCUN"].ToString();
-                                    arrOrder[numRow, 10] = readerItems["BKAR_INV_SHPNME"].ToString();
-                                    arrOrder[numRow, 11] = readerItems["BKAR_INV_SHPA1"].ToString();
-                                    arrOrder[numRow, 12] = readerItems["BKAR_INV_SHPA2"].ToString();
-                                    arrOrder[numRow, 13] = readerItems["BKAR_INV_SHPCTY"].ToString();
-                                    arrOrder[numRow, 14] = readerItems["BKAR_INV_SHPST"].ToString();
-                                    arrOrder[numRow, 15] = readerItems["BKAR_INV_SHPZIP"].ToString();
-                                    arrOrder[numRow, 16] = readerItems["BKAR_INV_SHPCUN"].ToString();
-                                    arrOrder[numRow, 17] = readerItems["BKAR_INV_LOC"].ToString();
-                                    arrOrder[numRow, 18] = readerItems["BKAR_INV_CUSORD"].ToString();
-                                    arrOrder[numRow, 19] = readerItems["BKAR_INV_SHPVIA"].ToString();
-                                    arrOrder[numRow, 20] = readerItems["BKAR_INV_TERMD"].ToString();
-                                    arrOrder[numRow, 21] = readerItems["BKAR_INV_ENTBY"].ToString();
-                                    arrOrder[numRow, 22] = readerItems["BKAR_INVL_PCODE"].ToString();
-                                    arrOrder[numRow, 23] = readerItems["BKAR_INVL_ITYPE"].ToString();
-                                    arrOrder[numRow, 24] = readerItems["BKAR_INVL_PQTY"].ToString();
-                                    arrOrder[numRow, 25] = readerItems["BKAR_INVL_PDESC"].ToString();
-                                    arrOrder[numRow, 26] = readerItems["BKAR_INVL_MSG"].ToString();
-                                    arrOrder[numRow, 27] = readerItems["BKAR_INVL_LOC"].ToString();
-                                    arrOrder[numRow, 28] = readerItems["BKIC_VND_PART"].ToString();
-                                    arrOrder[numRow, 29] = "A12-08-05-2";
-
+                                    
                                     // Check for shipping Notes
-                                    if (arrOrder[numRow, 23].ToString() == "X")
+                                    if (item.itemType == "X")
                                     {
-                                        if (arrOrder[numRow, 26].ToString().Substring(0, 1) == "@")
+                                        if (item.message.Substring(0, 1) == "@")
                                         {
-                                            arrNotes[numNotes] = arrOrder[numRow, 26].ToString();
                                             numNotes++;
+                                            arrNotes[numNotes] = item.message;
                                         }
                                     }
 
-                                    
-
-                                    numRow = numRow + 1;
-
+                                    order.items.Add(item);
                                 }
                             }
                             readerItems.Close();
@@ -285,12 +293,14 @@ namespace OrderPrint
                         int numPage = 1;
 
                         // Find first location code
-                        strInvLoc = arrOrder[0, 27].ToString().TrimEnd();
-                        for (int n = 0; n < arrOrder.Length; n++)
+                        strInvLoc = order.items[0].locationCode;
+                        foreach (Item item in order.items)
                         {
-                            if(arrOrder[n,23].ToString() != "X")
+                            //if Type is not message line 'X' or non-stock 'N'
+                            if (item.itemType != "X" && item.itemType != "N")
                             {
-                                strInvLoc = arrOrder[n, 27].ToString().TrimEnd();
+                                //change location code
+                                strInvLoc = item.locationCode;
                                 break;
                             }
                             
@@ -299,37 +309,37 @@ namespace OrderPrint
                         
                         //update excel template
                         // TOP Header Section
-                        xlBarcodeTop.Value = "*" + arrOrder[0, 0].ToString() + "*";
+                        xlBarcodeTop.Value = "*" + order.invoiceNumber + "*";
 
                         xlsheet.Cells[1, 1].Value = "Date:";
-                        xlsheet.Cells[1, 2].value = arrOrder[0, 1].ToString();
+                        xlsheet.Cells[1, 2].value = order.date;
 
-                        xlsheet.Cells[1, 6].value = arrOrder[0, 21].ToString();
+                        //xlsheet.Cells[1, 6].value = arrOrder[0, 21].ToString();
 
                         xlsheet.Cells[3, 1].Value = "Ship To:";
-                        xlsheet.Cells[5, 1].value = arrOrder[0, 10].ToString();
-                        xlsheet.Cells[6, 1].value = arrOrder[0, 11].ToString();
-                        xlsheet.Cells[7, 1].value = arrOrder[0, 12].ToString();
-                        xlsheet.Cells[8, 1].value = arrOrder[0, 13].ToString().TrimEnd() + ", " + arrOrder[0, 14].ToString() + "  " + arrOrder[0, 15].ToString();
+                        xlsheet.Cells[5, 1].value = order.shipAddress.name;
+                        xlsheet.Cells[6, 1].value = order.shipAddress.line1;
+                        xlsheet.Cells[7, 1].value = order.shipAddress.line2;
+                        xlsheet.Cells[8, 1].value = order.shipAddress.city.TrimEnd() + ", " + order.shipAddress.state + "  " + order.shipAddress.zipcode;
 
                         xlsheet.Cells[3, 5].Value = "Bill To:";
-                        xlsheet.Cells[5, 5].value = arrOrder[0, 3].ToString();
-                        xlsheet.Cells[6, 5].value = arrOrder[0, 4].ToString();
-                        xlsheet.Cells[7, 5].value = arrOrder[0, 5].ToString();
-                        xlsheet.Cells[8, 5].value = arrOrder[0, 6].ToString().TrimEnd() + ", " + arrOrder[0, 7].ToString() + "  " + arrOrder[0, 8].ToString();
+                        xlsheet.Cells[5, 1].value = order.billAddress.name;
+                        xlsheet.Cells[6, 1].value = order.billAddress.line1;
+                        xlsheet.Cells[7, 1].value = order.billAddress.line2;
+                        xlsheet.Cells[8, 1].value = order.billAddress.city.TrimEnd() + ", " + order.billAddress.state + "  " + order.billAddress.zipcode;
 
                         xlsheet.Cells[4, 9].Value = "PickNote:";
-                        xlsheet.Cells[4, 11].value = arrOrder[0, 0].ToString();
+                        xlsheet.Cells[4, 11].value = order.invoiceNumber;
                         xlsheet.Cells[5, 9].Value = "Location:";
                         xlsheet.Cells[5, 11].value = strInvLoc;
                         xlsheet.Cells[6, 9].Value = "Customer PO:";
-                        xlsheet.Cells[6, 11].value = arrOrder[0, 18].ToString();
+                        xlsheet.Cells[6, 11].value = order.customerPO;
                         xlsheet.Cells[7, 9].Value = "Account:";
-                        xlsheet.Cells[7, 11].value = arrOrder[0, 2].ToString();
+                        xlsheet.Cells[7, 11].value = order.customerCode;
                         xlsheet.Cells[8, 9].Value = "Delivery Method:";
-                        xlsheet.Cells[8, 11].value = arrOrder[0, 19].ToString();
+                        xlsheet.Cells[8, 11].value = order.deliveryMethod;
                         xlsheet.Cells[9, 9].Value = "Payment Terms:";
-                        xlsheet.Cells[9, 11].value = arrOrder[0, 20].ToString();
+                        xlsheet.Cells[9, 11].value = order.paymentTerms;
 
                         xlsheet.Cells[13, 10].Value = "# of Boxes: __________";
 
@@ -340,7 +350,7 @@ namespace OrderPrint
                         int currentNoteRow = 11;
                         int currentNoteCol = 1;
                         // IF CALIFORNIA SHIPTO THEN ADD PROP65 LABEL
-                        if (arrOrder[0, 14].ToString() == "CA")
+                        if (order.shipAddress.state == "CA")
                         {
                             arrNotes[numNotes] = "PROP 65 LABEL";
                             numNotes++;
@@ -576,24 +586,28 @@ namespace OrderPrint
                         // Print Out Final Page of Packlist
                         if (flagPrint == 1)
                         {
-                           // xlsheet.PrintOutEx(misValue, misValue, 1, false);
+                           //xlsheet.PrintOutEx(misValue, misValue, 1, false);
                             
                         }
 
-                        strCurrentDateTime = DateTime.Now.ToString("MM/dd/yyyy hh:mm");
-                        sqlUpdateList = "INSERT INTO wmsOrders (invoice_num,printed,printer) VALUES ('" + readerINV["BKAR_INV_NUM"] + "','" + strCurrentDateTime.ToString() + "','" + xlApp.ActivePrinter.ToString() + "')";
+                        strCurrentDateTime = DateTime.Now.ToString("yyyy-MM-dd hh:mm");
+                        sqlUpdateList = "INSERT INTO wmsOrders (invoice_num,printed,printer) " +
+                                        "VALUES ('" + readerINV["BKAR_INV_NUM"] + "', '" + strCurrentDateTime.ToString() +
+                                        "', '" + xlApp.ActivePrinter.ToString() + "');" +
+                                        "UPDATE BKARHINV " +
+                                        "SET BKAR_INV_TIME = '" + strCurrentDateTime.ToString() + "' " +
+                                        "WHERE BKAR_INV_NUM = '" + readerINV["BKAR_INV_NUM"] + "'";
                         using (OdbcCommand cmd = new OdbcCommand(sqlUpdateList, pSqlConn))
                         {
                             cmd.ExecuteNonQuery();
                         }
 
-
-                        /*using (OdbcCommand cmd = new OdbcCommand("order_printed", pSqlConn))
+                        /*using (OdbcCommand cmd = new OdbcCommand("{call order_printed(?)}", pSqlConn))
                         {
-                            cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                            cmd.Parameters.AddWithValue(":in_inv_num", readerINV["BKAR_INV_NUM"]);
-                            cmd.Parameters.AddWithValue(":in_time", strCurrentDateTime.ToString());
-                            cmd.Parameters.AddWithValue(":in_printer", xlApp.ActivePrinter.ToString());
+                            //cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                            cmd.Parameters.Add(new OdbcParameter("", OdbcType.Int)).Value = Convert.ToInt32(readerINV["BKAR_INV_NUM"]);
+                            cmd.Parameters.Add(new OdbcParameter("", OdbcType.Char, 50)).Value = strCurrentDateTime;
+                            cmd.Parameters.Add(new OdbcParameter("", OdbcType.Char, 50)).Value = xlApp.ActivePrinter.ToString();
 
                             cmd.ExecuteScalar();
                         }*/
