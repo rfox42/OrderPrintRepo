@@ -198,9 +198,16 @@ namespace OrderPrint
             OdbcConnection pSqlConn = null;
             using (pSqlConn = new OdbcConnection(strConnection))
             {
-                string sqlInvoice = "SELECT BKAR_INV_NUM" +
+                string sqlInvoice = "SELECT BKAR_INV_NUM, " +
+                        " invoice_num" +
                         " FROM BKARHINV" +
-                        " WHERE BKAR_INV_INVDTE <= '0001-12-31 16:00:00.000'";
+                        " LEFT JOIN wmsOrders" +
+                        " ON BKAR_INV_NUM = invoice_num" +
+                        " WHERE BKAR_INV_INVDTE > '2019-11-10'" +
+                        " AND invoice_num IS NULL";
+                /*"SELECT BKAR_INV_NUM" +
+                " FROM BKARHINV" +
+                " WHERE BKAR_INV_INVDTE <= '0001-12-31 16:00:00.000'";*/
                 OdbcCommand sqlCommandINV = new OdbcCommand(sqlInvoice, pSqlConn);
                 sqlCommandINV.CommandTimeout = 90;
                 pSqlConn.Open();
@@ -574,8 +581,14 @@ namespace OrderPrint
                         }
 
                         strCurrentDateTime = DateTime.Now.ToString("MM/dd/yyyy hh:mm");
+                        sqlUpdateList = "INSERT INTO wmsOrders (invoice_num,printed,printer) VALUES ('" + readerINV["BKAR_INV_NUM"] + "','" + strCurrentDateTime.ToString() + "','" + xlApp.ActivePrinter.ToString() + "')";
+                        using (OdbcCommand cmd = new OdbcCommand(sqlUpdateList, pSqlConn))
+                        {
+                            cmd.ExecuteNonQuery();
+                        }
 
-                        using (OdbcCommand cmd = new OdbcCommand("order_printed", pSqlConn))
+
+                        /*using (OdbcCommand cmd = new OdbcCommand("order_printed", pSqlConn))
                         {
                             cmd.CommandType = System.Data.CommandType.StoredProcedure;
                             cmd.Parameters.AddWithValue(":in_inv_num", readerINV["BKAR_INV_NUM"]);
@@ -583,7 +596,7 @@ namespace OrderPrint
                             cmd.Parameters.AddWithValue(":in_printer", xlApp.ActivePrinter.ToString());
 
                             cmd.ExecuteScalar();
-                        }
+                        }*/
 
 
                         // CLEAN UP LINE ITEMS AND EXTRA PAGES
