@@ -138,7 +138,7 @@ namespace OrderPrint
             xlsheet.Cells[24, 9].Value = "Description";
 
 
-            timer = new Timer(1000);
+            timer = new Timer(10000);
             timer.Elapsed += new ElapsedEventHandler(timerProgram);
             timer.Enabled = true;
             timer.Start();
@@ -254,24 +254,7 @@ namespace OrderPrint
                         order.paymentTerms = readerINV["BKAR_INV_TERMD"].ToString().TrimEnd();
                         order.enteredBy = readerINV["BKAR_INV_ENTBY"].ToString().TrimEnd();
 
-                        //if order is cash on demand
-                        if(order.paymentTerms.Contains("COD"))
-                        {
-                            //add to notes
-                            notes.Add(order.paymentTerms);
-                        }
-                        //if order is paid by credit
-                        else if(order.paymentTerms == "VISA/MC")
-                        {
-                            //add to credit table with Processed flagged false
-                            string creditString = "INSERT INTO CRDTINV (CRDT_INV_NUM, CRDT_INV_CUSCOD, CRDT_INV_DATE, CRDT_INV_TOTAL, CRDT_INV_PROCESSED) " +
-                                "VALUES (" + order.invoiceNumber + ", '" + order.customerCode + "', '" + order.date + "', " + readerINV["BKAR_INV_TOTAL"].ToString() + ", 0)";
 
-                            using(OdbcCommand creditCommand = new OdbcCommand(creditString, pSqlConn))
-                            {
-                                creditCommand.ExecuteNonQuery();
-                            }
-                        }
 
                         //get items for order
                         int flagPrint = 1;
@@ -310,14 +293,9 @@ namespace OrderPrint
 
                                     
                                     // Check for shipping Notes
-                                    if (item.itemType == "X")
+                                    if (item.itemType == "X" || item.itemType == "N")
                                     {
-                                        //if message
-                                        if (item.message.Substring(0, 1) == "@")
-                                        {
-                                            //add to notes
-                                            notes.Add(item.message);
-                                        }
+                                        notes.Add(item.message);
                                     }
 
                                     //add item(s) to order
@@ -325,6 +303,34 @@ namespace OrderPrint
                                 }
                             }
                             readerItems.Close();
+                        }
+
+                        //if order is cash on demand
+                        if (order.paymentTerms.Contains("COD"))
+                        {
+                            //add to notes
+                            notes.Add(order.paymentTerms);
+                        }
+                        //if order is paid by credit
+                        else if (order.paymentTerms == "VISA/MC")
+                        {
+                            string creditNotes = "";
+
+                            for(int i = 0; i < notes.Count; i++)
+                            {
+                                creditNotes += System.Environment.NewLine + notes[i];
+                            }
+
+                            Console.Write(creditNotes);
+
+                            //add to credit table with Processed flagged false
+                            string creditString = "INSERT INTO CRDTINV (CRDT_INV_NUM, CRDT_INV_CUSCOD, CRDT_INV_DATE, CRDT_INV_TOTAL, CRDT_INV_PROCESSED, CRDT_INV_NOTES) " +
+                                "VALUES (" + order.invoiceNumber + ", '" + order.customerCode + "', '" + order.date + "', " + readerINV["BKAR_INV_TOTAL"].ToString() + ", 0, '"+ creditNotes +"')";
+
+                            using (OdbcCommand creditCommand = new OdbcCommand(creditString, pSqlConn))
+                            {
+                                creditCommand.ExecuteNonQuery();
+                            }
                         }
 
                         int numItems = 0;
@@ -588,7 +594,7 @@ namespace OrderPrint
                             xlsheet.Cells[50, 11].value = "Page";
                             xlsheet.Cells[50, 12].value = numPage.ToString();
                             
-                            if (item.itemType == "X")
+                            if (item.itemType == "X" || item.itemType == "N")
                             {
                                 xlsheet.Cells[currentRow, 4].value = "  " + item.message;
                             }
