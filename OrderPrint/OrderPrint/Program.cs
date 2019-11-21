@@ -276,7 +276,7 @@ namespace OrderPrint
                                     item.itemType = readerItems["BKAR_INVL_ITYPE"].ToString();
                                     item.quantity = Convert.ToInt32( Convert.ToDouble( readerItems["BKAR_INVL_PQTY"].ToString()));
                                     item.description = readerItems["BKAR_INVL_PDESC"].ToString();
-                                    item.message = readerItems["BKAR_INVL_MSG"].ToString();
+                                    item.message = readerItems["BKAR_INVL_MSG"].ToString().TrimEnd();
                                     item.locationCode = readerItems["BKAR_INVL_LOC"].ToString().TrimEnd();
                                     item.vendorPart = readerItems["BKIC_VND_PART"].ToString();
 
@@ -293,7 +293,7 @@ namespace OrderPrint
 
                                     
                                     // Check for shipping Notes
-                                    if (item.itemType == "X" || item.itemType == "N")
+                                    if (item.itemType == "X")
                                     {
                                         notes.Add(item.message);
                                     }
@@ -454,7 +454,7 @@ namespace OrderPrint
                                 // Print Out Current PackList
                                 if(flagPrint == 1)
                                 {
-                                    xlsheet.PrintOutEx(misValue, misValue, 1, false);
+                                   // xlsheet.PrintOutEx(misValue, misValue, 1, false);
                                 }
 
                                 numPage = numPage + 1;
@@ -514,7 +514,7 @@ namespace OrderPrint
                                 // Print Out Current PackList
                                 if (flagPrint == 1)
                                 {
-                                    xlsheet.PrintOutEx(misValue, misValue, 1, false);
+                                    //xlsheet.PrintOutEx(misValue, misValue, 1, false);
                                 }
 
                                 numItems = 0;
@@ -621,11 +621,11 @@ namespace OrderPrint
                         // Print Out Final Page of Packlist
                         if (flagPrint == 1)
                         {
-                           xlsheet.PrintOutEx(misValue, misValue, 1, false);
+                           //xlsheet.PrintOutEx(misValue, misValue, 1, false);
                             
                         }
 
-                        strCurrentDateTime = DateTime.Now.ToString("yyyy-MM-dd hh:mm");
+                        strCurrentDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
                         sqlUpdateList = "INSERT INTO wmsOrders (invoice_num,printed,printer) " +
                                         "VALUES ('" + readerINV["BKAR_INV_NUM"] + "', '" + strCurrentDateTime.ToString() +
                                         "', '" + xlApp.ActivePrinter.ToString() + "');" +
