@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OrderPrint
+namespace OrderPrintForms
 {
-    public class Order
+    class Order
     {
         /// <summary>
         /// list of items in the order

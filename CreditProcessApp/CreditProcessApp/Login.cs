@@ -12,6 +12,16 @@ using System.Windows.Forms;
 
 namespace CreditProcessApp
 {
+
+    /* 
+     * @CLASS:      public partial class Login
+     * @PURPOSE:    query user for login details
+     *              create MainWindow on successful login
+     * 
+     * @PARAM:      none
+     * 
+     * @NOTES:      none
+     */
     public partial class Login : Form
     {
         MainWindow main;
@@ -21,6 +31,18 @@ namespace CreditProcessApp
             InitializeComponent();
         }
 
+        /*
+         * @FUNCTION:   private void SignInButton_Click()
+         * @PURPOSE:    checks current credentials against database
+         *              creates new MainWindow if valid
+         *              reports error to user otherwise
+         *              
+         * @PARAM:      object sender
+         *              EventArgs e
+         * 
+         * @RETURNS:    none
+         * @NOTES:      none
+         */
         private void SignInButton_Click(object sender, EventArgs e)
         {
             try
@@ -30,7 +52,7 @@ namespace CreditProcessApp
                 OdbcConnection pSqlConn = null;
                 using (pSqlConn = new OdbcConnection(strConnection))
                 {
-                    //get unprocessed invoices from database
+                    //get user code and security lvl from database with given username and password
                     string creditCommand = "SELECT BKSY_USER_CODE, BKSY_USER_SCTY FROM BKSYUSER WHERE BKSY_USER_CODE = '" + UsernameTextBox.Text + "' AND BKSY_USER_PSWD = '" + PasswordTextBox.Text + "'";
                     OdbcCommand cmd = new OdbcCommand(creditCommand, pSqlConn);
                     pSqlConn.Open();
@@ -42,14 +64,18 @@ namespace CreditProcessApp
                     }
                     else
                     {
+                        //report failure to user
                         throw new Exception("Invalid username or password");
                     }
 
+                    //if security level isn't high enough
                     if(CurrentUser.security_lvl > 2)
                     {
+                        //report failure
                         throw new Exception("You do not have the security level to access this application");
                     }
 
+                    //open main window with current credentials
                     main = new MainWindow(this);
                     main.Show();
                     this.Hide();
@@ -57,21 +83,59 @@ namespace CreditProcessApp
             }
             catch(Exception ex)
             {
+                //show error message
                 ErrorLabel.Text = "*" + ex.Message;
             }
         }
 
+        /*
+         * @FUNCTION:   private void CancelButton_Click()
+         * @PURPOSE:    closes the application
+         *              
+         * @PARAM:      object sender
+         *              EventArgs e
+         * 
+         * @RETURNS:    none
+         * @NOTES:      none
+         */
         private void CancelButton_Click(object sender, EventArgs e)
         {
             Close();
         }
 
+        //not used
         private void Login_FormClosing(object sender, FormClosingEventArgs e)
         {
         }
+
+        /*
+         * @FUNCTION:   private void PasswordTextBox_KeyPress()
+         * @PURPOSE:    checks if keypressed was enter
+         *              calls sign in function if it was
+         *              
+         * @PARAM:      object sender
+         *              EventArgs e
+         * 
+         * @RETURNS:    none
+         * @NOTES:      none
+         */
+        private void PasswordTextBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if(e.KeyChar == (char)Keys.Enter)
+            {
+                SignInButton_Click(sender, e);
+            }
+        }
     }
 
-
+    /* 
+     * @CLASS: static class CurrentUser
+     * @PURPOSE: hold current user code and security lvl for all forms
+     * 
+     * @PARAM: none
+     * 
+     * @NOTES: none
+     */
     static class CurrentUser
     {
         private static string _user_code = "";

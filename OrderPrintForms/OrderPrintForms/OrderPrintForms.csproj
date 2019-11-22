@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{BD7207DB-98F4-4D15-BC5A-1CA01703632E}</ProjectGuid>
+    <ProjectGuid>{5F75F1FB-342A-4B9A-A477-67FAF12D1BCA}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>CreditProcessApp</RootNamespace>
-    <AssemblyName>CreditProcessApp</AssemblyName>
+    <RootNamespace>OrderPrintForms</RootNamespace>
+    <AssemblyName>OrderPrintForms</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -46,26 +46,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Login.cs">
+    <Compile Include="InvoiceForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Login.Designer.cs">
-      <DependentUpon>Login.cs</DependentUpon>
+    <Compile Include="InvoiceForm.designer.cs">
+      <DependentUpon>InvoiceForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Invoice.cs" />
-    <Compile Include="MainWindow.cs">
+    <Compile Include="Order.cs" />
+    <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MainWindow.Designer.cs">
-      <DependentUpon>MainWindow.cs</DependentUpon>
+    <Compile Include="Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Login.resx">
-      <DependentUpon>Login.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MainWindow.resx">
-      <DependentUpon>MainWindow.cs</DependentUpon>
+    <EmbeddedResource Include="InvoiceForm.resx">
+      <DependentUpon>InvoiceForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -75,7 +72,6 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -89,21 +85,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\CalendarCollapsedImg.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\calendarimg.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\calendarimg1.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\RanshuLogo.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Refresh-512.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

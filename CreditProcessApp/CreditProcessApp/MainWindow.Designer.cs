@@ -35,25 +35,18 @@
             this.CompleteTable = new System.Windows.Forms.TableLayoutPanel();
             this.CompleteHeaderLine = new System.Windows.Forms.Label();
             this.CompleteHeaderTable = new System.Windows.Forms.TableLayoutPanel();
-            this.CompleteCusCodHeader = new System.Windows.Forms.Label();
+            this.CompleteDeliveryHeader = new System.Windows.Forms.Label();
             this.CompleteInvoiceHeader = new System.Windows.Forms.Label();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.CompleteDateHeader = new System.Windows.Forms.Label();
-            this.CalendarButton = new System.Windows.Forms.Button();
             this.CompleteInvoicePanel = new System.Windows.Forms.Panel();
-            this.Calendar = new System.Windows.Forms.MonthCalendar();
             this.CompleteInvoiceList = new System.Windows.Forms.TableLayoutPanel();
             this.label11 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
-            this.CompleteLabel = new System.Windows.Forms.Label();
-            this.ProcessLabel = new System.Windows.Forms.Label();
             this.ProcessPanel = new System.Windows.Forms.Panel();
             this.ProcessTable = new System.Windows.Forms.TableLayoutPanel();
             this.ProcessHeaderLine = new System.Windows.Forms.Label();
             this.ProcessHeaderTable = new System.Windows.Forms.TableLayoutPanel();
             this.ProcessDateHeader = new System.Windows.Forms.Label();
-            this.ProcessCusCodeHeader = new System.Windows.Forms.Label();
             this.ProcessInvNumHeader = new System.Windows.Forms.Label();
             this.ProcessInvoicePanel = new System.Windows.Forms.Panel();
             this.ProcessInvoiceList = new System.Windows.Forms.TableLayoutPanel();
@@ -70,6 +63,7 @@
             this.NotesLabel = new System.Windows.Forms.Label();
             this.DataTable = new System.Windows.Forms.TableLayoutPanel();
             this.InvoiceDataTable = new System.Windows.Forms.TableLayoutPanel();
+            this.ProcessedData = new System.Windows.Forms.Label();
             this.ProcessCheckLabel = new System.Windows.Forms.Label();
             this.ChargedByData = new System.Windows.Forms.Label();
             this.ChargedByLabel = new System.Windows.Forms.Label();
@@ -84,12 +78,23 @@
             this.InvoiceNumTable = new System.Windows.Forms.TableLayoutPanel();
             this.InvoiceData = new System.Windows.Forms.Label();
             this.InvoiceDataLabel = new System.Windows.Forms.Label();
+            this.DeliverySelectionTable = new System.Windows.Forms.TableLayoutPanel();
+            this.DeliveryMethodBox = new System.Windows.Forms.ComboBox();
+            this.DeliveryMethodLabel = new System.Windows.Forms.Label();
+            this.CompleteTitleTable = new System.Windows.Forms.TableLayoutPanel();
+            this.CompleteLabel = new System.Windows.Forms.Label();
+            this.TopButtonTable = new System.Windows.Forms.TableLayoutPanel();
+            this.CalendarButton = new System.Windows.Forms.Button();
+            this.RefreshButton = new System.Windows.Forms.Button();
+            this.ProcessLabel = new System.Windows.Forms.Label();
+            this.CompleteDateHeader = new System.Windows.Forms.Label();
+            this.CalendarPanel = new System.Windows.Forms.Panel();
+            this.Calendar = new System.Windows.Forms.MonthCalendar();
             this.TopPanel.SuspendLayout();
             this.TopTable.SuspendLayout();
             this.CompletePanel.SuspendLayout();
             this.CompleteTable.SuspendLayout();
             this.CompleteHeaderTable.SuspendLayout();
-            this.tableLayoutPanel1.SuspendLayout();
             this.CompleteInvoicePanel.SuspendLayout();
             this.CompleteInvoiceList.SuspendLayout();
             this.ProcessPanel.SuspendLayout();
@@ -104,6 +109,10 @@
             this.DataTable.SuspendLayout();
             this.InvoiceDataTable.SuspendLayout();
             this.InvoiceNumTable.SuspendLayout();
+            this.DeliverySelectionTable.SuspendLayout();
+            this.CompleteTitleTable.SuspendLayout();
+            this.TopButtonTable.SuspendLayout();
+            this.CalendarPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // TopPanel
@@ -121,10 +130,10 @@
             this.TopTable.ColumnCount = 2;
             this.TopTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.TopTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.TopTable.Controls.Add(this.CompletePanel, 0, 1);
-            this.TopTable.Controls.Add(this.CompleteLabel, 1, 0);
             this.TopTable.Controls.Add(this.ProcessLabel, 0, 0);
+            this.TopTable.Controls.Add(this.CompletePanel, 1, 1);
             this.TopTable.Controls.Add(this.ProcessPanel, 0, 1);
+            this.TopTable.Controls.Add(this.CompleteTitleTable, 1, 0);
             this.TopTable.Dock = System.Windows.Forms.DockStyle.Fill;
             this.TopTable.Location = new System.Drawing.Point(0, 0);
             this.TopTable.Name = "TopTable";
@@ -179,9 +188,9 @@
             this.CompleteHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.CompleteHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.CompleteHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.CompleteHeaderTable.Controls.Add(this.CompleteCusCodHeader, 1, 0);
+            this.CompleteHeaderTable.Controls.Add(this.CompleteDateHeader, 2, 0);
+            this.CompleteHeaderTable.Controls.Add(this.CompleteDeliveryHeader, 1, 0);
             this.CompleteHeaderTable.Controls.Add(this.CompleteInvoiceHeader, 0, 0);
-            this.CompleteHeaderTable.Controls.Add(this.tableLayoutPanel1, 2, 0);
             this.CompleteHeaderTable.Dock = System.Windows.Forms.DockStyle.Fill;
             this.CompleteHeaderTable.Location = new System.Drawing.Point(0, 0);
             this.CompleteHeaderTable.Margin = new System.Windows.Forms.Padding(0);
@@ -191,18 +200,18 @@
             this.CompleteHeaderTable.Size = new System.Drawing.Size(429, 37);
             this.CompleteHeaderTable.TabIndex = 3;
             // 
-            // CompleteCusCodHeader
+            // CompleteDeliveryHeader
             // 
-            this.CompleteCusCodHeader.AutoSize = true;
-            this.CompleteCusCodHeader.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.CompleteCusCodHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CompleteCusCodHeader.Location = new System.Drawing.Point(143, 0);
-            this.CompleteCusCodHeader.Margin = new System.Windows.Forms.Padding(0);
-            this.CompleteCusCodHeader.Name = "CompleteCusCodHeader";
-            this.CompleteCusCodHeader.Size = new System.Drawing.Size(143, 37);
-            this.CompleteCusCodHeader.TabIndex = 2;
-            this.CompleteCusCodHeader.Text = "Customer Code";
-            this.CompleteCusCodHeader.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.CompleteDeliveryHeader.AutoSize = true;
+            this.CompleteDeliveryHeader.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.CompleteDeliveryHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CompleteDeliveryHeader.Location = new System.Drawing.Point(143, 0);
+            this.CompleteDeliveryHeader.Margin = new System.Windows.Forms.Padding(0);
+            this.CompleteDeliveryHeader.Name = "CompleteDeliveryHeader";
+            this.CompleteDeliveryHeader.Size = new System.Drawing.Size(143, 37);
+            this.CompleteDeliveryHeader.TabIndex = 2;
+            this.CompleteDeliveryHeader.Text = "Delivery Method";
+            this.CompleteDeliveryHeader.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // CompleteInvoiceHeader
             // 
@@ -217,54 +226,9 @@
             this.CompleteInvoiceHeader.Text = "Invoice Number";
             this.CompleteInvoiceHeader.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // tableLayoutPanel1
-            // 
-            this.tableLayoutPanel1.ColumnCount = 2;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 69.93007F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30.06993F));
-            this.tableLayoutPanel1.Controls.Add(this.CompleteDateHeader, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.CalendarButton, 1, 0);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(286, 0);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 1;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(143, 37);
-            this.tableLayoutPanel1.TabIndex = 3;
-            // 
-            // CompleteDateHeader
-            // 
-            this.CompleteDateHeader.AutoSize = true;
-            this.CompleteDateHeader.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.CompleteDateHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CompleteDateHeader.Location = new System.Drawing.Point(0, 0);
-            this.CompleteDateHeader.Margin = new System.Windows.Forms.Padding(0, 0, 5, 0);
-            this.CompleteDateHeader.Name = "CompleteDateHeader";
-            this.CompleteDateHeader.Size = new System.Drawing.Size(94, 37);
-            this.CompleteDateHeader.TabIndex = 4;
-            this.CompleteDateHeader.Text = "Date";
-            this.CompleteDateHeader.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // CalendarButton
-            // 
-            this.CalendarButton.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.CalendarButton.BackgroundImage = global::CreditProcessApp.Properties.Resources.calendarimg;
-            this.CalendarButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.CalendarButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.CalendarButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.CalendarButton.Location = new System.Drawing.Point(99, 0);
-            this.CalendarButton.Margin = new System.Windows.Forms.Padding(0);
-            this.CalendarButton.Name = "CalendarButton";
-            this.CalendarButton.Size = new System.Drawing.Size(44, 37);
-            this.CalendarButton.TabIndex = 5;
-            this.CalendarButton.UseVisualStyleBackColor = false;
-            this.CalendarButton.Click += new System.EventHandler(this.CalendarButton_Click);
-            // 
             // CompleteInvoicePanel
             // 
             this.CompleteInvoicePanel.AutoScroll = true;
-            this.CompleteInvoicePanel.Controls.Add(this.Calendar);
             this.CompleteInvoicePanel.Controls.Add(this.CompleteInvoiceList);
             this.CompleteInvoicePanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.CompleteInvoicePanel.Location = new System.Drawing.Point(0, 42);
@@ -272,14 +236,6 @@
             this.CompleteInvoicePanel.Name = "CompleteInvoicePanel";
             this.CompleteInvoicePanel.Size = new System.Drawing.Size(429, 297);
             this.CompleteInvoicePanel.TabIndex = 17;
-            // 
-            // Calendar
-            // 
-            this.Calendar.Location = new System.Drawing.Point(185, 0);
-            this.Calendar.Name = "Calendar";
-            this.Calendar.TabIndex = 2;
-            this.Calendar.Visible = false;
-            this.Calendar.DateSelected += new System.Windows.Forms.DateRangeEventHandler(this.Calendar_DateSelected);
             // 
             // CompleteInvoiceList
             // 
@@ -340,32 +296,6 @@
             this.label13.Text = "1344925";
             this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // CompleteLabel
-            // 
-            this.CompleteLabel.AutoSize = true;
-            this.CompleteLabel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.CompleteLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 40F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CompleteLabel.Location = new System.Drawing.Point(437, 1);
-            this.CompleteLabel.Margin = new System.Windows.Forms.Padding(0);
-            this.CompleteLabel.Name = "CompleteLabel";
-            this.CompleteLabel.Size = new System.Drawing.Size(435, 67);
-            this.CompleteLabel.TabIndex = 1;
-            this.CompleteLabel.Text = "Complete";
-            this.CompleteLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // ProcessLabel
-            // 
-            this.ProcessLabel.AutoSize = true;
-            this.ProcessLabel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ProcessLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 40F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ProcessLabel.Location = new System.Drawing.Point(1, 1);
-            this.ProcessLabel.Margin = new System.Windows.Forms.Padding(0);
-            this.ProcessLabel.Name = "ProcessLabel";
-            this.ProcessLabel.Size = new System.Drawing.Size(435, 67);
-            this.ProcessLabel.TabIndex = 0;
-            this.ProcessLabel.Text = "Process";
-            this.ProcessLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // ProcessPanel
             // 
             this.ProcessPanel.AutoScroll = true;
@@ -408,11 +338,11 @@
             // 
             this.ProcessHeaderTable.ColumnCount = 3;
             this.ProcessHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.ProcessHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.ProcessHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.ProcessHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 36.82984F));
+            this.ProcessHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30.06993F));
             this.ProcessHeaderTable.Controls.Add(this.ProcessDateHeader, 2, 0);
-            this.ProcessHeaderTable.Controls.Add(this.ProcessCusCodeHeader, 1, 0);
             this.ProcessHeaderTable.Controls.Add(this.ProcessInvNumHeader, 0, 0);
+            this.ProcessHeaderTable.Controls.Add(this.DeliverySelectionTable, 1, 0);
             this.ProcessHeaderTable.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ProcessHeaderTable.Location = new System.Drawing.Point(0, 0);
             this.ProcessHeaderTable.Margin = new System.Windows.Forms.Padding(0);
@@ -427,26 +357,13 @@
             this.ProcessDateHeader.AutoSize = true;
             this.ProcessDateHeader.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ProcessDateHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ProcessDateHeader.Location = new System.Drawing.Point(286, 0);
+            this.ProcessDateHeader.Location = new System.Drawing.Point(299, 0);
             this.ProcessDateHeader.Margin = new System.Windows.Forms.Padding(0);
             this.ProcessDateHeader.Name = "ProcessDateHeader";
-            this.ProcessDateHeader.Size = new System.Drawing.Size(143, 37);
+            this.ProcessDateHeader.Size = new System.Drawing.Size(130, 37);
             this.ProcessDateHeader.TabIndex = 3;
             this.ProcessDateHeader.Text = "Date";
             this.ProcessDateHeader.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // ProcessCusCodeHeader
-            // 
-            this.ProcessCusCodeHeader.AutoSize = true;
-            this.ProcessCusCodeHeader.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ProcessCusCodeHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ProcessCusCodeHeader.Location = new System.Drawing.Point(143, 0);
-            this.ProcessCusCodeHeader.Margin = new System.Windows.Forms.Padding(0);
-            this.ProcessCusCodeHeader.Name = "ProcessCusCodeHeader";
-            this.ProcessCusCodeHeader.Size = new System.Drawing.Size(143, 37);
-            this.ProcessCusCodeHeader.TabIndex = 2;
-            this.ProcessCusCodeHeader.Text = "Customer Code";
-            this.ProcessCusCodeHeader.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // ProcessInvNumHeader
             // 
@@ -456,7 +373,7 @@
             this.ProcessInvNumHeader.Location = new System.Drawing.Point(0, 0);
             this.ProcessInvNumHeader.Margin = new System.Windows.Forms.Padding(0);
             this.ProcessInvNumHeader.Name = "ProcessInvNumHeader";
-            this.ProcessInvNumHeader.Size = new System.Drawing.Size(143, 37);
+            this.ProcessInvNumHeader.Size = new System.Drawing.Size(142, 37);
             this.ProcessInvNumHeader.TabIndex = 1;
             this.ProcessInvNumHeader.Text = "Invoice Number";
             this.ProcessInvNumHeader.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -477,8 +394,8 @@
             this.ProcessInvoiceList.AutoSize = true;
             this.ProcessInvoiceList.ColumnCount = 3;
             this.ProcessInvoiceList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.ProcessInvoiceList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33334F));
-            this.ProcessInvoiceList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33334F));
+            this.ProcessInvoiceList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 36.59674F));
+            this.ProcessInvoiceList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30.30303F));
             this.ProcessInvoiceList.Controls.Add(this.label6, 2, 0);
             this.ProcessInvoiceList.Controls.Add(this.label7, 1, 0);
             this.ProcessInvoiceList.Controls.Add(this.label8, 0, 0);
@@ -487,7 +404,7 @@
             this.ProcessInvoiceList.Name = "ProcessInvoiceList";
             this.ProcessInvoiceList.RowCount = 1;
             this.ProcessInvoiceList.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.ProcessInvoiceList.Size = new System.Drawing.Size(429, 20);
+            this.ProcessInvoiceList.Size = new System.Drawing.Size(429, 22);
             this.ProcessInvoiceList.TabIndex = 18;
             // 
             // label6
@@ -496,10 +413,10 @@
             this.label6.BackColor = System.Drawing.SystemColors.Control;
             this.label6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(285, 0);
-            this.label6.Margin = new System.Windows.Forms.Padding(0);
+            this.label6.Location = new System.Drawing.Point(299, 1);
+            this.label6.Margin = new System.Windows.Forms.Padding(1);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(144, 20);
+            this.label6.Size = new System.Drawing.Size(129, 20);
             this.label6.TabIndex = 3;
             this.label6.Text = "08/20/2019";
             this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -510,10 +427,10 @@
             this.label7.BackColor = System.Drawing.SystemColors.Control;
             this.label7.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(142, 0);
-            this.label7.Margin = new System.Windows.Forms.Padding(0);
+            this.label7.Location = new System.Drawing.Point(143, 1);
+            this.label7.Margin = new System.Windows.Forms.Padding(1);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(143, 20);
+            this.label7.Size = new System.Drawing.Size(154, 20);
             this.label7.TabIndex = 2;
             this.label7.Text = "AUTOAIROL";
             this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -523,10 +440,10 @@
             this.label8.AutoSize = true;
             this.label8.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label8.Location = new System.Drawing.Point(0, 0);
-            this.label8.Margin = new System.Windows.Forms.Padding(0);
+            this.label8.Location = new System.Drawing.Point(1, 1);
+            this.label8.Margin = new System.Windows.Forms.Padding(1);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(142, 20);
+            this.label8.Size = new System.Drawing.Size(140, 20);
             this.label8.TabIndex = 1;
             this.label8.Text = "1344925";
             this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -580,6 +497,7 @@
             // 
             this.ExitButton.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.ExitButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ExitButton.FlatAppearance.BorderColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.ExitButton.FlatAppearance.BorderSize = 0;
             this.ExitButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.ExitButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -588,6 +506,7 @@
             this.ExitButton.Name = "ExitButton";
             this.ExitButton.Size = new System.Drawing.Size(202, 97);
             this.ExitButton.TabIndex = 1;
+            this.ExitButton.TabStop = false;
             this.ExitButton.Text = "EXIT";
             this.ExitButton.UseVisualStyleBackColor = false;
             this.ExitButton.Click += new System.EventHandler(this.ExitButton_Click);
@@ -597,6 +516,7 @@
             this.ProcessButton.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.ProcessButton.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ProcessButton.Enabled = false;
+            this.ProcessButton.FlatAppearance.BorderColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.ProcessButton.FlatAppearance.BorderSize = 0;
             this.ProcessButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.ProcessButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -674,6 +594,7 @@
             this.InvoiceDataTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 32.16783F));
             this.InvoiceDataTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.27273F));
             this.InvoiceDataTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 22.64151F));
+            this.InvoiceDataTable.Controls.Add(this.ProcessedData, 3, 2);
             this.InvoiceDataTable.Controls.Add(this.ProcessCheckLabel, 2, 2);
             this.InvoiceDataTable.Controls.Add(this.ChargedByData, 3, 0);
             this.InvoiceDataTable.Controls.Add(this.ChargedByLabel, 2, 0);
@@ -696,6 +617,18 @@
             this.InvoiceDataTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.InvoiceDataTable.Size = new System.Drawing.Size(429, 147);
             this.InvoiceDataTable.TabIndex = 5;
+            // 
+            // ProcessedData
+            // 
+            this.ProcessedData.AutoSize = true;
+            this.ProcessedData.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ProcessedData.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ProcessedData.Location = new System.Drawing.Point(332, 99);
+            this.ProcessedData.Margin = new System.Windows.Forms.Padding(1);
+            this.ProcessedData.Name = "ProcessedData";
+            this.ProcessedData.Size = new System.Drawing.Size(96, 47);
+            this.ProcessedData.TabIndex = 15;
+            this.ProcessedData.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // ProcessCheckLabel
             // 
@@ -877,11 +810,187 @@
             this.InvoiceDataLabel.Text = "Invoice Number:";
             this.InvoiceDataLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // DeliverySelectionTable
+            // 
+            this.DeliverySelectionTable.ColumnCount = 2;
+            this.DeliverySelectionTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.DeliverySelectionTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.DeliverySelectionTable.Controls.Add(this.DeliveryMethodLabel, 0, 0);
+            this.DeliverySelectionTable.Controls.Add(this.DeliveryMethodBox, 1, 0);
+            this.DeliverySelectionTable.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.DeliverySelectionTable.Location = new System.Drawing.Point(142, 0);
+            this.DeliverySelectionTable.Margin = new System.Windows.Forms.Padding(0);
+            this.DeliverySelectionTable.Name = "DeliverySelectionTable";
+            this.DeliverySelectionTable.RowCount = 1;
+            this.DeliverySelectionTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.DeliverySelectionTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 37F));
+            this.DeliverySelectionTable.Size = new System.Drawing.Size(157, 37);
+            this.DeliverySelectionTable.TabIndex = 4;
+            // 
+            // DeliveryMethodBox
+            // 
+            this.DeliveryMethodBox.Cursor = System.Windows.Forms.Cursors.Default;
+            this.DeliveryMethodBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.DeliveryMethodBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.DeliveryMethodBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.DeliveryMethodBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.DeliveryMethodBox.FormattingEnabled = true;
+            this.DeliveryMethodBox.Items.AddRange(new object[] {
+            "ALL",
+            "RETAIL",
+            "NON-R"});
+            this.DeliveryMethodBox.Location = new System.Drawing.Point(81, 3);
+            this.DeliveryMethodBox.Name = "DeliveryMethodBox";
+            this.DeliveryMethodBox.Size = new System.Drawing.Size(73, 28);
+            this.DeliveryMethodBox.TabIndex = 5;
+            this.DeliveryMethodBox.SelectedIndexChanged += new System.EventHandler(this.DeliveryMethodBox_SelectedIndexChanged_1);
+            // 
+            // DeliveryMethodLabel
+            // 
+            this.DeliveryMethodLabel.AutoSize = true;
+            this.DeliveryMethodLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.DeliveryMethodLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.DeliveryMethodLabel.Location = new System.Drawing.Point(0, 0);
+            this.DeliveryMethodLabel.Margin = new System.Windows.Forms.Padding(0);
+            this.DeliveryMethodLabel.Name = "DeliveryMethodLabel";
+            this.DeliveryMethodLabel.Size = new System.Drawing.Size(78, 37);
+            this.DeliveryMethodLabel.TabIndex = 6;
+            this.DeliveryMethodLabel.Text = "Delivery";
+            this.DeliveryMethodLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // CompleteTitleTable
+            // 
+            this.CompleteTitleTable.ColumnCount = 2;
+            this.CompleteTitleTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 89.65517F));
+            this.CompleteTitleTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10.34483F));
+            this.CompleteTitleTable.Controls.Add(this.CompleteLabel, 0, 0);
+            this.CompleteTitleTable.Controls.Add(this.TopButtonTable, 1, 0);
+            this.CompleteTitleTable.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.CompleteTitleTable.Location = new System.Drawing.Point(437, 1);
+            this.CompleteTitleTable.Margin = new System.Windows.Forms.Padding(0);
+            this.CompleteTitleTable.Name = "CompleteTitleTable";
+            this.CompleteTitleTable.RowCount = 1;
+            this.CompleteTitleTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.CompleteTitleTable.Size = new System.Drawing.Size(435, 67);
+            this.CompleteTitleTable.TabIndex = 4;
+            // 
+            // CompleteLabel
+            // 
+            this.CompleteLabel.AutoSize = true;
+            this.CompleteLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.CompleteLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 40F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CompleteLabel.Location = new System.Drawing.Point(0, 0);
+            this.CompleteLabel.Margin = new System.Windows.Forms.Padding(0);
+            this.CompleteLabel.Name = "CompleteLabel";
+            this.CompleteLabel.Size = new System.Drawing.Size(390, 67);
+            this.CompleteLabel.TabIndex = 2;
+            this.CompleteLabel.Text = "  Complete";
+            this.CompleteLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // TopButtonTable
+            // 
+            this.TopButtonTable.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
+            this.TopButtonTable.ColumnCount = 1;
+            this.TopButtonTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.TopButtonTable.Controls.Add(this.RefreshButton, 0, 0);
+            this.TopButtonTable.Controls.Add(this.CalendarButton, 0, 1);
+            this.TopButtonTable.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TopButtonTable.Location = new System.Drawing.Point(390, 0);
+            this.TopButtonTable.Margin = new System.Windows.Forms.Padding(0);
+            this.TopButtonTable.Name = "TopButtonTable";
+            this.TopButtonTable.RowCount = 2;
+            this.TopButtonTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.TopButtonTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.TopButtonTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.TopButtonTable.Size = new System.Drawing.Size(45, 67);
+            this.TopButtonTable.TabIndex = 3;
+            // 
+            // CalendarButton
+            // 
+            this.CalendarButton.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.CalendarButton.BackgroundImage = global::CreditProcessApp.Properties.Resources.calendarimg;
+            this.CalendarButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.CalendarButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.CalendarButton.FlatAppearance.BorderColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.CalendarButton.FlatAppearance.BorderSize = 0;
+            this.CalendarButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.CalendarButton.Location = new System.Drawing.Point(1, 34);
+            this.CalendarButton.Margin = new System.Windows.Forms.Padding(0);
+            this.CalendarButton.Name = "CalendarButton";
+            this.CalendarButton.Size = new System.Drawing.Size(43, 32);
+            this.CalendarButton.TabIndex = 6;
+            this.CalendarButton.UseVisualStyleBackColor = false;
+            this.CalendarButton.Click += new System.EventHandler(this.CalendarButton_Click);
+            // 
+            // RefreshButton
+            // 
+            this.RefreshButton.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.RefreshButton.BackgroundImage = global::CreditProcessApp.Properties.Resources.Refresh_512;
+            this.RefreshButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.RefreshButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.RefreshButton.FlatAppearance.BorderColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.RefreshButton.FlatAppearance.BorderSize = 0;
+            this.RefreshButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.RefreshButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.RefreshButton.Location = new System.Drawing.Point(1, 1);
+            this.RefreshButton.Margin = new System.Windows.Forms.Padding(0);
+            this.RefreshButton.Name = "RefreshButton";
+            this.RefreshButton.Size = new System.Drawing.Size(43, 32);
+            this.RefreshButton.TabIndex = 7;
+            this.RefreshButton.TabStop = false;
+            this.RefreshButton.UseVisualStyleBackColor = false;
+            this.RefreshButton.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // ProcessLabel
+            // 
+            this.ProcessLabel.AutoSize = true;
+            this.ProcessLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ProcessLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 40F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ProcessLabel.Location = new System.Drawing.Point(1, 1);
+            this.ProcessLabel.Margin = new System.Windows.Forms.Padding(0);
+            this.ProcessLabel.Name = "ProcessLabel";
+            this.ProcessLabel.Size = new System.Drawing.Size(435, 67);
+            this.ProcessLabel.TabIndex = 5;
+            this.ProcessLabel.Text = "Process";
+            this.ProcessLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // CompleteDateHeader
+            // 
+            this.CompleteDateHeader.AutoSize = true;
+            this.CompleteDateHeader.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.CompleteDateHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CompleteDateHeader.Location = new System.Drawing.Point(286, 0);
+            this.CompleteDateHeader.Margin = new System.Windows.Forms.Padding(0, 0, 5, 0);
+            this.CompleteDateHeader.Name = "CompleteDateHeader";
+            this.CompleteDateHeader.Size = new System.Drawing.Size(138, 37);
+            this.CompleteDateHeader.TabIndex = 5;
+            this.CompleteDateHeader.Text = "Date";
+            this.CompleteDateHeader.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // CalendarPanel
+            // 
+            this.CalendarPanel.AutoSize = true;
+            this.CalendarPanel.Controls.Add(this.Calendar);
+            this.CalendarPanel.Location = new System.Drawing.Point(642, 70);
+            this.CalendarPanel.Name = "CalendarPanel";
+            this.CalendarPanel.Size = new System.Drawing.Size(227, 163);
+            this.CalendarPanel.TabIndex = 2;
+            this.CalendarPanel.Visible = false;
+            // 
+            // Calendar
+            // 
+            this.Calendar.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Calendar.Location = new System.Drawing.Point(0, 0);
+            this.Calendar.Name = "Calendar";
+            this.Calendar.TabIndex = 3;
+            this.Calendar.DateSelected += new System.Windows.Forms.DateRangeEventHandler(this.Calendar_DateSelected);
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(873, 613);
+            this.Controls.Add(this.CalendarPanel);
             this.Controls.Add(this.BottomPanel);
             this.Controls.Add(this.TopPanel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -898,8 +1007,6 @@
             this.CompleteTable.ResumeLayout(false);
             this.CompleteHeaderTable.ResumeLayout(false);
             this.CompleteHeaderTable.PerformLayout();
-            this.tableLayoutPanel1.ResumeLayout(false);
-            this.tableLayoutPanel1.PerformLayout();
             this.CompleteInvoicePanel.ResumeLayout(false);
             this.CompleteInvoicePanel.PerformLayout();
             this.CompleteInvoiceList.ResumeLayout(false);
@@ -922,7 +1029,14 @@
             this.InvoiceDataTable.PerformLayout();
             this.InvoiceNumTable.ResumeLayout(false);
             this.InvoiceNumTable.PerformLayout();
+            this.DeliverySelectionTable.ResumeLayout(false);
+            this.DeliverySelectionTable.PerformLayout();
+            this.CompleteTitleTable.ResumeLayout(false);
+            this.CompleteTitleTable.PerformLayout();
+            this.TopButtonTable.ResumeLayout(false);
+            this.CalendarPanel.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -930,14 +1044,11 @@
 
         private System.Windows.Forms.Panel TopPanel;
         private System.Windows.Forms.TableLayoutPanel TopTable;
-        private System.Windows.Forms.Label CompleteLabel;
-        private System.Windows.Forms.Label ProcessLabel;
         private System.Windows.Forms.Panel ProcessPanel;
         private System.Windows.Forms.TableLayoutPanel ProcessTable;
         private System.Windows.Forms.Label ProcessHeaderLine;
         private System.Windows.Forms.TableLayoutPanel ProcessHeaderTable;
         private System.Windows.Forms.Label ProcessDateHeader;
-        private System.Windows.Forms.Label ProcessCusCodeHeader;
         private System.Windows.Forms.Label ProcessInvNumHeader;
         private System.Windows.Forms.Panel BottomPanel;
         private System.Windows.Forms.Panel ProcessInvoicePanel;
@@ -972,16 +1083,25 @@
         private System.Windows.Forms.TableLayoutPanel CompleteTable;
         private System.Windows.Forms.Label CompleteHeaderLine;
         private System.Windows.Forms.TableLayoutPanel CompleteHeaderTable;
-        private System.Windows.Forms.Label CompleteCusCodHeader;
+        private System.Windows.Forms.Label CompleteDeliveryHeader;
         private System.Windows.Forms.Label CompleteInvoiceHeader;
         private System.Windows.Forms.Panel CompleteInvoicePanel;
         private System.Windows.Forms.TableLayoutPanel CompleteInvoiceList;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.Label ProcessedData;
+        private System.Windows.Forms.TableLayoutPanel DeliverySelectionTable;
+        private System.Windows.Forms.Label DeliveryMethodLabel;
+        private System.Windows.Forms.ComboBox DeliveryMethodBox;
+        private System.Windows.Forms.Label ProcessLabel;
         private System.Windows.Forms.Label CompleteDateHeader;
+        private System.Windows.Forms.TableLayoutPanel CompleteTitleTable;
+        private System.Windows.Forms.Label CompleteLabel;
+        private System.Windows.Forms.TableLayoutPanel TopButtonTable;
+        private System.Windows.Forms.Button RefreshButton;
         private System.Windows.Forms.Button CalendarButton;
+        private System.Windows.Forms.Panel CalendarPanel;
         private System.Windows.Forms.MonthCalendar Calendar;
     }
 }

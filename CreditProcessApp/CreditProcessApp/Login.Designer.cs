@@ -38,10 +38,10 @@
             this.ErrorLabel = new System.Windows.Forms.Label();
             this.LoginLabel = new System.Windows.Forms.Label();
             this.UserPassTable = new System.Windows.Forms.TableLayoutPanel();
+            this.PasswordTextBox = new System.Windows.Forms.RichTextBox();
             this.PasswordLabel = new System.Windows.Forms.Label();
             this.UsernameLabel = new System.Windows.Forms.Label();
             this.UsernameTextBox = new System.Windows.Forms.RichTextBox();
-            this.PasswordTextBox = new System.Windows.Forms.RichTextBox();
             this.LoginLayoutTable.SuspendLayout();
             this.ButtonTable.SuspendLayout();
             this.LoginTable.SuspendLayout();
@@ -98,6 +98,7 @@
             // 
             this.CancelButton.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.CancelButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.CancelButton.FlatAppearance.BorderColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.CancelButton.FlatAppearance.BorderSize = 0;
             this.CancelButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.CancelButton.Location = new System.Drawing.Point(227, 1);
@@ -113,6 +114,7 @@
             // 
             this.SignInButton.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.SignInButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SignInButton.FlatAppearance.BorderColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.SignInButton.FlatAppearance.BorderSize = 0;
             this.SignInButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.SignInButton.Location = new System.Drawing.Point(1, 1);
@@ -185,6 +187,18 @@
             this.UserPassTable.Size = new System.Drawing.Size(290, 85);
             this.UserPassTable.TabIndex = 1;
             // 
+            // PasswordTextBox
+            // 
+            this.PasswordTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.PasswordTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.PasswordTextBox.Location = new System.Drawing.Point(92, 49);
+            this.PasswordTextBox.Multiline = false;
+            this.PasswordTextBox.Name = "PasswordTextBox";
+            this.PasswordTextBox.Size = new System.Drawing.Size(195, 28);
+            this.PasswordTextBox.TabIndex = 4;
+            this.PasswordTextBox.Text = "";
+            this.PasswordTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.PasswordTextBox_KeyPress);
+            // 
             // PasswordLabel
             // 
             this.PasswordLabel.AutoSize = true;
@@ -222,17 +236,6 @@
             this.UsernameTextBox.TabIndex = 3;
             this.UsernameTextBox.Text = "";
             // 
-            // PasswordTextBox
-            // 
-            this.PasswordTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.PasswordTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.PasswordTextBox.Location = new System.Drawing.Point(92, 49);
-            this.PasswordTextBox.Multiline = false;
-            this.PasswordTextBox.Name = "PasswordTextBox";
-            this.PasswordTextBox.Size = new System.Drawing.Size(195, 28);
-            this.PasswordTextBox.TabIndex = 4;
-            this.PasswordTextBox.Text = "";
-            // 
             // Login
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -240,8 +243,9 @@
             this.ClientSize = new System.Drawing.Size(460, 343);
             this.Controls.Add(this.LoginLayoutTable);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
             this.Name = "Login";
-            this.Text = "Form1";
+            this.Text = "CreditProcessApp";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Login_FormClosing);
             this.LoginLayoutTable.ResumeLayout(false);
             this.ButtonTable.ResumeLayout(false);

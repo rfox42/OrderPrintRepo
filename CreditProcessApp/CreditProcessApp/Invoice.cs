@@ -49,6 +49,8 @@ namespace CreditProcessApp
         /// </summary>
         public string notes;
 
+        public string deliveryMethod;
+
 
         /*
          * @FUNCTION:   public Invoice()

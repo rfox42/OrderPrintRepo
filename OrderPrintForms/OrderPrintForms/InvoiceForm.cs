@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace OrderPrint
+namespace OrderPrintForms
 {
     public partial class InvoiceForm : Form
     {
@@ -35,6 +35,7 @@ namespace OrderPrint
 
             //set page number
             PageText.Text = page.ToString();
+            PageTextB.Text = page.ToString();
             ItemList.Controls.Clear();
             ItemList.RowCount = 0;
             ItemList.AutoSize = true;
@@ -44,6 +45,7 @@ namespace OrderPrint
         {
             captureScreen();
             printDocument.Print();
+            this.Close();
         }
 
         private void printDocument_Print(object sender, PrintPageEventArgs e)
