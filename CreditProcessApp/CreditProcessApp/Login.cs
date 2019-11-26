@@ -45,8 +45,7 @@ namespace CreditProcessApp
          */
         private void SignInButton_Click(object sender, EventArgs e)
         {
-            try
-            {
+            
                 //establish database connection
                 string strConnection = "DSN=Ranshu20190831";
                 OdbcConnection pSqlConn = null;
@@ -80,12 +79,12 @@ namespace CreditProcessApp
                     main.Show();
                     this.Hide();
                 }
-            }
+            /*}
             catch(Exception ex)
             {
                 //show error message
                 ErrorLabel.Text = "*" + ex.Message;
-            }
+            }*/
         }
 
         /*

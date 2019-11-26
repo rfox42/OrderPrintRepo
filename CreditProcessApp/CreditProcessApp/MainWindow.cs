@@ -76,6 +76,9 @@ namespace CreditProcessApp
          */
         private void populateTables()
         {
+            ProcessButton.Enabled = false;
+            releaseInvoice();
+            clearData();
             refreshTimer.Stop();
 
             //create table lists
@@ -88,7 +91,7 @@ namespace CreditProcessApp
             using (pSqlConn = new OdbcConnection(strConnection))
             {
                 //get unprocessed invoices from database
-                string creditCommand = "SELECT CRDT_INV_NUM, CRDT_INV_CUSCOD, CRDT_INV_DATE, CRDT_INV_TOTAL, CRDT_INV_NOTES, CRDT_INV_SHPVIA FROM CRDTINV WHERE CRDT_INV_PROCESSED = 0";
+                string creditCommand = "SELECT CRDT_INV_NUM, CRDT_INV_CUSCOD, CRDT_INV_DATE, CRDT_INV_TOTAL, CRDT_INV_NOTES, CRDT_INV_SHPVIA, CRDT_INV_SLSP FROM CRDTINV WHERE CRDT_INV_PROCESSED = 0 and CRDT_INV_USER = 'null'";
                 if(selectedDelivery != "ALL")
                 {
                     creditCommand += " AND " + selectedDelivery;
@@ -111,6 +114,7 @@ namespace CreditProcessApp
                         invoice.total = Convert.ToDouble(creditReader["CRDT_INV_TOTAL"].ToString());
                         invoice.notes = creditReader["CRDT_INV_NOTES"].ToString().Trim();
                         invoice.deliveryMethod = creditReader["CRDT_INV_SHPVIA"].ToString().TrimEnd();
+                        invoice.salesPerson = Convert.ToInt32(creditReader["CRDT_INV_SLSP"].ToString());
 
                         //add invoice to list
                         incomplete.Add(invoice);
@@ -120,7 +124,7 @@ namespace CreditProcessApp
                 creditReader.Close();
 
                 //get processed invoices for selected date (default is currentdate)
-                creditCommand = "SELECT CRDT_INV_NUM, CRDT_INV_CUSCOD, CRDT_INV_DATE, CRDT_INV_TOTAL, CRDT_INV_CHARGETIME, CRDT_INV_USER, CRDT_INV_NOTES, CRDT_INV_SHPVIA FROM CRDTINV WHERE CRDT_INV_PROCESSED = 1 AND (CRDT_INV_CHARGETIME >= '"+ selectedDate.ToString("yyyy-MM-dd") +"' AND CRDT_INV_CHARGETIME < '"+ selectedDate.AddDays(1).ToString("yyyy-MM-dd") +"') ORDER BY CRDT_INV_NUM";
+                creditCommand = "SELECT CRDT_INV_NUM, CRDT_INV_CUSCOD, CRDT_INV_DATE, CRDT_INV_TOTAL, CRDT_INV_CHARGETIME, CRDT_INV_USER, CRDT_INV_NOTES, CRDT_INV_SHPVIA, CRDT_INV_SLSP FROM CRDTINV WHERE CRDT_INV_PROCESSED = 1 AND (CRDT_INV_CHARGETIME >= '" + selectedDate.ToString("yyyy-MM-dd") +"' AND CRDT_INV_CHARGETIME < '"+ selectedDate.AddDays(1).ToString("yyyy-MM-dd") +"') ORDER BY CRDT_INV_NUM";
                 cmd = new OdbcCommand(creditCommand, pSqlConn);
                 creditReader = cmd.ExecuteReader();
                 if (creditReader.HasRows)
@@ -138,6 +142,7 @@ namespace CreditProcessApp
                         invoice.user = creditReader["CRDT_INV_USER"].ToString().TrimEnd();
                         invoice.notes = creditReader["CRDT_INV_NOTES"].ToString().Trim();
                         invoice.deliveryMethod = creditReader["CRDT_INV_SHPVIA"].ToString().TrimEnd();
+                        invoice.salesPerson = Convert.ToInt32(creditReader["CRDT_INV_SLSP"].ToString());
 
                         //add invoice to list
                         complete.Add(invoice);
@@ -149,9 +154,23 @@ namespace CreditProcessApp
                 pSqlConn.Close();
             }
 
-            //fill respective tables with list data
-            refreshTable(ProcessInvoiceList, incomplete);
-            refreshTable(CompleteInvoiceList, complete);
+
+            ProcessInvoiceList.Hide();
+            CompleteInvoiceList.Hide();
+
+            try
+            {
+
+                //fill respective tables with list data
+                refreshTable(ProcessInvoiceList, incomplete);
+                refreshTable(CompleteInvoiceList, complete);
+
+            }
+            finally
+            {
+                ProcessInvoiceList.Show();
+                CompleteInvoiceList.Show();
+            }
 
             refreshTimer.Start();
         }
@@ -169,19 +188,25 @@ namespace CreditProcessApp
         private void refreshTable(TableLayoutPanel table, List<Invoice> invoices)
         {
             //clear and hide table during refresh
-            table.Visible = false;
-            table.Controls.Clear();
-            table.RowCount = 0;
-
-            //for each invoice in the list
-            for (int i = 0; i < invoices.Count; i++)
+            //table.Hide();
+            try
             {
-                //add invoice to table
-                addToTable(table, invoices[i]);
+                table.Controls.Clear();
+                table.RowCount = 0;
+
+                //for each invoice in the list
+                for (int i = 0; i < invoices.Count; i++)
+                {
+                    //add invoice to table
+                    addToTable(table, invoices[i]);
+                }
+            }
+            finally
+            {
+                //display table
+                //table.Show();
             }
 
-            //display table
-            table.Visible = true;
         }
 
 
@@ -209,29 +234,52 @@ namespace CreditProcessApp
             tempLabel.Click += new EventHandler(tempLabel_Click);
             table.Controls.Add(tempLabel, 0, table.RowCount);
 
-            //add delivery method to row
+
+            //add account to row
             //add click event
-            tempLabel = new Label() { Text = invoice.deliveryMethod, TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Microsoft Sans Serif", 12, FontStyle.Regular), Dock = DockStyle.Fill, Margin = new Padding(0, 1, 0, 1), Tag = invoice, Parent = table };
+            tempLabel = new Label() { Text = invoice.account, TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Microsoft Sans Serif", 12, FontStyle.Regular), Dock = DockStyle.Fill, Margin = new Padding(0, 1, 0, 1), Tag = invoice, Parent = table };
             tempLabel.Click += new EventHandler(tempLabel_Click);
             table.Controls.Add(tempLabel, 1, table.RowCount);
 
+
+            //add salesperson to row
+            //add click event
+            tempLabel = new Label() { Text = invoice.salesPerson.ToString(), TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Microsoft Sans Serif", 12, FontStyle.Regular), Dock = DockStyle.Fill, Margin = new Padding(0, 1, 0, 1), Tag = invoice, Parent = table };
+            tempLabel.Click += new EventHandler(tempLabel_Click);
+            table.Controls.Add(tempLabel, 2, table.RowCount);
+
+
+            //add retail character to row
+            if (invoice.deliveryMethod == "DELIVERY" || invoice.deliveryMethod == "WILL CALL")
+            {
+                tempLabel = new Label() { Text = "Y", TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Microsoft Sans Serif", 12, FontStyle.Regular), Dock = DockStyle.Fill, Margin = new Padding(0, 1, 0, 1), Tag = invoice, Parent = table };
+            }
+            else
+            {
+                tempLabel = new Label() { Text = "N", TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Microsoft Sans Serif", 12, FontStyle.Regular), Dock = DockStyle.Fill, Margin = new Padding(0, 1, 0, 1), Tag = invoice, Parent = table };
+            }
+
+            //add click event
+            tempLabel.Click += new EventHandler(tempLabel_Click);
+            table.Controls.Add(tempLabel, 3, table.RowCount);
+
+
             //if invoice has been processed
-            if(invoice.chargeTime != null)
+            if (invoice.chargeTime != null)
             {
                 //show date processed
-                //add click event
                 tempLabel = new Label() { Text = Convert.ToDateTime( invoice.chargeTime).ToString("MM/dd/yyyy"), TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Microsoft Sans Serif", 12, FontStyle.Regular), Dock = DockStyle.Fill, Margin = new Padding(0, 1, 0, 1), Tag = invoice, Parent = table };
-                tempLabel.Click += new EventHandler(tempLabel_Click);
-                table.Controls.Add(tempLabel, 2, table.RowCount);
+
             }
             else
             {
                 //show date order was placed
-                //add click event
                 tempLabel = new Label() { Text = invoice.date, TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Microsoft Sans Serif", 12, FontStyle.Regular), Dock = DockStyle.Fill, Margin = new Padding(0, 1, 0, 1), Tag = invoice, Parent = table };
-                tempLabel.Click += new EventHandler(tempLabel_Click);
-                table.Controls.Add(tempLabel, 2, table.RowCount);
             }
+
+            //add click event
+            tempLabel.Click += new EventHandler(tempLabel_Click);
+            table.Controls.Add(tempLabel, 4, table.RowCount);
         }
 
         /*
@@ -250,6 +298,16 @@ namespace CreditProcessApp
             e.Graphics.DrawLine(Pens.Black, new Point(e.CellBounds.Left, e.CellBounds.Bottom), new Point(e.CellBounds.Right, e.CellBounds.Bottom));
         }
 
+        /*
+         * @FUNCTION:   private void refreshTimer_Complete()
+         * @PURPOSE:    refreshes the tables if user has been idle for 30 seconds
+         *              
+         * @PARAM:      object sender
+         *              EventArgs e
+         * 
+         * @RETURNS:    none
+         * @NOTES:      none
+         */
         private void refreshTimer_Complete(object sender, EventArgs e)
         {
             refreshTimer.Stop();
@@ -279,9 +337,6 @@ namespace CreditProcessApp
             //get invoice and display data
             Label clicked = (Label)sender;
 
-            
-
-
             //initialize table references
             TableLayoutPanel table = null;
             TableLayoutPanel offTable = null;
@@ -296,16 +351,27 @@ namespace CreditProcessApp
                 table = ProcessInvoiceList;
                 offTable = CompleteInvoiceList;
 
-                if (currentInvoice != null)
-                {
-                }
-
+                //update control user in db
                 string strConnection = "DSN=Ranshu20190831";
                 OdbcConnection pSqlConn = null;
                 using (pSqlConn = new OdbcConnection(strConnection))
                 {
-                    //get unprocessed invoices from database
-                    string creditCommand = "UPDATE CRDTINV SET CRDT_INV_USER = '" + CurrentUser.user_code + "' WHERE CRDT_INV_NUM = " + currentInvoice.invoiceNumber + "AND CRDT_INV_USER = NULL";
+                    pSqlConn.Open();
+                    string creditCommand = "UPDATE CRDTINV SET CRDT_INV_USER = '" + CurrentUser.user_code + "' WHERE CRDT_INV_NUM = " + ((Invoice)clicked.Tag).invoiceNumber + "AND CRDT_INV_USER = 'null'";
+                    using (OdbcCommand cmd = new OdbcCommand(creditCommand, pSqlConn))
+                    {
+                        //if invoice is being processed by another user
+                        if (cmd.ExecuteNonQuery() <= 0)
+                        {
+                            //alert user
+                            MessageBox.Show("Invoice being processed by another user please select another invoice.", "Error");
+
+                            //refresh tables and break from function
+                            populateTables();
+                            return;
+                        }
+                    }
+                    pSqlConn.Close();
                 }
             }
             //else if invoice is in complete table
@@ -318,6 +384,10 @@ namespace CreditProcessApp
                 offTable = ProcessInvoiceList;
             }
 
+            //release previous invoice
+            releaseInvoice();
+
+            //set current invoice
             currentInvoice = clicked.Tag as Invoice;
             showData(currentInvoice);
 
@@ -383,6 +453,61 @@ namespace CreditProcessApp
                 ProcessedData.Text = "No";
             }
             NotesText.Text = invoice.notes;
+        }
+
+        /*
+         * @FUNCTION:   private void clearData()
+         * @PURPOSE:    clears data fields
+         *              
+         * @PARAM:      none
+         * 
+         * @RETURNS:    none
+         * @NOTES:      none
+         */
+        private void clearData()
+        {
+
+            //clear data fields
+            InvoiceData.Text = "";
+            AccountData.Text = "";
+            DateData.Text = "";
+            ChargedData.Text = "";
+            ChargedByData.Text = "";
+            TotalData.Text = "";
+            ProcessedData.Text = "";
+            NotesText.Text = "";
+        }
+
+        /*
+         * @FUNCTION:   private void releaseInvoice()
+         * @PURPOSE:    releases control of current invoice in db
+         *              sets current invoice to null
+         *              
+         * @PARAM:      none
+         * 
+         * @RETURNS:    none
+         * @NOTES:      none
+         */
+        private void releaseInvoice()
+        {
+            //if invoice is selected
+            if (currentInvoice != null)
+            {
+                //update invoice control in db
+                string strConnection = "DSN=Ranshu20190831";
+                OdbcConnection pSQLConn = null;
+                using (pSQLConn = new OdbcConnection(strConnection))
+                {
+                    string creditCommand = "UPDATE CRDTINV SET CRDT_INV_USER = 'null' WHERE CRDT_INV_NUM = " + currentInvoice.invoiceNumber + "AND CRDT_INV_USER != 'null' AND CRDT_INV_PROCESSED = 0";
+                    OdbcCommand cmd = new OdbcCommand(creditCommand, pSQLConn);
+                    pSQLConn.Open();
+                    cmd.ExecuteNonQuery();
+                    pSQLConn.Close();
+                }
+
+                //clear current invoice
+                currentInvoice = null;
+            }
         }
 
         /*
@@ -513,6 +638,19 @@ namespace CreditProcessApp
 
             //if user selects "no", stop closing
             e.Cancel = (dialogResult == DialogResult.No);
+            if (dialogResult == DialogResult.Yes && currentInvoice != null)
+            {
+                string strConnection = "DSN=Ranshu20190831";
+                OdbcConnection pSQLConn = null;
+                using(pSQLConn = new OdbcConnection(strConnection))
+                {
+                    string creditCommand = "UPDATE CRDTINV SET CRDT_INV_USER = 'null' WHERE CRDT_INV_NUM = " + currentInvoice.invoiceNumber + "AND CRDT_INV_USER != 'null' AND CRDT_INV_PROCESSED = 0";
+                    OdbcCommand cmd = new OdbcCommand(creditCommand, pSQLConn);
+                    pSQLConn.Open();
+                    cmd.ExecuteNonQuery();
+                    pSQLConn.Close();
+                }
+            }
         }
 
         private void MainWindow_FormClosed(object sender, FormClosedEventArgs e)
@@ -546,6 +684,11 @@ namespace CreditProcessApp
         private void button1_Click(object sender, EventArgs e)
         {
             populateTables();
+        }
+
+        private void DeliveryMethodLabel_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

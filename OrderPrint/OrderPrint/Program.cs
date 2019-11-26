@@ -198,7 +198,7 @@ namespace OrderPrint
                 newOrders();
             }
 
-
+            //checks for errors on the installed printer
             PrintServer printServer = new PrintServer(installedPrinter);
             PrintQueueCollection printQueues = printServer.GetPrintQueues();
             foreach (PrintQueue pq in printQueues)
@@ -207,9 +207,12 @@ namespace OrderPrint
                 PrintJobInfoCollection pCollection = pq.GetPrintJobInfoCollection();
                 if ((pq.QueueStatus & PrintQueueStatus.Error) == PrintQueueStatus.Error || (pq.QueueStatus & PrintQueueStatus.Offline) == PrintQueueStatus.Offline || (pq.QueueStatus & PrintQueueStatus.None) != PrintQueueStatus.None)
                 {
+                    //emails error report to IT
                     string text = "There appears to be a problem printing order " + currentOrder.invoiceNumber + " to " + installedPrinter + ".";
                     text += System.Environment.NewLine + "Please check the printer.";
                     SendEmail(installedPrinter, text);
+
+                    //breaks loop once error found
                     break;
                 }
             }
@@ -234,7 +237,7 @@ namespace OrderPrint
             {
                 //get order information
                 string sqlInvoice =
-                "SELECT BKAR_INV_NUM, BKAR_INV_INVDTE, BKAR_INV_CUSCOD, BKAR_INV_CUSNME, BKAR_INV_CUSA1, BKAR_INV_CUSA2, BKAR_INV_CUSCTY, BKAR_INV_CUSST, BKAR_INV_CUSZIP, BKAR_INV_CUSCUN, BKAR_INV_SHPNME, BKAR_INV_SHPA1, BKAR_INV_SHPA2, BKAR_INV_SHPCTY, BKAR_INV_SHPST, BKAR_INV_SHPZIP, BKAR_INV_SHPCUN, BKAR_INV_LOC, BKAR_INV_CUSORD, BKAR_INV_SHPVIA, BKAR_INV_TERMD, BKAR_INV_ENTBY, BKAR_INV_TOTAL, invoice_num" +
+                "SELECT BKAR_INV_NUM, BKAR_INV_INVDTE, BKAR_INV_CUSCOD, BKAR_INV_CUSNME, BKAR_INV_CUSA1, BKAR_INV_CUSA2, BKAR_INV_CUSCTY, BKAR_INV_CUSST, BKAR_INV_CUSZIP, BKAR_INV_CUSCUN, BKAR_INV_SHPNME, BKAR_INV_SHPA1, BKAR_INV_SHPA2, BKAR_INV_SHPCTY, BKAR_INV_SHPST, BKAR_INV_SHPZIP, BKAR_INV_SHPCUN, BKAR_INV_LOC, BKAR_INV_CUSORD, BKAR_INV_SHPVIA, BKAR_INV_TERMD, BKAR_INV_ENTBY, BKAR_INV_TOTAL, BKAR_INV_SLSP, invoice_num" +
                 " FROM BKARHINV LEFT JOIN wmsOrders ON BKAR_INV_NUM = invoice_num " +
                 " WHERE BKAR_INV_MAX = 0 ";
                 OdbcCommand sqlCommandINV = new OdbcCommand(sqlInvoice, pSqlConn);
@@ -314,11 +317,11 @@ namespace OrderPrint
                                     Item item = new Item();
                                     item.partCode = readerItems["BKAR_INVL_PCODE"].ToString();
                                     item.itemType = readerItems["BKAR_INVL_ITYPE"].ToString();
-                                    item.quantity = Convert.ToInt32( Convert.ToDouble( readerItems["BKAR_INVL_PQTY"].ToString()));
                                     item.description = readerItems["BKAR_INVL_PDESC"].ToString();
                                     item.message = readerItems["BKAR_INVL_MSG"].ToString().TrimEnd();
                                     item.locationCode = readerItems["BKAR_INVL_LOC"].ToString().TrimEnd();
                                     item.vendorPart = readerItems["BKIC_VND_PART"].ToString();
+
 
                                     //if item has bin
                                     if(readerItems["BIN_NAME"].ToString() != "")
@@ -336,6 +339,11 @@ namespace OrderPrint
                                     if (item.itemType == "X")
                                     {
                                             notes.Add(item.message);
+                                    }
+                                    else
+                                    {
+
+                                        item.quantity = Convert.ToInt32(Convert.ToDouble(readerItems["BKAR_INVL_PQTY"].ToString()));
                                     }
 
                                     //add item(s) to order
@@ -364,8 +372,8 @@ namespace OrderPrint
                             Console.Write(creditNotes);
 
                             //add to credit table with Processed flagged false
-                            string creditString = "INSERT INTO CRDTINV (CRDT_INV_NUM, CRDT_INV_CUSCOD, CRDT_INV_DATE, CRDT_INV_TOTAL, CRDT_INV_PROCESSED, CRDT_INV_NOTES, CRDT_INV_SHPVIA) " +
-                                "VALUES (" + order.invoiceNumber + ", '" + order.customerCode + "', '" + order.date + "', " + readerINV["BKAR_INV_TOTAL"].ToString() + ", 0, '"+ creditNotes +"', '"+ order.deliveryMethod +"')";
+                            string creditString = "INSERT INTO CRDTINV (CRDT_INV_NUM, CRDT_INV_CUSCOD, CRDT_INV_DATE, CRDT_INV_TOTAL, CRDT_INV_PROCESSED, CRDT_INV_USER, CRDT_INV_NOTES, CRDT_INV_SHPVIA, CRDT_INV_SLSP) " +
+                                "VALUES (" + order.invoiceNumber + ", '" + order.customerCode + "', '" + order.date + "', " + readerINV["BKAR_INV_TOTAL"].ToString() + ", 0, 'null', '"+ creditNotes +"', '"+ order.deliveryMethod +"', "+ Convert.ToInt32(readerINV["BKAR_INV_SLSP"].ToString()) +")";
 
                             using (OdbcCommand creditCommand = new OdbcCommand(creditString, pSqlConn))
                             {
@@ -494,7 +502,7 @@ namespace OrderPrint
                                 // Print Out Current PackList
                                 if(flagPrint == 1)
                                 {
-                                    xlsheet.PrintOutEx(misValue, misValue, 1, false);
+                                    //xlsheet.PrintOutEx(misValue, misValue, 1, false);
                                 }
 
                                 numPage = numPage + 1;
@@ -535,7 +543,7 @@ namespace OrderPrint
                                 // Print Out Current PackList
                                 if (flagPrint == 1)
                                 {
-                                    xlsheet.PrintOutEx(misValue, misValue, 1, false);
+                                    //xlsheet.PrintOutEx(misValue, misValue, 1, false);
                                 }
 
                                 numItems = 0;
@@ -617,11 +625,12 @@ namespace OrderPrint
                         }
                         else if (flagPrint == 1)
                         {
-                           xlsheet.PrintOutEx(misValue, misValue, 1, false);
+                           //xlsheet.PrintOutEx(misValue, misValue, 1, false);
                             
                         }
                         
-
+                        //add order to wmsOrders
+                        //update invoice as printed
                         strCurrentDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
                         sqlUpdateList = "INSERT INTO wmsOrders (invoice_num,printed,printer) " +
                                         "VALUES (" + order.invoiceNumber + ", '" + strCurrentDateTime.ToString() +
@@ -722,23 +731,25 @@ namespace OrderPrint
                 }
                 else
                 {
-                    string text = "There appears to be a problem printing order "+ currentOrder.invoiceNumber +" to " + installedPrinter + ".";
-                    text += System.Environment.NewLine + "Please check the printer.";
-
-                    if (installedPrinter != "RICOHNV")
-                    {
-                        text += System.Environment.NewLine + "The invoice will be printed to RICOHNV to compensate.";
-                        flagPrinterFound = selectPrinter("RENO");
-                    }
-
-                    SendEmail(installedPrinter, text);
+                    Console.WriteLine("There appears to be a problem printing to " + installedPrinter);
                 }
             }
             return flagPrinterFound;
         }
 
+        /*
+         * @FUNCTION:   static void SendEmail()
+         * @PURPOSE:    create and send error emails
+         *              
+         * @PARAM:      string subject
+         *              string msgText
+         * 
+         * @RETURNS:    none
+         * @NOTES:      none
+         */
         static void SendEmail(string subject, string msgText)
         {
+            //set email credentials
             SmtpClient mailClient = new SmtpClient("secure.emailsrvr.com");
             mailClient.DeliveryMethod = SmtpDeliveryMethod.Network;
             mailClient.UseDefaultCredentials = false;
@@ -746,16 +757,18 @@ namespace OrderPrint
             mailClient.Port = 587;
             mailClient.EnableSsl = true;
 
+            //create message
             MailMessage msgMail;
-
-
             msgMail = new MailMessage(new MailAddress("orders@ranshu.com"), new MailAddress("ryan@ranshu.com"));
             //msgMail.CC.Add(new MailAddress("jeremy@ranshu.com"));
-
             msgMail.Subject = "Print Error on " + subject;
             msgMail.Body = msgText;
             msgMail.IsBodyHtml = true;
+
+            //send message
             mailClient.Send(msgMail);
+
+            //garbage collect
             msgMail.Dispose();
         }
 

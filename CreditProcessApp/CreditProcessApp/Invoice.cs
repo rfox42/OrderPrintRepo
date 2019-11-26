@@ -19,6 +19,8 @@ namespace CreditProcessApp
         /// </summary>
         public int invoiceNumber;
 
+        public int salesPerson;
+
         /// <summary>
         /// holds total cost of order
         /// </summary>
@@ -50,6 +52,7 @@ namespace CreditProcessApp
         public string notes;
 
         public string deliveryMethod;
+
 
 
         /*
