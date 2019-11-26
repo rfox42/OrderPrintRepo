@@ -268,7 +268,9 @@
         private System.Windows.Forms.Label PasswordLabel;
         private System.Windows.Forms.Label UsernameLabel;
         private System.Windows.Forms.RichTextBox UsernameTextBox;
+#pragma warning disable CS0108 // Member hides inherited member; missing new keyword
         private System.Windows.Forms.Button CancelButton;
+#pragma warning restore CS0108 // Member hides inherited member; missing new keyword
         private System.Windows.Forms.Button SignInButton;
         private System.Windows.Forms.Label ErrorLabel;
         private System.Windows.Forms.RichTextBox PasswordTextBox;

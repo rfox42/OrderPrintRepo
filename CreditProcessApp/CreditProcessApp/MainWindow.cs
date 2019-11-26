@@ -25,6 +25,7 @@ namespace CreditProcessApp
         Invoice currentInvoice;
         DateTime selectedDate;
         string selectedDelivery;
+        string held;
         Login login;
         Timer refreshTimer;
 
@@ -59,9 +60,18 @@ namespace CreditProcessApp
             refreshTimer.Enabled = true;
             refreshTimer.Start();
 
-
+            held = "";
 
             DeliveryMethodBox.SelectedIndex = 0;
+
+            if(CurrentUser.security_lvl <=1)
+            {
+                HeldViewButton.Show();
+            }
+            else
+            {
+                ProcessLabel.Margin = new Padding(6, 0, 0, 0);
+            }
         }
 
         /*
@@ -91,7 +101,9 @@ namespace CreditProcessApp
             using (pSqlConn = new OdbcConnection(strConnection))
             {
                 //get unprocessed invoices from database
-                string creditCommand = "SELECT CRDT_INV_NUM, CRDT_INV_CUSCOD, CRDT_INV_DATE, CRDT_INV_TOTAL, CRDT_INV_NOTES, CRDT_INV_SHPVIA, CRDT_INV_SLSP FROM CRDTINV WHERE CRDT_INV_PROCESSED = 0 and CRDT_INV_USER = 'null'";
+                string creditCommand = "SELECT CRDT_INV_NUM, CRDT_INV_CUSCOD, CRDT_INV_DATE, CRDT_INV_TOTAL, CRDT_INV_NOTES, CRDT_INV_SHPVIA, CRDT_INV_SLSP, BKAR_INV_LOC " +
+                    "FROM CRDTINV LEFT JOIN BKARHINV ON CRDT_INV_NUM = BKAR_INV_NUM" +
+                    "WHERE CRDT_INV_PROCESSED = 0 and CRDT_INV_USER "+ held +"= 'null'";
                 if(selectedDelivery != "ALL")
                 {
                     creditCommand += " AND " + selectedDelivery;
@@ -224,44 +236,58 @@ namespace CreditProcessApp
          */
         private void addToTable(TableLayoutPanel table, Invoice invoice)
         {
+            int column = 0;
+
             //increment rowcount of given table and add new row
             table.RowCount++;
             table.RowStyles.Add(new RowStyle() { SizeType = SizeType.Absolute, Height = 30 });
 
             //add invoice number to row
             //add click event
-            Label tempLabel = new Label() { Text = invoice.invoiceNumber.ToString(), TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Microsoft Sans Serif", 12, FontStyle.Regular), Dock = DockStyle.Fill, Margin = new Padding(0,1,0,1), Tag = invoice, Parent = table };
+            Label tempLabel = new Label() { Text = invoice.invoiceNumber.ToString(), TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Microsoft Sans Serif", 11, FontStyle.Regular), Dock = DockStyle.Fill, Margin = new Padding(0,1,0,1), Tag = invoice, Parent = table };
             tempLabel.Click += new EventHandler(tempLabel_Click);
-            table.Controls.Add(tempLabel, 0, table.RowCount);
-
+            table.Controls.Add(tempLabel, column, table.RowCount);
+            column++;
 
             //add account to row
             //add click event
-            tempLabel = new Label() { Text = invoice.account, TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Microsoft Sans Serif", 12, FontStyle.Regular), Dock = DockStyle.Fill, Margin = new Padding(0, 1, 0, 1), Tag = invoice, Parent = table };
+            tempLabel = new Label() { Text = invoice.account, TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Microsoft Sans Serif", 11, FontStyle.Regular), Dock = DockStyle.Fill, Margin = new Padding(0, 1, 0, 1), Tag = invoice, Parent = table };
             tempLabel.Click += new EventHandler(tempLabel_Click);
-            table.Controls.Add(tempLabel, 1, table.RowCount);
+            table.Controls.Add(tempLabel, column, table.RowCount);
+            column++;
 
+            if(invoice.chargeTime == null)
+            {
+                //add location to row
+                //add click event
+                tempLabel = new Label() { Text = invoice.locaton, TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Microsoft Sans Serif", 11, FontStyle.Regular), Dock = DockStyle.Fill, Margin = new Padding(0, 1, 0, 1), Tag = invoice, Parent = table };
+                tempLabel.Click += new EventHandler(tempLabel_Click);
+                table.Controls.Add(tempLabel, column, table.RowCount);
+                column++;
+            }
 
             //add salesperson to row
             //add click event
-            tempLabel = new Label() { Text = invoice.salesPerson.ToString(), TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Microsoft Sans Serif", 12, FontStyle.Regular), Dock = DockStyle.Fill, Margin = new Padding(0, 1, 0, 1), Tag = invoice, Parent = table };
+            tempLabel = new Label() { Text = invoice.salesPerson.ToString(), TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Microsoft Sans Serif", 11, FontStyle.Regular), Dock = DockStyle.Fill, Margin = new Padding(0, 1, 0, 1), Tag = invoice, Parent = table };
             tempLabel.Click += new EventHandler(tempLabel_Click);
-            table.Controls.Add(tempLabel, 2, table.RowCount);
+            table.Controls.Add(tempLabel, column, table.RowCount);
+            column++;
 
 
             //add retail character to row
             if (invoice.deliveryMethod == "DELIVERY" || invoice.deliveryMethod == "WILL CALL")
             {
-                tempLabel = new Label() { Text = "Y", TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Microsoft Sans Serif", 12, FontStyle.Regular), Dock = DockStyle.Fill, Margin = new Padding(0, 1, 0, 1), Tag = invoice, Parent = table };
+                tempLabel = new Label() { Text = "R", TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Microsoft Sans Serif", 11, FontStyle.Regular), Dock = DockStyle.Fill, Margin = new Padding(0, 1, 0, 1), Tag = invoice, Parent = table };
             }
             else
             {
-                tempLabel = new Label() { Text = "N", TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Microsoft Sans Serif", 12, FontStyle.Regular), Dock = DockStyle.Fill, Margin = new Padding(0, 1, 0, 1), Tag = invoice, Parent = table };
+                tempLabel = new Label() { Text = "N", TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Microsoft Sans Serif", 11, FontStyle.Regular), Dock = DockStyle.Fill, Margin = new Padding(0, 1, 0, 1), Tag = invoice, Parent = table };
             }
 
             //add click event
             tempLabel.Click += new EventHandler(tempLabel_Click);
-            table.Controls.Add(tempLabel, 3, table.RowCount);
+            table.Controls.Add(tempLabel, column, table.RowCount);
+            column++;
 
 
             //if invoice has been processed
@@ -279,7 +305,8 @@ namespace CreditProcessApp
 
             //add click event
             tempLabel.Click += new EventHandler(tempLabel_Click);
-            table.Controls.Add(tempLabel, 4, table.RowCount);
+            table.Controls.Add(tempLabel, column, table.RowCount);
+            column++;
         }
 
         /*
@@ -535,7 +562,10 @@ namespace CreditProcessApp
                         "SET CRDT_INV_PROCESSED = 1, " +
                         "CRDT_INV_CHARGETIME = '" + DateTime.Now.ToString("yyyy-MM-dd HH:mm") + "', " +
                         "CRDT_INV_USER = '" + CurrentUser.user_code + "' " +
-                        "WHERE CRDT_INV_NUM = " + currentInvoice.invoiceNumber;
+                        "WHERE CRDT_INV_NUM = " + currentInvoice.invoiceNumber+ "; " +
+                        "UPDATE BKARHINV " +
+                        "SET BKAR_INV_MAX = 0" +
+                        "WHERE BKAR_INV_NUM = " + currentInvoice.invoiceNumber + ";";
                     OdbcCommand cmd = new OdbcCommand(sqlProcess, pSqlConn);
                     pSqlConn.Open();
                     cmd.ExecuteNonQuery();
@@ -689,6 +719,19 @@ namespace CreditProcessApp
         private void DeliveryMethodLabel_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void HeldViewButton_Click(object sender, EventArgs e)
+        {
+            if(held == "")
+            {
+                held = "!";
+            }
+            else
+            {
+                held = "";
+            }
+            populateTables();
         }
     }
 }

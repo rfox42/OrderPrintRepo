@@ -53,6 +53,8 @@ namespace CreditProcessApp
 
         public string deliveryMethod;
 
+        public string locaton;
+
 
 
         /*
