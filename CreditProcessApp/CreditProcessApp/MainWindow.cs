@@ -26,8 +26,11 @@ namespace CreditProcessApp
         DateTime selectedDate;
         string selectedDelivery;
         string held;
+        string processOrderBy;
+        string completeOrderBy;
         Login login;
         Timer refreshTimer;
+        
 
         /*
          * @FUNCTION:   public MainWindow()
@@ -45,6 +48,7 @@ namespace CreditProcessApp
             InitializeComponent();
 
             login = in_login;
+            processOrderBy = "CRDT_INV_NUM";
 
             //set start values
             selectedDate = DateTime.Now;
@@ -109,7 +113,7 @@ namespace CreditProcessApp
                     creditCommand += " AND " + selectedDelivery;
                 }
 
-                creditCommand += " ORDER BY CRDT_INV_NUM";
+                creditCommand += " ORDER BY " + processOrderBy;
                 OdbcCommand cmd = new OdbcCommand(creditCommand, pSqlConn);
                 pSqlConn.Open();
                 OdbcDataReader creditReader = cmd.ExecuteReader();
@@ -127,6 +131,7 @@ namespace CreditProcessApp
                         invoice.notes = creditReader["CRDT_INV_NOTES"].ToString().Trim();
                         invoice.deliveryMethod = creditReader["CRDT_INV_SHPVIA"].ToString().TrimEnd();
                         invoice.salesPerson = Convert.ToInt32(creditReader["CRDT_INV_SLSP"].ToString());
+                        invoice.setLocation(creditReader["BKAR_INV_LOC"].ToString());
 
                         //add invoice to list
                         incomplete.Add(invoice);
@@ -260,7 +265,7 @@ namespace CreditProcessApp
             {
                 //add location to row
                 //add click event
-                tempLabel = new Label() { Text = invoice.locaton, TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Microsoft Sans Serif", 11, FontStyle.Regular), Dock = DockStyle.Fill, Margin = new Padding(0, 1, 0, 1), Tag = invoice, Parent = table };
+                tempLabel = new Label() { Text = invoice.location, TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Microsoft Sans Serif", 11, FontStyle.Regular), Dock = DockStyle.Fill, Margin = new Padding(0, 1, 0, 1), Tag = invoice, Parent = table };
                 tempLabel.Click += new EventHandler(tempLabel_Click);
                 table.Controls.Add(tempLabel, column, table.RowCount);
                 column++;
@@ -471,14 +476,6 @@ namespace CreditProcessApp
             ChargedData.Text = invoice.chargeTime;
             ChargedByData.Text = invoice.user;
             TotalData.Text = "$" + String.Format("{0:0.00}", invoice.total);
-            if(invoice.user != null)
-            {
-                ProcessedData.Text = "Yes";
-            }
-            else
-            {
-                ProcessedData.Text = "No";
-            }
             NotesText.Text = invoice.notes;
         }
 
@@ -501,7 +498,6 @@ namespace CreditProcessApp
             ChargedData.Text = "";
             ChargedByData.Text = "";
             TotalData.Text = "";
-            ProcessedData.Text = "";
             NotesText.Text = "";
         }
 
@@ -537,6 +533,11 @@ namespace CreditProcessApp
             }
         }
 
+        private void changeOrder(string orderStr, string newOrder)
+        {
+            orderStr = newOrder;
+        }
+
         /*
          * @FUNCTION:   private void ProcessButton_Click()
          * @PURPOSE:    updates database to mark invoice as processed
@@ -549,6 +550,29 @@ namespace CreditProcessApp
          */
         private void ProcessButton_Click(object sender, EventArgs e)
         {
+            processInvoice(0);
+        }
+
+        /*
+         * @FUNCTION:   private void ExitButton_Click()
+         * @PURPOSE:    updates the CRDT table
+         *              leaves print flag false
+         *              
+         * @PARAM:      object sender
+         *              EventArgs e
+         * 
+         * @RETURNS:    none
+         * @NOTES:      none
+         */
+        private void ExitButton_Click(object sender, EventArgs e)
+        {
+            //begin form close
+            processInvoice(1);
+        }
+
+        private void processInvoice(int printFlag)
+        {
+
             //if current invoice is valid
             if (currentInvoice != null)
             {
@@ -562,9 +586,9 @@ namespace CreditProcessApp
                         "SET CRDT_INV_PROCESSED = 1, " +
                         "CRDT_INV_CHARGETIME = '" + DateTime.Now.ToString("yyyy-MM-dd HH:mm") + "', " +
                         "CRDT_INV_USER = '" + CurrentUser.user_code + "' " +
-                        "WHERE CRDT_INV_NUM = " + currentInvoice.invoiceNumber+ "; " +
+                        "WHERE CRDT_INV_NUM = " + currentInvoice.invoiceNumber + "; " +
                         "UPDATE BKARHINV " +
-                        "SET BKAR_INV_MAX = 0" +
+                        "SET BKAR_INV_MAX = "+ printFlag +
                         "WHERE BKAR_INV_NUM = " + currentInvoice.invoiceNumber + ";";
                     OdbcCommand cmd = new OdbcCommand(sqlProcess, pSqlConn);
                     pSqlConn.Open();
@@ -579,22 +603,6 @@ namespace CreditProcessApp
             //reset UI
             currentInvoice = null;
             ProcessButton.Enabled = false;
-        }
-
-        /*
-         * @FUNCTION:   private void ExitButton_Click()
-         * @PURPOSE:    closes the form
-         *              
-         * @PARAM:      object sender
-         *              EventArgs e
-         * 
-         * @RETURNS:    none
-         * @NOTES:      none
-         */
-        private void ExitButton_Click(object sender, EventArgs e)
-        {
-            //begin form close
-            Close();
         }
 
         /*
@@ -732,6 +740,31 @@ namespace CreditProcessApp
                 held = "";
             }
             populateTables();
+        }
+
+        private void OtherOrdersButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void AccountDataButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void OtherInvoicesTable_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void OtherOrdersCloseButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ProcessInvoiceNumButton_Click(object sender, EventArgs e)
+        {
+            
         }
     }
 }

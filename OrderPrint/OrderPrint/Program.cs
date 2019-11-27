@@ -253,6 +253,7 @@ namespace OrderPrint
 
                         //create new notes for order
                         List<string> notes = new List<string>();
+                        List<string> crdtNotes = new List<string>();
 
                         //create order with invoice number
                         Order order = new Order(Convert.ToInt32(readerINV["BKAR_INV_NUM"].ToString()));
@@ -313,7 +314,7 @@ namespace OrderPrint
                                     item.partCode = readerItems["BKAR_INVL_PCODE"].ToString();
                                     item.itemType = readerItems["BKAR_INVL_ITYPE"].ToString();
                                     item.description = readerItems["BKAR_INVL_PDESC"].ToString();
-                                    item.message = readerItems["BKAR_INVL_MSG"].ToString().TrimEnd();
+                                    item.message = readerItems["BKAR_INVL_MSG"].ToString().TrimEnd().TrimStart();
                                     item.locationCode = readerItems["BKAR_INVL_LOC"].ToString().TrimEnd();
                                     item.vendorPart = readerItems["BKIC_VND_PART"].ToString();
 
@@ -331,13 +332,19 @@ namespace OrderPrint
 
                                     
                                     // Check for shipping Notes
-                                    if (item.itemType == "X")
+                                    if (item.itemType == "X" && item.message.Length >= 1)
                                     {
-                                            notes.Add(item.message);
+                                        if(item.message.Substring(0, 1) == "@")
+                                        {
+                                            notes.Add(item.message.TrimStart('@'));
+                                        }
+                                        else
+                                        {
+                                            crdtNotes.Add(item.message);
+                                        }
                                     }
                                     else
                                     {
-
                                         item.quantity = Convert.ToInt32(Convert.ToDouble(readerItems["BKAR_INVL_PQTY"].ToString()));
                                     }
 
@@ -360,9 +367,9 @@ namespace OrderPrint
                         {
                             string creditNotes = "";
 
-                            for(int i = 0; i < notes.Count; i++)
+                            for(int i = 0; i < crdtNotes.Count; i++)
                             {
-                                creditNotes += System.Environment.NewLine + notes[i];
+                                creditNotes += System.Environment.NewLine + crdtNotes[i];
                             }
 
                             Console.Write(creditNotes);
@@ -476,7 +483,7 @@ namespace OrderPrint
                             xlsheet.Cells[22, 11].value = order.deliveryMethod;
 
                             // ASSIGN PRINTER BASED OFF OF WAREHOUSE CODE
-                            flagPrint = selectPrinter(strInvLoc);
+                            flagPrint = selectPrinter(strInvLoc, (order.deliveryMethod == "DELIVERY" || order.deliveryMethod == "WILL CALL"));
                             Console.WriteLine(xlApp.ActivePrinter.ToString());
 
                             // Dont print FAX
@@ -560,7 +567,7 @@ namespace OrderPrint
                                     strInvLoc = item.locationCode;
 
                                     // ASSIGN PRINTER BASED OFF OF WAREHOUSE CODE
-                                    flagPrint = selectPrinter(strInvLoc);
+                                    flagPrint = selectPrinter(strInvLoc, (order.deliveryMethod == "DELIVERY" || order.deliveryMethod == "WILL CALL"));
 
                                     xlsheet.Cells[3, 5].Value = "Bill To:";
                                     xlsheet.Cells[5, 5].value = order.billAddress.name;
@@ -598,7 +605,7 @@ namespace OrderPrint
                                 xlsheet.Cells[50, 11].value = "Page";
                                 xlsheet.Cells[50, 12].value = numPage.ToString();
 
-                                if (item.itemType == "X" || item.itemType == "N")
+                                if (item.itemType == "X")
                                 {
                                     xlsheet.Cells[currentRow, 4].value = "  " + item.message;
                                 }
@@ -692,12 +699,13 @@ namespace OrderPrint
             flagActive = 0;
         }
 
-        public static int selectPrinter(string locationcode)
+        public static int selectPrinter(string locationcode, bool retail)
         {
             int flagPrinterFound = 0;
             string backupPrinter;
 
             // ASSIGN PRINTER BASED OFF OF WAREHOUSE CODE
+
             if (locationcode == "RENO")
             {
                 installedPrinter = "RICOHNV";
@@ -716,7 +724,14 @@ namespace OrderPrint
             }
             else if (locationcode == "FORT WORTH")
             {
-                installedPrinter = "RICOHTX";
+                if(retail)
+                {
+                    installedPrinter = "RICOHTX";
+                }
+                else
+                {
+                    installedPrinter = "RICOHTX";
+                }
             }
             else if (locationcode == "TX CONSIGN")
             {

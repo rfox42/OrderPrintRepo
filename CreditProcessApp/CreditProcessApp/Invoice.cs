@@ -53,7 +53,7 @@ namespace CreditProcessApp
 
         public string deliveryMethod;
 
-        public string locaton;
+        public string location;
 
 
 
@@ -74,6 +74,40 @@ namespace CreditProcessApp
         ~Invoice()
         {
 
+        }
+
+        public void setLocation(string loc)
+        {
+            switch(loc)
+            {
+                case "FORT WORTH":
+                    location = "FW";
+                    break;
+
+                case "RENO":
+                    location = "R";
+                    break;
+
+                case "SPARKS1":
+                    location = "S1";
+                    break;
+
+                case "SPARKS2":
+                    location = "S2";
+                    break;
+
+                case "TX COSIGN":
+                    location = "TXC";
+                    break;
+
+                case "PA":
+                    location = loc;
+                    break;
+
+                case "FL":
+                    location = loc;
+                    break;
+            }
         }
     }
 }
