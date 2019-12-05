@@ -45,10 +45,10 @@ namespace CreditProcessApp
          */
         private void SignInButton_Click(object sender, EventArgs e)
         {
-            try
-            {
+            try 
+            { 
                 //establish database connection
-                string strConnection = "DSN=Ranshu20190831";
+                string strConnection = "DSN=Ranshu";
                 OdbcConnection pSqlConn = null;
                 using (pSqlConn = new OdbcConnection(strConnection))
                 {

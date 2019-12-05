@@ -34,6 +34,11 @@
             this.CompletePanel = new System.Windows.Forms.Panel();
             this.CompleteTable = new System.Windows.Forms.TableLayoutPanel();
             this.CompleteHeaderTable = new System.Windows.Forms.TableLayoutPanel();
+            this.CompleteDateButton = new System.Windows.Forms.Button();
+            this.CompleteRetailButton = new System.Windows.Forms.Button();
+            this.CompleteSLSPButton = new System.Windows.Forms.Button();
+            this.CompleteAccountButton = new System.Windows.Forms.Button();
+            this.CompleteInvoiceButton = new System.Windows.Forms.Button();
             this.CompleteHeaderLine = new System.Windows.Forms.Label();
             this.CompleteInvoicePanel = new System.Windows.Forms.Panel();
             this.CompleteInvoiceList = new System.Windows.Forms.TableLayoutPanel();
@@ -67,8 +72,6 @@
             this.CalendarButton = new System.Windows.Forms.Button();
             this.ProcessTitleTable = new System.Windows.Forms.TableLayoutPanel();
             this.HeldViewButton = new System.Windows.Forms.Button();
-            this.DeliveryMethodBox = new System.Windows.Forms.ComboBox();
-            this.DeliveryMethodLabel = new System.Windows.Forms.Label();
             this.ProcessLabel = new System.Windows.Forms.Label();
             this.BottomPanel = new System.Windows.Forms.Panel();
             this.BottomTable = new System.Windows.Forms.TableLayoutPanel();
@@ -80,6 +83,8 @@
             this.NotesLabel = new System.Windows.Forms.Label();
             this.DataTable = new System.Windows.Forms.TableLayoutPanel();
             this.InvoiceDataTable = new System.Windows.Forms.TableLayoutPanel();
+            this.AccountDataButton = new System.Windows.Forms.Button();
+            this.OtherOrdersButton = new System.Windows.Forms.Button();
             this.ChargedByData = new System.Windows.Forms.Label();
             this.ChargedByLabel = new System.Windows.Forms.Label();
             this.ChargedData = new System.Windows.Forms.Label();
@@ -95,16 +100,12 @@
             this.InvoiceDataLabel = new System.Windows.Forms.Label();
             this.CalendarPanel = new System.Windows.Forms.Panel();
             this.Calendar = new System.Windows.Forms.MonthCalendar();
-            this.CompleteInvoiceButton = new System.Windows.Forms.Button();
-            this.CompleteAccountButton = new System.Windows.Forms.Button();
-            this.CompleteSLSPButton = new System.Windows.Forms.Button();
-            this.CompleteRetailButton = new System.Windows.Forms.Button();
-            this.CompleteDateButton = new System.Windows.Forms.Button();
-            this.OtherOrdersButton = new System.Windows.Forms.Button();
-            this.AccountDataButton = new System.Windows.Forms.Button();
             this.OtherInvoicesPanel = new System.Windows.Forms.Panel();
             this.OtherInvoicesTable = new System.Windows.Forms.TableLayoutPanel();
+            this.OtherOrdersTitle = new System.Windows.Forms.Label();
+            this.OtherOrdersCloseButton = new System.Windows.Forms.Button();
             this.OtherInvoicesHeaderTable = new System.Windows.Forms.TableLayoutPanel();
+            this.OtherTotalButton = new System.Windows.Forms.Button();
             this.OtherDateButton = new System.Windows.Forms.Button();
             this.OtherRetailButton = new System.Windows.Forms.Button();
             this.OtherSLSPButton = new System.Windows.Forms.Button();
@@ -113,15 +114,12 @@
             this.OtherInvoicesLine = new System.Windows.Forms.Label();
             this.OtherInvoicesBottomPanel = new System.Windows.Forms.Panel();
             this.OtherInvoicesList = new System.Windows.Forms.TableLayoutPanel();
+            this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
-            this.OtherOrdersCloseButton = new System.Windows.Forms.Button();
-            this.OtherOrdersTitle = new System.Windows.Forms.Label();
-            this.OtherTotalButton = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
             this.TopPanel.SuspendLayout();
             this.TopTable.SuspendLayout();
             this.CompletePanel.SuspendLayout();
@@ -213,10 +211,10 @@
             // 
             this.CompleteHeaderTable.ColumnCount = 5;
             this.CompleteHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 29.7546F));
-            this.CompleteHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 39.8773F));
+            this.CompleteHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 38.90675F));
             this.CompleteHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.CompleteHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.CompleteHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
+            this.CompleteHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 31.51125F));
             this.CompleteHeaderTable.Controls.Add(this.CompleteDateButton, 4, 0);
             this.CompleteHeaderTable.Controls.Add(this.CompleteRetailButton, 3, 0);
             this.CompleteHeaderTable.Controls.Add(this.CompleteSLSPButton, 2, 0);
@@ -230,6 +228,104 @@
             this.CompleteHeaderTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.CompleteHeaderTable.Size = new System.Drawing.Size(426, 37);
             this.CompleteHeaderTable.TabIndex = 18;
+            // 
+            // CompleteDateButton
+            // 
+            this.CompleteDateButton.AutoSize = true;
+            this.CompleteDateButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.CompleteDateButton.BackColor = System.Drawing.SystemColors.Control;
+            this.CompleteDateButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.CompleteDateButton.FlatAppearance.BorderColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.CompleteDateButton.FlatAppearance.BorderSize = 0;
+            this.CompleteDateButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.CompleteDateButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CompleteDateButton.Location = new System.Drawing.Point(328, 1);
+            this.CompleteDateButton.Margin = new System.Windows.Forms.Padding(1);
+            this.CompleteDateButton.Name = "CompleteDateButton";
+            this.CompleteDateButton.Size = new System.Drawing.Size(97, 35);
+            this.CompleteDateButton.TabIndex = 18;
+            this.CompleteDateButton.Tag = "CRDT_INV_CHARGETIME";
+            this.CompleteDateButton.Text = "Date";
+            this.CompleteDateButton.UseVisualStyleBackColor = false;
+            this.CompleteDateButton.Click += new System.EventHandler(this.CompleteOrderChanged);
+            // 
+            // CompleteRetailButton
+            // 
+            this.CompleteRetailButton.AutoSize = true;
+            this.CompleteRetailButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.CompleteRetailButton.BackColor = System.Drawing.SystemColors.Control;
+            this.CompleteRetailButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.CompleteRetailButton.FlatAppearance.BorderColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.CompleteRetailButton.FlatAppearance.BorderSize = 0;
+            this.CompleteRetailButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.CompleteRetailButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CompleteRetailButton.Location = new System.Drawing.Point(271, 1);
+            this.CompleteRetailButton.Margin = new System.Windows.Forms.Padding(1);
+            this.CompleteRetailButton.Name = "CompleteRetailButton";
+            this.CompleteRetailButton.Size = new System.Drawing.Size(55, 35);
+            this.CompleteRetailButton.TabIndex = 17;
+            this.CompleteRetailButton.Text = "Retail";
+            this.CompleteRetailButton.UseVisualStyleBackColor = false;
+            // 
+            // CompleteSLSPButton
+            // 
+            this.CompleteSLSPButton.AutoSize = true;
+            this.CompleteSLSPButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.CompleteSLSPButton.BackColor = System.Drawing.SystemColors.Control;
+            this.CompleteSLSPButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.CompleteSLSPButton.FlatAppearance.BorderColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.CompleteSLSPButton.FlatAppearance.BorderSize = 0;
+            this.CompleteSLSPButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.CompleteSLSPButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CompleteSLSPButton.Location = new System.Drawing.Point(213, 1);
+            this.CompleteSLSPButton.Margin = new System.Windows.Forms.Padding(1);
+            this.CompleteSLSPButton.Name = "CompleteSLSPButton";
+            this.CompleteSLSPButton.Size = new System.Drawing.Size(56, 35);
+            this.CompleteSLSPButton.TabIndex = 16;
+            this.CompleteSLSPButton.Tag = "CRDT_INV_SLSP";
+            this.CompleteSLSPButton.Text = "SLSP";
+            this.CompleteSLSPButton.UseVisualStyleBackColor = false;
+            this.CompleteSLSPButton.Click += new System.EventHandler(this.CompleteOrderChanged);
+            // 
+            // CompleteAccountButton
+            // 
+            this.CompleteAccountButton.AutoSize = true;
+            this.CompleteAccountButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.CompleteAccountButton.BackColor = System.Drawing.SystemColors.Control;
+            this.CompleteAccountButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.CompleteAccountButton.FlatAppearance.BorderColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.CompleteAccountButton.FlatAppearance.BorderSize = 0;
+            this.CompleteAccountButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.CompleteAccountButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CompleteAccountButton.Location = new System.Drawing.Point(93, 1);
+            this.CompleteAccountButton.Margin = new System.Windows.Forms.Padding(1);
+            this.CompleteAccountButton.Name = "CompleteAccountButton";
+            this.CompleteAccountButton.Size = new System.Drawing.Size(118, 35);
+            this.CompleteAccountButton.TabIndex = 15;
+            this.CompleteAccountButton.Tag = "CRDT_INV_CUSCOD";
+            this.CompleteAccountButton.Text = "Account";
+            this.CompleteAccountButton.UseVisualStyleBackColor = false;
+            this.CompleteAccountButton.Click += new System.EventHandler(this.CompleteOrderChanged);
+            // 
+            // CompleteInvoiceButton
+            // 
+            this.CompleteInvoiceButton.AutoSize = true;
+            this.CompleteInvoiceButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.CompleteInvoiceButton.BackColor = System.Drawing.SystemColors.Control;
+            this.CompleteInvoiceButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.CompleteInvoiceButton.FlatAppearance.BorderColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.CompleteInvoiceButton.FlatAppearance.BorderSize = 0;
+            this.CompleteInvoiceButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.CompleteInvoiceButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CompleteInvoiceButton.Location = new System.Drawing.Point(1, 1);
+            this.CompleteInvoiceButton.Margin = new System.Windows.Forms.Padding(1);
+            this.CompleteInvoiceButton.Name = "CompleteInvoiceButton";
+            this.CompleteInvoiceButton.Size = new System.Drawing.Size(90, 35);
+            this.CompleteInvoiceButton.TabIndex = 14;
+            this.CompleteInvoiceButton.Tag = "CRDT_INV_NUM";
+            this.CompleteInvoiceButton.Text = "Invoice #";
+            this.CompleteInvoiceButton.UseVisualStyleBackColor = false;
+            this.CompleteInvoiceButton.Click += new System.EventHandler(this.CompleteOrderChanged);
             // 
             // CompleteHeaderLine
             // 
@@ -384,11 +480,11 @@
             // 
             this.ProcessHeaderTable.ColumnCount = 6;
             this.ProcessHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 29.86453F));
-            this.ProcessHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 42.94671F));
+            this.ProcessHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 38.87148F));
             this.ProcessHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.ProcessHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.ProcessHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.ProcessHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.27273F));
+            this.ProcessHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 31.34796F));
             this.ProcessHeaderTable.Controls.Add(this.ProcessLocationButton, 2, 0);
             this.ProcessHeaderTable.Controls.Add(this.ProcessDateButton, 5, 0);
             this.ProcessHeaderTable.Controls.Add(this.ProcessInvoiceNumButton, 0, 0);
@@ -414,14 +510,15 @@
             this.ProcessLocationButton.FlatAppearance.BorderSize = 0;
             this.ProcessLocationButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.ProcessLocationButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ProcessLocationButton.Location = new System.Drawing.Point(232, 1);
+            this.ProcessLocationButton.Location = new System.Drawing.Point(219, 1);
             this.ProcessLocationButton.Margin = new System.Windows.Forms.Padding(1);
             this.ProcessLocationButton.Name = "ProcessLocationButton";
             this.ProcessLocationButton.Size = new System.Drawing.Size(75, 35);
             this.ProcessLocationButton.TabIndex = 15;
+            this.ProcessLocationButton.Tag = "BKAR_INV_LOC";
             this.ProcessLocationButton.Text = "Location";
             this.ProcessLocationButton.UseVisualStyleBackColor = false;
-            this.ProcessLocationButton.Visible = false;
+            this.ProcessLocationButton.Click += new System.EventHandler(this.ProcessOrderChanged);
             // 
             // ProcessDateButton
             // 
@@ -433,17 +530,19 @@
             this.ProcessDateButton.FlatAppearance.BorderSize = 0;
             this.ProcessDateButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.ProcessDateButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ProcessDateButton.Location = new System.Drawing.Point(424, 1);
+            this.ProcessDateButton.Location = new System.Drawing.Point(411, 1);
             this.ProcessDateButton.Margin = new System.Windows.Forms.Padding(1);
             this.ProcessDateButton.Name = "ProcessDateButton";
-            this.ProcessDateButton.Size = new System.Drawing.Size(86, 35);
+            this.ProcessDateButton.Size = new System.Drawing.Size(99, 35);
             this.ProcessDateButton.TabIndex = 14;
+            this.ProcessDateButton.Tag = "CRDT_INV_DATE";
             this.ProcessDateButton.Text = "Date";
             this.ProcessDateButton.UseVisualStyleBackColor = false;
-            this.ProcessDateButton.Visible = false;
+            this.ProcessDateButton.Click += new System.EventHandler(this.ProcessOrderChanged);
             // 
             // ProcessInvoiceNumButton
             // 
+            this.ProcessInvoiceNumButton.AccessibleDescription = "CRDT_INV_NUM";
             this.ProcessInvoiceNumButton.AutoSize = true;
             this.ProcessInvoiceNumButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ProcessInvoiceNumButton.BackColor = System.Drawing.SystemColors.Control;
@@ -457,10 +556,10 @@
             this.ProcessInvoiceNumButton.Name = "ProcessInvoiceNumButton";
             this.ProcessInvoiceNumButton.Size = new System.Drawing.Size(93, 35);
             this.ProcessInvoiceNumButton.TabIndex = 13;
+            this.ProcessInvoiceNumButton.Tag = "CRDT_INV_NUM";
             this.ProcessInvoiceNumButton.Text = "Invoice #";
             this.ProcessInvoiceNumButton.UseVisualStyleBackColor = false;
-            this.ProcessInvoiceNumButton.Visible = false;
-            this.ProcessInvoiceNumButton.Click += new System.EventHandler(this.ProcessInvoiceNumButton_Click);
+            this.ProcessInvoiceNumButton.Click += new System.EventHandler(this.ProcessOrderChanged);
             // 
             // ProcessAccountButton
             // 
@@ -475,11 +574,12 @@
             this.ProcessAccountButton.Location = new System.Drawing.Point(96, 1);
             this.ProcessAccountButton.Margin = new System.Windows.Forms.Padding(1);
             this.ProcessAccountButton.Name = "ProcessAccountButton";
-            this.ProcessAccountButton.Size = new System.Drawing.Size(134, 35);
+            this.ProcessAccountButton.Size = new System.Drawing.Size(121, 35);
             this.ProcessAccountButton.TabIndex = 12;
+            this.ProcessAccountButton.Tag = "CRDT_INV_CUSCOD";
             this.ProcessAccountButton.Text = "Account";
             this.ProcessAccountButton.UseVisualStyleBackColor = false;
-            this.ProcessAccountButton.Visible = false;
+            this.ProcessAccountButton.Click += new System.EventHandler(this.ProcessOrderChanged);
             // 
             // ProcessSalespersonButton
             // 
@@ -491,14 +591,15 @@
             this.ProcessSalespersonButton.FlatAppearance.BorderSize = 0;
             this.ProcessSalespersonButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.ProcessSalespersonButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ProcessSalespersonButton.Location = new System.Drawing.Point(309, 1);
+            this.ProcessSalespersonButton.Location = new System.Drawing.Point(296, 1);
             this.ProcessSalespersonButton.Margin = new System.Windows.Forms.Padding(1);
             this.ProcessSalespersonButton.Name = "ProcessSalespersonButton";
             this.ProcessSalespersonButton.Size = new System.Drawing.Size(56, 35);
             this.ProcessSalespersonButton.TabIndex = 11;
+            this.ProcessSalespersonButton.Tag = "CRDT_INV_SLSP";
             this.ProcessSalespersonButton.Text = "SLSP";
             this.ProcessSalespersonButton.UseVisualStyleBackColor = false;
-            this.ProcessSalespersonButton.Visible = false;
+            this.ProcessSalespersonButton.Click += new System.EventHandler(this.ProcessOrderChanged);
             // 
             // ProcessRetailButton
             // 
@@ -510,14 +611,14 @@
             this.ProcessRetailButton.FlatAppearance.BorderSize = 0;
             this.ProcessRetailButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.ProcessRetailButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ProcessRetailButton.Location = new System.Drawing.Point(367, 1);
+            this.ProcessRetailButton.Location = new System.Drawing.Point(354, 1);
             this.ProcessRetailButton.Margin = new System.Windows.Forms.Padding(1);
             this.ProcessRetailButton.Name = "ProcessRetailButton";
             this.ProcessRetailButton.Size = new System.Drawing.Size(55, 35);
             this.ProcessRetailButton.TabIndex = 10;
             this.ProcessRetailButton.Text = "Retail";
             this.ProcessRetailButton.UseVisualStyleBackColor = false;
-            this.ProcessRetailButton.Visible = false;
+            this.ProcessRetailButton.Click += new System.EventHandler(this.ProcessRetailButton_Click);
             // 
             // ProcessInvoicePanel
             // 
@@ -539,7 +640,7 @@
             this.ProcessInvoiceList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 18.16038F));
             this.ProcessInvoiceList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 13.91509F));
             this.ProcessInvoiceList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 13.4434F));
-            this.ProcessInvoiceList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 87F));
+            this.ProcessInvoiceList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 95F));
             this.ProcessInvoiceList.Controls.Add(this.label1, 2, 0);
             this.ProcessInvoiceList.Controls.Add(this.label5, 4, 0);
             this.ProcessInvoiceList.Controls.Add(this.label4, 3, 0);
@@ -559,10 +660,10 @@
             this.label1.AutoSize = true;
             this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(231, 1);
+            this.label1.Location = new System.Drawing.Point(227, 1);
             this.label1.Margin = new System.Windows.Forms.Padding(1);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 18);
+            this.label1.Size = new System.Drawing.Size(73, 18);
             this.label1.TabIndex = 9;
             this.label1.Text = "Location";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -572,10 +673,10 @@
             this.label5.AutoSize = true;
             this.label5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(366, 1);
+            this.label5.Location = new System.Drawing.Point(359, 1);
             this.label5.Margin = new System.Windows.Forms.Padding(1);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(55, 18);
+            this.label5.Size = new System.Drawing.Size(53, 18);
             this.label5.TabIndex = 8;
             this.label5.Text = "Retail?";
             this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -585,10 +686,10 @@
             this.label4.AutoSize = true;
             this.label4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(308, 1);
+            this.label4.Location = new System.Drawing.Point(302, 1);
             this.label4.Margin = new System.Windows.Forms.Padding(1);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(56, 18);
+            this.label4.Size = new System.Drawing.Size(55, 18);
             this.label4.TabIndex = 7;
             this.label4.Text = "SLSP";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -599,10 +700,10 @@
             this.label6.BackColor = System.Drawing.SystemColors.Control;
             this.label6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(423, 1);
+            this.label6.Location = new System.Drawing.Point(414, 1);
             this.label6.Margin = new System.Windows.Forms.Padding(1);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(87, 18);
+            this.label6.Size = new System.Drawing.Size(96, 18);
             this.label6.TabIndex = 3;
             this.label6.Text = "08/20/2019";
             this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -613,10 +714,10 @@
             this.label7.BackColor = System.Drawing.SystemColors.Control;
             this.label7.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(96, 1);
+            this.label7.Location = new System.Drawing.Point(94, 1);
             this.label7.Margin = new System.Windows.Forms.Padding(1);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(133, 18);
+            this.label7.Size = new System.Drawing.Size(131, 18);
             this.label7.TabIndex = 2;
             this.label7.Text = "AUTOAIROL";
             this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -629,7 +730,7 @@
             this.label8.Location = new System.Drawing.Point(1, 1);
             this.label8.Margin = new System.Windows.Forms.Padding(1);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(93, 18);
+            this.label8.Size = new System.Drawing.Size(91, 18);
             this.label8.TabIndex = 1;
             this.label8.Text = "1344925";
             this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -719,13 +820,11 @@
             // 
             // ProcessTitleTable
             // 
-            this.ProcessTitleTable.ColumnCount = 3;
-            this.ProcessTitleTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 72.77778F));
-            this.ProcessTitleTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.22222F));
+            this.ProcessTitleTable.ColumnCount = 2;
+            this.ProcessTitleTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.ProcessTitleTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.ProcessTitleTable.Controls.Add(this.HeldViewButton, 2, 0);
-            this.ProcessTitleTable.Controls.Add(this.DeliveryMethodBox, 1, 1);
-            this.ProcessTitleTable.Controls.Add(this.DeliveryMethodLabel, 1, 0);
+            this.ProcessTitleTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.ProcessTitleTable.Controls.Add(this.HeldViewButton, 1, 0);
             this.ProcessTitleTable.Controls.Add(this.ProcessLabel, 0, 0);
             this.ProcessTitleTable.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ProcessTitleTable.Location = new System.Drawing.Point(1, 1);
@@ -745,49 +844,16 @@
             this.HeldViewButton.FlatAppearance.BorderSize = 0;
             this.HeldViewButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.HeldViewButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.HeldViewButton.Location = new System.Drawing.Point(446, 0);
+            this.HeldViewButton.Location = new System.Drawing.Point(443, 0);
             this.HeldViewButton.Margin = new System.Windows.Forms.Padding(0);
             this.HeldViewButton.Name = "HeldViewButton";
             this.ProcessTitleTable.SetRowSpan(this.HeldViewButton, 2);
-            this.HeldViewButton.Size = new System.Drawing.Size(71, 67);
+            this.HeldViewButton.Size = new System.Drawing.Size(74, 67);
             this.HeldViewButton.TabIndex = 9;
             this.HeldViewButton.Text = "View\r\nHeld\r\nItems\r\n";
             this.HeldViewButton.UseVisualStyleBackColor = false;
             this.HeldViewButton.Visible = false;
             this.HeldViewButton.Click += new System.EventHandler(this.HeldViewButton_Click);
-            // 
-            // DeliveryMethodBox
-            // 
-            this.DeliveryMethodBox.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.DeliveryMethodBox.Cursor = System.Windows.Forms.Cursors.Default;
-            this.DeliveryMethodBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.DeliveryMethodBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.DeliveryMethodBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.DeliveryMethodBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.DeliveryMethodBox.FormattingEnabled = true;
-            this.DeliveryMethodBox.Items.AddRange(new object[] {
-            "ALL",
-            "RETAIL",
-            "NON-R"});
-            this.DeliveryMethodBox.Location = new System.Drawing.Point(328, 38);
-            this.DeliveryMethodBox.Name = "DeliveryMethodBox";
-            this.DeliveryMethodBox.Size = new System.Drawing.Size(115, 28);
-            this.DeliveryMethodBox.TabIndex = 8;
-            this.DeliveryMethodBox.SelectedIndexChanged += new System.EventHandler(this.DeliveryMethodBox_SelectedIndexChanged_1);
-            // 
-            // DeliveryMethodLabel
-            // 
-            this.DeliveryMethodLabel.AutoSize = true;
-            this.DeliveryMethodLabel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.DeliveryMethodLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.DeliveryMethodLabel.Location = new System.Drawing.Point(325, 0);
-            this.DeliveryMethodLabel.Margin = new System.Windows.Forms.Padding(0);
-            this.DeliveryMethodLabel.Name = "DeliveryMethodLabel";
-            this.DeliveryMethodLabel.Size = new System.Drawing.Size(121, 35);
-            this.DeliveryMethodLabel.TabIndex = 7;
-            this.DeliveryMethodLabel.Text = "Delivery Type ";
-            this.DeliveryMethodLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.DeliveryMethodLabel.Click += new System.EventHandler(this.DeliveryMethodLabel_Click);
             // 
             // ProcessLabel
             // 
@@ -798,7 +864,7 @@
             this.ProcessLabel.Margin = new System.Windows.Forms.Padding(0);
             this.ProcessLabel.Name = "ProcessLabel";
             this.ProcessTitleTable.SetRowSpan(this.ProcessLabel, 2);
-            this.ProcessLabel.Size = new System.Drawing.Size(325, 67);
+            this.ProcessLabel.Size = new System.Drawing.Size(443, 67);
             this.ProcessLabel.TabIndex = 6;
             this.ProcessLabel.Text = "Process";
             this.ProcessLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -806,7 +872,8 @@
             // BottomPanel
             // 
             this.BottomPanel.Controls.Add(this.BottomTable);
-            this.BottomPanel.Location = new System.Drawing.Point(854, 478);
+            this.BottomPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.BottomPanel.Location = new System.Drawing.Point(0, 415);
             this.BottomPanel.Name = "BottomPanel";
             this.BottomPanel.Size = new System.Drawing.Size(952, 198);
             this.BottomPanel.TabIndex = 1;
@@ -861,7 +928,7 @@
             this.ExitButton.Size = new System.Drawing.Size(221, 97);
             this.ExitButton.TabIndex = 1;
             this.ExitButton.TabStop = false;
-            this.ExitButton.Text = "Decline";
+            this.ExitButton.Text = "Declined/\r\nRemoved";
             this.ExitButton.UseVisualStyleBackColor = false;
             this.ExitButton.Click += new System.EventHandler(this.ExitButton_Click);
             // 
@@ -879,7 +946,7 @@
             this.ProcessButton.Name = "ProcessButton";
             this.ProcessButton.Size = new System.Drawing.Size(221, 96);
             this.ProcessButton.TabIndex = 0;
-            this.ProcessButton.Text = "Charge";
+            this.ProcessButton.Text = "Charged";
             this.ProcessButton.UseVisualStyleBackColor = false;
             this.ProcessButton.Click += new System.EventHandler(this.ProcessButton_Click);
             // 
@@ -970,6 +1037,41 @@
             this.InvoiceDataTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33111F));
             this.InvoiceDataTable.Size = new System.Drawing.Size(468, 147);
             this.InvoiceDataTable.TabIndex = 5;
+            // 
+            // AccountDataButton
+            // 
+            this.AccountDataButton.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.AccountDataButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.AccountDataButton.Enabled = false;
+            this.AccountDataButton.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
+            this.AccountDataButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.AccountDataButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AccountDataButton.Location = new System.Drawing.Point(350, 98);
+            this.AccountDataButton.Margin = new System.Windows.Forms.Padding(0);
+            this.AccountDataButton.Name = "AccountDataButton";
+            this.AccountDataButton.Size = new System.Drawing.Size(118, 49);
+            this.AccountDataButton.TabIndex = 15;
+            this.AccountDataButton.Text = "Account Data";
+            this.AccountDataButton.UseVisualStyleBackColor = false;
+            this.AccountDataButton.Click += new System.EventHandler(this.AccountDataButton_Click);
+            // 
+            // OtherOrdersButton
+            // 
+            this.OtherOrdersButton.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.OtherOrdersButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.OtherOrdersButton.Enabled = false;
+            this.OtherOrdersButton.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
+            this.OtherOrdersButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.OtherOrdersButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.OtherOrdersButton.Location = new System.Drawing.Point(233, 98);
+            this.OtherOrdersButton.Margin = new System.Windows.Forms.Padding(0);
+            this.OtherOrdersButton.Name = "OtherOrdersButton";
+            this.OtherOrdersButton.Size = new System.Drawing.Size(117, 49);
+            this.OtherOrdersButton.TabIndex = 14;
+            this.OtherOrdersButton.Tag = "BKAR_INV_NUM";
+            this.OtherOrdersButton.Text = "Open Orders";
+            this.OtherOrdersButton.UseVisualStyleBackColor = false;
+            this.OtherOrdersButton.Click += new System.EventHandler(this.OtherOrdersButton_Click);
             // 
             // ChargedByData
             // 
@@ -1156,139 +1258,9 @@
             this.Calendar.TabIndex = 3;
             this.Calendar.DateSelected += new System.Windows.Forms.DateRangeEventHandler(this.Calendar_DateSelected);
             // 
-            // CompleteInvoiceButton
-            // 
-            this.CompleteInvoiceButton.AutoSize = true;
-            this.CompleteInvoiceButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.CompleteInvoiceButton.BackColor = System.Drawing.SystemColors.Control;
-            this.CompleteInvoiceButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.CompleteInvoiceButton.FlatAppearance.BorderColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.CompleteInvoiceButton.FlatAppearance.BorderSize = 0;
-            this.CompleteInvoiceButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.CompleteInvoiceButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CompleteInvoiceButton.Location = new System.Drawing.Point(1, 1);
-            this.CompleteInvoiceButton.Margin = new System.Windows.Forms.Padding(1);
-            this.CompleteInvoiceButton.Name = "CompleteInvoiceButton";
-            this.CompleteInvoiceButton.Size = new System.Drawing.Size(90, 35);
-            this.CompleteInvoiceButton.TabIndex = 14;
-            this.CompleteInvoiceButton.Text = "Invoice #";
-            this.CompleteInvoiceButton.UseVisualStyleBackColor = false;
-            this.CompleteInvoiceButton.Visible = false;
-            // 
-            // CompleteAccountButton
-            // 
-            this.CompleteAccountButton.AutoSize = true;
-            this.CompleteAccountButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.CompleteAccountButton.BackColor = System.Drawing.SystemColors.Control;
-            this.CompleteAccountButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.CompleteAccountButton.FlatAppearance.BorderColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.CompleteAccountButton.FlatAppearance.BorderSize = 0;
-            this.CompleteAccountButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.CompleteAccountButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CompleteAccountButton.Location = new System.Drawing.Point(93, 1);
-            this.CompleteAccountButton.Margin = new System.Windows.Forms.Padding(1);
-            this.CompleteAccountButton.Name = "CompleteAccountButton";
-            this.CompleteAccountButton.Size = new System.Drawing.Size(122, 35);
-            this.CompleteAccountButton.TabIndex = 15;
-            this.CompleteAccountButton.Text = "Account";
-            this.CompleteAccountButton.UseVisualStyleBackColor = false;
-            this.CompleteAccountButton.Visible = false;
-            // 
-            // CompleteSLSPButton
-            // 
-            this.CompleteSLSPButton.AutoSize = true;
-            this.CompleteSLSPButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.CompleteSLSPButton.BackColor = System.Drawing.SystemColors.Control;
-            this.CompleteSLSPButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.CompleteSLSPButton.FlatAppearance.BorderColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.CompleteSLSPButton.FlatAppearance.BorderSize = 0;
-            this.CompleteSLSPButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.CompleteSLSPButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CompleteSLSPButton.Location = new System.Drawing.Point(217, 1);
-            this.CompleteSLSPButton.Margin = new System.Windows.Forms.Padding(1);
-            this.CompleteSLSPButton.Name = "CompleteSLSPButton";
-            this.CompleteSLSPButton.Size = new System.Drawing.Size(56, 35);
-            this.CompleteSLSPButton.TabIndex = 16;
-            this.CompleteSLSPButton.Text = "SLSP";
-            this.CompleteSLSPButton.UseVisualStyleBackColor = false;
-            this.CompleteSLSPButton.Visible = false;
-            // 
-            // CompleteRetailButton
-            // 
-            this.CompleteRetailButton.AutoSize = true;
-            this.CompleteRetailButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.CompleteRetailButton.BackColor = System.Drawing.SystemColors.Control;
-            this.CompleteRetailButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.CompleteRetailButton.FlatAppearance.BorderColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.CompleteRetailButton.FlatAppearance.BorderSize = 0;
-            this.CompleteRetailButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.CompleteRetailButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CompleteRetailButton.Location = new System.Drawing.Point(275, 1);
-            this.CompleteRetailButton.Margin = new System.Windows.Forms.Padding(1);
-            this.CompleteRetailButton.Name = "CompleteRetailButton";
-            this.CompleteRetailButton.Size = new System.Drawing.Size(55, 35);
-            this.CompleteRetailButton.TabIndex = 17;
-            this.CompleteRetailButton.Text = "Retail";
-            this.CompleteRetailButton.UseVisualStyleBackColor = false;
-            this.CompleteRetailButton.Visible = false;
-            // 
-            // CompleteDateButton
-            // 
-            this.CompleteDateButton.AutoSize = true;
-            this.CompleteDateButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.CompleteDateButton.BackColor = System.Drawing.SystemColors.Control;
-            this.CompleteDateButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.CompleteDateButton.FlatAppearance.BorderColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.CompleteDateButton.FlatAppearance.BorderSize = 0;
-            this.CompleteDateButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.CompleteDateButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CompleteDateButton.Location = new System.Drawing.Point(332, 1);
-            this.CompleteDateButton.Margin = new System.Windows.Forms.Padding(1);
-            this.CompleteDateButton.Name = "CompleteDateButton";
-            this.CompleteDateButton.Size = new System.Drawing.Size(93, 35);
-            this.CompleteDateButton.TabIndex = 18;
-            this.CompleteDateButton.Text = "Date";
-            this.CompleteDateButton.UseVisualStyleBackColor = false;
-            this.CompleteDateButton.Visible = false;
-            // 
-            // OtherOrdersButton
-            // 
-            this.OtherOrdersButton.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.OtherOrdersButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.OtherOrdersButton.Enabled = false;
-            this.OtherOrdersButton.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
-            this.OtherOrdersButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.OtherOrdersButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.OtherOrdersButton.Location = new System.Drawing.Point(233, 98);
-            this.OtherOrdersButton.Margin = new System.Windows.Forms.Padding(0);
-            this.OtherOrdersButton.Name = "OtherOrdersButton";
-            this.OtherOrdersButton.Size = new System.Drawing.Size(117, 49);
-            this.OtherOrdersButton.TabIndex = 14;
-            this.OtherOrdersButton.Text = "Open Orders";
-            this.OtherOrdersButton.UseVisualStyleBackColor = false;
-            this.OtherOrdersButton.Click += new System.EventHandler(this.OtherOrdersButton_Click);
-            // 
-            // AccountDataButton
-            // 
-            this.AccountDataButton.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.AccountDataButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.AccountDataButton.Enabled = false;
-            this.AccountDataButton.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
-            this.AccountDataButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.AccountDataButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.AccountDataButton.Location = new System.Drawing.Point(350, 98);
-            this.AccountDataButton.Margin = new System.Windows.Forms.Padding(0);
-            this.AccountDataButton.Name = "AccountDataButton";
-            this.AccountDataButton.Size = new System.Drawing.Size(118, 49);
-            this.AccountDataButton.TabIndex = 15;
-            this.AccountDataButton.Text = "Account Data";
-            this.AccountDataButton.UseVisualStyleBackColor = false;
-            this.AccountDataButton.Click += new System.EventHandler(this.AccountDataButton_Click);
-            // 
             // OtherInvoicesPanel
             // 
             this.OtherInvoicesPanel.Controls.Add(this.OtherInvoicesTable);
-            this.OtherInvoicesPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.OtherInvoicesPanel.Location = new System.Drawing.Point(0, 415);
             this.OtherInvoicesPanel.Name = "OtherInvoicesPanel";
             this.OtherInvoicesPanel.Size = new System.Drawing.Size(952, 198);
@@ -1318,6 +1290,36 @@
             this.OtherInvoicesTable.TabIndex = 7;
             this.OtherInvoicesTable.Paint += new System.Windows.Forms.PaintEventHandler(this.OtherInvoicesTable_Paint);
             // 
+            // OtherOrdersTitle
+            // 
+            this.OtherOrdersTitle.AutoSize = true;
+            this.OtherOrdersTitle.BackColor = System.Drawing.SystemColors.Control;
+            this.OtherOrdersTitle.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.OtherOrdersTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.OtherOrdersTitle.Location = new System.Drawing.Point(1, 1);
+            this.OtherOrdersTitle.Margin = new System.Windows.Forms.Padding(1);
+            this.OtherOrdersTitle.Name = "OtherOrdersTitle";
+            this.OtherOrdersTitle.Size = new System.Drawing.Size(878, 38);
+            this.OtherOrdersTitle.TabIndex = 20;
+            this.OtherOrdersTitle.Text = "AUTOAIROL";
+            this.OtherOrdersTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // OtherOrdersCloseButton
+            // 
+            this.OtherOrdersCloseButton.BackColor = System.Drawing.Color.Salmon;
+            this.OtherOrdersCloseButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.OtherOrdersCloseButton.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
+            this.OtherOrdersCloseButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.OtherOrdersCloseButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.OtherOrdersCloseButton.Location = new System.Drawing.Point(880, 0);
+            this.OtherOrdersCloseButton.Margin = new System.Windows.Forms.Padding(0);
+            this.OtherOrdersCloseButton.Name = "OtherOrdersCloseButton";
+            this.OtherOrdersCloseButton.Size = new System.Drawing.Size(72, 40);
+            this.OtherOrdersCloseButton.TabIndex = 19;
+            this.OtherOrdersCloseButton.Text = "Close";
+            this.OtherOrdersCloseButton.UseVisualStyleBackColor = false;
+            this.OtherOrdersCloseButton.Click += new System.EventHandler(this.OtherOrdersCloseButton_Click);
+            // 
             // OtherInvoicesHeaderTable
             // 
             this.OtherInvoicesHeaderTable.ColumnCount = 6;
@@ -1343,6 +1345,26 @@
             this.OtherInvoicesHeaderTable.Size = new System.Drawing.Size(952, 37);
             this.OtherInvoicesHeaderTable.TabIndex = 18;
             // 
+            // OtherTotalButton
+            // 
+            this.OtherTotalButton.AutoSize = true;
+            this.OtherTotalButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.OtherTotalButton.BackColor = System.Drawing.SystemColors.Control;
+            this.OtherTotalButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.OtherTotalButton.FlatAppearance.BorderColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.OtherTotalButton.FlatAppearance.BorderSize = 0;
+            this.OtherTotalButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.OtherTotalButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.OtherTotalButton.Location = new System.Drawing.Point(534, 1);
+            this.OtherTotalButton.Margin = new System.Windows.Forms.Padding(1);
+            this.OtherTotalButton.Name = "OtherTotalButton";
+            this.OtherTotalButton.Size = new System.Drawing.Size(168, 35);
+            this.OtherTotalButton.TabIndex = 19;
+            this.OtherTotalButton.Tag = "BKAR_INV_TOTAL";
+            this.OtherTotalButton.Text = "Total";
+            this.OtherTotalButton.UseVisualStyleBackColor = false;
+            this.OtherTotalButton.Click += new System.EventHandler(this.OtherOrdersButton_Click);
+            // 
             // OtherDateButton
             // 
             this.OtherDateButton.AutoSize = true;
@@ -1358,9 +1380,10 @@
             this.OtherDateButton.Name = "OtherDateButton";
             this.OtherDateButton.Size = new System.Drawing.Size(247, 35);
             this.OtherDateButton.TabIndex = 18;
+            this.OtherDateButton.Tag = "BKAR_INV_INVDTE";
             this.OtherDateButton.Text = "Date";
             this.OtherDateButton.UseVisualStyleBackColor = false;
-            this.OtherDateButton.Visible = false;
+            this.OtherDateButton.Click += new System.EventHandler(this.OtherOrdersButton_Click);
             // 
             // OtherRetailButton
             // 
@@ -1368,6 +1391,7 @@
             this.OtherRetailButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.OtherRetailButton.BackColor = System.Drawing.SystemColors.Control;
             this.OtherRetailButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.OtherRetailButton.Enabled = false;
             this.OtherRetailButton.FlatAppearance.BorderColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.OtherRetailButton.FlatAppearance.BorderSize = 0;
             this.OtherRetailButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -1379,7 +1403,6 @@
             this.OtherRetailButton.TabIndex = 17;
             this.OtherRetailButton.Text = "Retail";
             this.OtherRetailButton.UseVisualStyleBackColor = false;
-            this.OtherRetailButton.Visible = false;
             // 
             // OtherSLSPButton
             // 
@@ -1396,9 +1419,10 @@
             this.OtherSLSPButton.Name = "OtherSLSPButton";
             this.OtherSLSPButton.Size = new System.Drawing.Size(56, 35);
             this.OtherSLSPButton.TabIndex = 16;
+            this.OtherSLSPButton.Tag = "BKAR_INV_SLSP";
             this.OtherSLSPButton.Text = "SLSP";
             this.OtherSLSPButton.UseVisualStyleBackColor = false;
-            this.OtherSLSPButton.Visible = false;
+            this.OtherSLSPButton.Click += new System.EventHandler(this.OtherOrdersButton_Click);
             // 
             // OtherLocationButton
             // 
@@ -1415,9 +1439,10 @@
             this.OtherLocationButton.Name = "OtherLocationButton";
             this.OtherLocationButton.Size = new System.Drawing.Size(167, 35);
             this.OtherLocationButton.TabIndex = 15;
+            this.OtherLocationButton.Tag = "BKAR_INV_LOC";
             this.OtherLocationButton.Text = "Location";
             this.OtherLocationButton.UseVisualStyleBackColor = false;
-            this.OtherLocationButton.Visible = false;
+            this.OtherLocationButton.Click += new System.EventHandler(this.OtherOrdersButton_Click);
             // 
             // OtherInvoiceButton
             // 
@@ -1434,9 +1459,10 @@
             this.OtherInvoiceButton.Name = "OtherInvoiceButton";
             this.OtherInvoiceButton.Size = new System.Drawing.Size(247, 35);
             this.OtherInvoiceButton.TabIndex = 14;
+            this.OtherInvoiceButton.Tag = "BKAR_INV_NUM";
             this.OtherInvoiceButton.Text = "Invoice #";
             this.OtherInvoiceButton.UseVisualStyleBackColor = false;
-            this.OtherInvoiceButton.Visible = false;
+            this.OtherInvoiceButton.Click += new System.EventHandler(this.OtherOrdersButton_Click);
             // 
             // OtherInvoicesLine
             // 
@@ -1485,6 +1511,19 @@
             this.OtherInvoicesList.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.OtherInvoicesList.Size = new System.Drawing.Size(952, 20);
             this.OtherInvoicesList.TabIndex = 19;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(534, 1);
+            this.label2.Margin = new System.Windows.Forms.Padding(1);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(168, 18);
+            this.label2.TabIndex = 9;
+            this.label2.Text = "$1000.00";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label3
             // 
@@ -1553,77 +1592,15 @@
             this.label15.Text = "1344925";
             this.label15.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // OtherOrdersCloseButton
-            // 
-            this.OtherOrdersCloseButton.BackColor = System.Drawing.Color.Salmon;
-            this.OtherOrdersCloseButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.OtherOrdersCloseButton.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
-            this.OtherOrdersCloseButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.OtherOrdersCloseButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.OtherOrdersCloseButton.Location = new System.Drawing.Point(880, 0);
-            this.OtherOrdersCloseButton.Margin = new System.Windows.Forms.Padding(0);
-            this.OtherOrdersCloseButton.Name = "OtherOrdersCloseButton";
-            this.OtherOrdersCloseButton.Size = new System.Drawing.Size(72, 40);
-            this.OtherOrdersCloseButton.TabIndex = 19;
-            this.OtherOrdersCloseButton.Text = "Close";
-            this.OtherOrdersCloseButton.UseVisualStyleBackColor = false;
-            this.OtherOrdersCloseButton.Click += new System.EventHandler(this.OtherOrdersCloseButton_Click);
-            // 
-            // OtherOrdersTitle
-            // 
-            this.OtherOrdersTitle.AutoSize = true;
-            this.OtherOrdersTitle.BackColor = System.Drawing.SystemColors.Control;
-            this.OtherOrdersTitle.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.OtherOrdersTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.OtherOrdersTitle.Location = new System.Drawing.Point(1, 1);
-            this.OtherOrdersTitle.Margin = new System.Windows.Forms.Padding(1);
-            this.OtherOrdersTitle.Name = "OtherOrdersTitle";
-            this.OtherOrdersTitle.Size = new System.Drawing.Size(878, 38);
-            this.OtherOrdersTitle.TabIndex = 20;
-            this.OtherOrdersTitle.Text = "AUTOAIROL";
-            this.OtherOrdersTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // OtherTotalButton
-            // 
-            this.OtherTotalButton.AutoSize = true;
-            this.OtherTotalButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.OtherTotalButton.BackColor = System.Drawing.SystemColors.Control;
-            this.OtherTotalButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.OtherTotalButton.FlatAppearance.BorderColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.OtherTotalButton.FlatAppearance.BorderSize = 0;
-            this.OtherTotalButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.OtherTotalButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.OtherTotalButton.Location = new System.Drawing.Point(534, 1);
-            this.OtherTotalButton.Margin = new System.Windows.Forms.Padding(1);
-            this.OtherTotalButton.Name = "OtherTotalButton";
-            this.OtherTotalButton.Size = new System.Drawing.Size(168, 35);
-            this.OtherTotalButton.TabIndex = 19;
-            this.OtherTotalButton.Text = "Total";
-            this.OtherTotalButton.UseVisualStyleBackColor = false;
-            this.OtherTotalButton.Visible = false;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(534, 1);
-            this.label2.Margin = new System.Windows.Forms.Padding(1);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(168, 18);
-            this.label2.TabIndex = 9;
-            this.label2.Text = "$1000.00";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(952, 613);
             this.Controls.Add(this.OtherInvoicesPanel);
-            this.Controls.Add(this.TopPanel);
-            this.Controls.Add(this.CalendarPanel);
             this.Controls.Add(this.BottomPanel);
+            this.Controls.Add(this.CalendarPanel);
+            this.Controls.Add(this.TopPanel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
@@ -1727,8 +1704,6 @@
         private System.Windows.Forms.Panel CalendarPanel;
         private System.Windows.Forms.MonthCalendar Calendar;
         private System.Windows.Forms.TableLayoutPanel ProcessTitleTable;
-        private System.Windows.Forms.ComboBox DeliveryMethodBox;
-        private System.Windows.Forms.Label DeliveryMethodLabel;
         private System.Windows.Forms.Label ProcessLabel;
         private System.Windows.Forms.TableLayoutPanel CompleteHeaderTable;
         private System.Windows.Forms.TableLayoutPanel CompleteInvoiceList;

@@ -24,7 +24,8 @@ namespace CreditProcessApp
     {
         Invoice currentInvoice;
         DateTime selectedDate;
-        string selectedDelivery;
+        int deliverySelection;
+        string[] selectedDelivery = new string[3] {"ALL", "(CRDT_INV_SHPVIA = 'DELIVERY' OR CRDT_INV_SHPVIA = 'WILL CALL')", "(CRDT_INV_SHPVIA != 'DELIVERY' AND CRDT_INV_SHPVIA != 'WILL CALL')" };
         string held;
         string processOrderBy;
         string completeOrderBy;
@@ -48,7 +49,7 @@ namespace CreditProcessApp
             InitializeComponent();
 
             login = in_login;
-            processOrderBy = "CRDT_INV_NUM";
+            completeOrderBy = processOrderBy = "CRDT_INV_NUM";
 
             //set start values
             selectedDate = DateTime.Now;
@@ -66,7 +67,7 @@ namespace CreditProcessApp
 
             held = "";
 
-            DeliveryMethodBox.SelectedIndex = 0;
+            populateTables();
 
             if(CurrentUser.security_lvl <=1)
             {
@@ -100,17 +101,17 @@ namespace CreditProcessApp
             List<Invoice> complete = new List<Invoice>();
 
             //establish database connection
-            string strConnection = "DSN=Ranshu20190831";
+            string strConnection = "DSN=Ranshu";
             OdbcConnection pSqlConn = null;
             using (pSqlConn = new OdbcConnection(strConnection))
             {
                 //get unprocessed invoices from database
                 string creditCommand = "SELECT CRDT_INV_NUM, CRDT_INV_CUSCOD, CRDT_INV_DATE, CRDT_INV_TOTAL, CRDT_INV_NOTES, CRDT_INV_SHPVIA, CRDT_INV_SLSP, BKAR_INV_LOC " +
-                    "FROM CRDTINV LEFT JOIN BKARHINV ON CRDT_INV_NUM = BKAR_INV_NUM" +
+                    "FROM CRDTINV LEFT JOIN BKARHINV ON CRDT_INV_NUM = BKAR_INV_NUM " +
                     "WHERE CRDT_INV_PROCESSED = 0 and CRDT_INV_USER "+ held +"= 'null'";
-                if(selectedDelivery != "ALL")
+                if(selectedDelivery[deliverySelection % 3] != "ALL")
                 {
-                    creditCommand += " AND " + selectedDelivery;
+                    creditCommand += " AND " + selectedDelivery[deliverySelection % 3];
                 }
 
                 creditCommand += " ORDER BY " + processOrderBy;
@@ -131,7 +132,7 @@ namespace CreditProcessApp
                         invoice.notes = creditReader["CRDT_INV_NOTES"].ToString().Trim();
                         invoice.deliveryMethod = creditReader["CRDT_INV_SHPVIA"].ToString().TrimEnd();
                         invoice.salesPerson = Convert.ToInt32(creditReader["CRDT_INV_SLSP"].ToString());
-                        invoice.setLocation(creditReader["BKAR_INV_LOC"].ToString());
+                        invoice.setLocation(creditReader["BKAR_INV_LOC"].ToString().TrimEnd());
 
                         //add invoice to list
                         incomplete.Add(invoice);
@@ -141,7 +142,11 @@ namespace CreditProcessApp
                 creditReader.Close();
 
                 //get processed invoices for selected date (default is currentdate)
-                creditCommand = "SELECT CRDT_INV_NUM, CRDT_INV_CUSCOD, CRDT_INV_DATE, CRDT_INV_TOTAL, CRDT_INV_CHARGETIME, CRDT_INV_USER, CRDT_INV_NOTES, CRDT_INV_SHPVIA, CRDT_INV_SLSP FROM CRDTINV WHERE CRDT_INV_PROCESSED = 1 AND (CRDT_INV_CHARGETIME >= '" + selectedDate.ToString("yyyy-MM-dd") +"' AND CRDT_INV_CHARGETIME < '"+ selectedDate.AddDays(1).ToString("yyyy-MM-dd") +"') ORDER BY CRDT_INV_NUM";
+                creditCommand = "SELECT CRDT_INV_NUM, CRDT_INV_CUSCOD, CRDT_INV_DATE, CRDT_INV_TOTAL, CRDT_INV_CHARGETIME, CRDT_INV_USER, CRDT_INV_NOTES, CRDT_INV_SHPVIA, CRDT_INV_SLSP " +
+                    "FROM CRDTINV WHERE CRDT_INV_PROCESSED = 1 " +
+                    "AND (CRDT_INV_CHARGETIME >= '" + selectedDate.ToString("yyyy-MM-dd") +"' " +
+                    "AND CRDT_INV_CHARGETIME < '"+ selectedDate.AddDays(1).ToString("yyyy-MM-dd") +"') " +
+                    "ORDER BY " + completeOrderBy;
                 cmd = new OdbcCommand(creditCommand, pSqlConn);
                 creditReader = cmd.ExecuteReader();
                 if (creditReader.HasRows)
@@ -171,6 +176,7 @@ namespace CreditProcessApp
                 pSqlConn.Close();
             }
 
+            
 
             ProcessInvoiceList.Hide();
             CompleteInvoiceList.Hide();
@@ -254,12 +260,15 @@ namespace CreditProcessApp
             table.Controls.Add(tempLabel, column, table.RowCount);
             column++;
 
-            //add account to row
-            //add click event
-            tempLabel = new Label() { Text = invoice.account, TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Microsoft Sans Serif", 11, FontStyle.Regular), Dock = DockStyle.Fill, Margin = new Padding(0, 1, 0, 1), Tag = invoice, Parent = table };
-            tempLabel.Click += new EventHandler(tempLabel_Click);
-            table.Controls.Add(tempLabel, column, table.RowCount);
-            column++;
+            if(table.Name != "OtherInvoicesList")
+            {
+                //add account to row
+                //add click event
+                tempLabel = new Label() { Text = invoice.account, TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Microsoft Sans Serif", 11, FontStyle.Regular), Dock = DockStyle.Fill, Margin = new Padding(0, 1, 0, 1), Tag = invoice, Parent = table };
+                tempLabel.Click += new EventHandler(tempLabel_Click);
+                table.Controls.Add(tempLabel, column, table.RowCount);
+                column++;
+            }
 
             if(invoice.chargeTime == null)
             {
@@ -293,6 +302,16 @@ namespace CreditProcessApp
             tempLabel.Click += new EventHandler(tempLabel_Click);
             table.Controls.Add(tempLabel, column, table.RowCount);
             column++;
+
+            if(table.Name == "OtherInvoicesList")
+            {
+                //add total to row
+                //add click event
+                tempLabel = new Label() { Text = invoice.total.ToString(), TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Microsoft Sans Serif", 11, FontStyle.Regular), Dock = DockStyle.Fill, Margin = new Padding(0, 1, 0, 1), Tag = invoice, Parent = table };
+                tempLabel.Click += new EventHandler(tempLabel_Click);
+                table.Controls.Add(tempLabel, column, table.RowCount);
+                column++;
+            }
 
 
             //if invoice has been processed
@@ -384,12 +403,14 @@ namespace CreditProcessApp
                 offTable = CompleteInvoiceList;
 
                 //update control user in db
-                string strConnection = "DSN=Ranshu20190831";
+                string strConnection = "DSN=Ranshu";
                 OdbcConnection pSqlConn = null;
                 using (pSqlConn = new OdbcConnection(strConnection))
                 {
                     pSqlConn.Open();
-                    string creditCommand = "UPDATE CRDTINV SET CRDT_INV_USER = '" + CurrentUser.user_code + "' WHERE CRDT_INV_NUM = " + ((Invoice)clicked.Tag).invoiceNumber + "AND CRDT_INV_USER = 'null'";
+                    string creditCommand = "UPDATE CRDTINV SET CRDT_INV_USER = '" + CurrentUser.user_code + "' " +
+                        "WHERE CRDT_INV_NUM = " + ((Invoice)clicked.Tag).invoiceNumber + " " +
+                        "AND CRDT_INV_USER = 'null'";
                     using (OdbcCommand cmd = new OdbcCommand(creditCommand, pSqlConn))
                     {
                         //if invoice is being processed by another user
@@ -415,6 +436,8 @@ namespace CreditProcessApp
                 table = CompleteInvoiceList;
                 offTable = ProcessInvoiceList;
             }
+
+            OtherOrdersButton.Enabled = true;
 
             //release previous invoice
             releaseInvoice();
@@ -456,6 +479,8 @@ namespace CreditProcessApp
                     offTable.GetControlFromPosition(j, i).BackColor = Color.FromArgb(255, 240, 240, 240);
                 }
             }
+
+            Clipboard.SetText(currentInvoice.invoiceNumber.ToString());
         }
 
         /*
@@ -517,7 +542,7 @@ namespace CreditProcessApp
             if (currentInvoice != null)
             {
                 //update invoice control in db
-                string strConnection = "DSN=Ranshu20190831";
+                string strConnection = "DSN=Ranshu";
                 OdbcConnection pSQLConn = null;
                 using (pSQLConn = new OdbcConnection(strConnection))
                 {
@@ -533,14 +558,10 @@ namespace CreditProcessApp
             }
         }
 
-        private void changeOrder(string orderStr, string newOrder)
-        {
-            orderStr = newOrder;
-        }
-
         /*
          * @FUNCTION:   private void ProcessButton_Click()
          * @PURPOSE:    updates database to mark invoice as processed
+         *              sets print flag to print
          *              
          * @PARAM:      object sender
          *              EventArgs e
@@ -570,6 +591,15 @@ namespace CreditProcessApp
             processInvoice(1);
         }
 
+        /*
+         * @FUNCTION:   private void processInvoice()
+         * @PURPOSE:    updates the CRDTINV and BKARHINV tables
+         *              
+         * @PARAM:      int printFlag
+         * 
+         * @RETURNS:    none
+         * @NOTES:      none
+         */
         private void processInvoice(int printFlag)
         {
 
@@ -577,7 +607,7 @@ namespace CreditProcessApp
             if (currentInvoice != null)
             {
                 //establish database connection
-                string strConnection = "DSN=Ranshu20190831";
+                string strConnection = "DSN=Ranshu";
                 OdbcConnection pSqlConn = null;
                 using (pSqlConn = new OdbcConnection(strConnection))
                 {
@@ -678,7 +708,7 @@ namespace CreditProcessApp
             e.Cancel = (dialogResult == DialogResult.No);
             if (dialogResult == DialogResult.Yes && currentInvoice != null)
             {
-                string strConnection = "DSN=Ranshu20190831";
+                string strConnection = "DSN=Ranshu";
                 OdbcConnection pSQLConn = null;
                 using(pSQLConn = new OdbcConnection(strConnection))
                 {
@@ -691,31 +721,25 @@ namespace CreditProcessApp
             }
         }
 
+
+        /*
+         * @FUNCTION:   private void MainWindow_FormClosed()
+         * @PURPOSE:    as the main window closes it closes the login page as well
+         *              
+         * @PARAM:      object sender
+         *              EventArgs e
+         * 
+         * @RETURNS:    none
+         * @NOTES:      none
+         */
         private void MainWindow_FormClosed(object sender, FormClosedEventArgs e)
         {
             login.Close();
         }
 
-        private void DeliveryMethodBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            DeliveryMethodBox.SelectionLength = 0;
-        }
 
         private void DeliveryMethodBox_SelectedIndexChanged_1(object sender, EventArgs e)
         {
-            if (DeliveryMethodBox.SelectedItem.ToString() == "RETAIL")
-            {
-                selectedDelivery = "(CRDT_INV_SHPVIA = 'DELIVERY' OR CRDT_INV_SHPVIA = 'WILL CALL')";
-            }
-            else if (DeliveryMethodBox.SelectedItem.ToString() == "NON-R")
-            {
-                selectedDelivery = "(CRDT_INV_SHPVIA != 'DELIVERY' AND CRDT_INV_SHPVIA != 'WILL CALL')";
-            }
-            else
-            {
-                selectedDelivery = "ALL";
-            }
-
             populateTables();
         }
 
@@ -744,7 +768,58 @@ namespace CreditProcessApp
 
         private void OtherOrdersButton_Click(object sender, EventArgs e)
         {
+            BottomPanel.Hide();
+            OtherInvoicesPanel.Show();
+            List<Invoice> incomplete = new List<Invoice>();
 
+            //establish database connection
+            string strConnection = "DSN=Ranshu";
+            OdbcConnection pSqlConn = null;
+            using (pSqlConn = new OdbcConnection(strConnection))
+            {
+                //get unprocessed invoices from database
+                string creditCommand = "SELECT BKAR_INV_NUM, BKAR_INV_CUSCOD, BKAR_INV_INVDTE, BKAR_INV_TOTAL, BKAR_INV_SHPVIA, BKAR_INV_SLSP, BKAR_INV_LOC, INVOICE_NUM, TRACKING_NUM " +
+                    "FROM BKARHINV INNER JOIN TRACKING ON BKAR_INV_NUM = INVOICE_NUM " +
+                    "WHERE TRACKING_NUM <= '' and BKAR_INV_CUSCOD = '"+ currentInvoice.account +"' " +
+                    "ORDER BY " + (sender as Button).Tag.ToString();
+
+                OdbcCommand cmd = new OdbcCommand(creditCommand, pSqlConn);
+                pSqlConn.Open();
+                OdbcDataReader creditReader = cmd.ExecuteReader();
+                if (creditReader.HasRows)
+                {
+                    while (creditReader.Read())
+                    {
+                        //create and fill invoice
+                        Invoice invoice = new Invoice();
+
+                        invoice.invoiceNumber = Convert.ToInt32(creditReader["BKAR_INV_NUM"].ToString());
+                        invoice.account = creditReader["BKAR_INV_CUSCOD"].ToString().TrimEnd();
+                        invoice.date = creditReader["BKAR_INV_DATE"].ToString().TrimEnd();
+                        invoice.total = Convert.ToDouble(creditReader["BKAR_INV_TOTAL"].ToString());
+                        invoice.deliveryMethod = creditReader["BKAR_INV_SHPVIA"].ToString().TrimEnd();
+                        invoice.salesPerson = Convert.ToInt32(creditReader["BKAR_INV_SLSP"].ToString());
+                        invoice.setLocation(creditReader["BKAR_INV_LOC"].ToString());
+
+                        //add invoice to list
+                        incomplete.Add(invoice);
+                    }
+                }
+
+                creditReader.Close();
+                pSqlConn.Close();
+            }
+
+            OtherInvoicesList.Hide();
+
+            try
+            {
+                refreshTable(OtherInvoicesList, incomplete);
+            }
+            finally
+            {
+                OtherInvoicesList.Show();
+            }
         }
 
         private void AccountDataButton_Click(object sender, EventArgs e)
@@ -759,12 +834,54 @@ namespace CreditProcessApp
 
         private void OtherOrdersCloseButton_Click(object sender, EventArgs e)
         {
-
+            OtherInvoicesPanel.Hide();
+            BottomPanel.Show();
         }
 
-        private void ProcessInvoiceNumButton_Click(object sender, EventArgs e)
+        private void ProcessOrderChanged(object sender, EventArgs e)
         {
-            
+            string order = (sender as Button).Tag.ToString();
+
+            if (processOrderBy == order)
+            {
+                order += " DESC";
+            }
+
+            processOrderBy = order;
+            populateTables();
+        }
+
+        private void CompleteOrderChanged(object sender, EventArgs e)
+        {
+            string order = (sender as Button).Tag.ToString();
+
+            if (completeOrderBy == order)
+            {
+                order += " DESC";
+            }
+
+            completeOrderBy = order;
+            populateTables();
+        }
+
+        private void ProcessRetailButton_Click(object sender, EventArgs e)
+        {
+            deliverySelection++;
+            populateTables();
+            switch(deliverySelection % 3)
+            {
+                case 0:
+                    (sender as Button).BackColor = Color.FromArgb(255, 240, 240, 240);
+                    break;
+
+                case 1:
+                    (sender as Button).BackColor = Color.FromArgb(255, 152, 251, 152);
+                    break;
+
+                case 2:
+                    (sender as Button).BackColor = Color.FromArgb(255, 250, 128, 114);
+                    break;
+            }
         }
     }
 }

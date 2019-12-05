@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OrderPrintForms
+namespace RanshuPrintService
 {
-    class Order
+    public class Order
     {
         /// <summary>
         /// list of items in the order

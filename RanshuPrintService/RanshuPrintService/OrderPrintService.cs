@@ -1,32 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Diagnostics;
 using System.Linq;
+using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
-
 using System.Timers;
 using System.IO;
 using System.Data.Odbc;
 using System.Data.SqlClient;
-using System.Windows.Forms;
-using System.Management;
 using System.Net;
 using System.Net.Mail;
 using System.Drawing;
-using System.Drawing.Printing;
 using System.Printing;
-
 using Microsoft.Win32;
 using Microsoft.Office.Interop.Excel;
 
-namespace OrderPrint
+namespace RanshuPrintService
 {
-    class Program
+    public partial class OrderPrintService : ServiceBase
     {
 
         // Create Excel Application Instance for use by Program Forms
         public static Microsoft.Office.Interop.Excel.Application xlApp = new Microsoft.Office.Interop.Excel.Application();
-        public static Workbook xlWorkBook = Program.xlApp.Workbooks.Add();
+        public static Workbook xlWorkBook = OrderPrintService.xlApp.Workbooks.Add();
         public static Worksheet xlsheet;
 
         public static Range xlBarcodeTop;
@@ -41,25 +40,18 @@ namespace OrderPrint
 
         public static string installedPrinter = null;
 
-        static System.Timers.Timer timer;
-        public static int flagActive;
-        static bool updateBinsFlag = false;
-        static bool invoiceTest = false;
+        public static int flagActive = 0;
         static Order currentOrder;
         static bool REPRINT;
+        static Timer timer;
 
-        //List<InvoiceForm> invoice = new List<InvoiceForm>();
-
-        static void Main(string[] args)
+        public OrderPrintService()
         {
-            //if update bins flag set
-            if (updateBinsFlag)
-            {
-                //call update bins
-                //updateBins(@"C:\Users\rfox\Documents\GitHubRepo\OrderPrintRepo\OrderPrint\newCompressors.xlsx");
-            }
+            InitializeComponent();
+        }
 
-
+        protected override void OnStart(string[] args)
+        {
             // Temporarily Prevent new instances of Excel from using this applications workbook
             xlApp.IgnoreRemoteRequests = true;
             // Hide this instance of excel
@@ -148,29 +140,11 @@ namespace OrderPrint
             xlsheet.Cells[24, 7].Value = "Cust Part No";
             xlsheet.Cells[24, 9].Value = "Description";
 
+            writeToFile("Service Started");
 
             timer = new System.Timers.Timer(10000);
             timer.Elapsed += new ElapsedEventHandler(timerProgram);
             timer.Enabled = true;
-            timer.Start();
-
-            while (Console.Read() != 'q')
-            {
-                ;  // Do nothing until the user presses 'q' and then 'enter'  
-            }
-
-            // Close down program
-            // Allow new instances of Excel from using this applications workbook
-            Program.xlApp.IgnoreRemoteRequests = false;
-
-            Program.xlWorkBook.Close(false, misValue, misValue);
-            Program.xlApp.Application.Quit();
-            Program.xlApp.Quit();
-
-            releaseObject(xlsheet);
-            releaseObject(Program.xlWorkBook);
-            releaseObject(Program.xlApp);
-
         }
 
         private static void releaseObject(object obj)
@@ -183,7 +157,7 @@ namespace OrderPrint
             catch (Exception ex)
             {
                 obj = null;
-                Console.WriteLine("Unable to release the Object " + ex.ToString());
+                writeToFile("Unable to release the Object " + ex.ToString());
             }
             finally
             {
@@ -191,11 +165,8 @@ namespace OrderPrint
             }
         }
 
-
-        static void timerProgram(object sender, ElapsedEventArgs e)
+        private static void timerProgram(object sender, ElapsedEventArgs e)
         {
-            timer.Stop();
-
             if (flagActive == 0)
             {
                 newOrders();
@@ -221,8 +192,8 @@ namespace OrderPrint
             }
 
             GC.Collect();
-            timer.Start();
         }
+
 
         static void newOrders()
         {
@@ -245,15 +216,18 @@ namespace OrderPrint
                 string sqlInvoice =
                 "SELECT BKAR_INV_NUM, BKAR_INV_INVDTE, BKAR_INV_CUSCOD, BKAR_INV_CUSNME, BKAR_INV_CUSA1, BKAR_INV_CUSA2, BKAR_INV_CUSCTY, BKAR_INV_CUSST, BKAR_INV_CUSZIP, BKAR_INV_CUSCUN, BKAR_INV_SHPNME, BKAR_INV_SHPA1, BKAR_INV_SHPA2, BKAR_INV_SHPCTY, BKAR_INV_SHPST, BKAR_INV_SHPZIP, BKAR_INV_SHPCUN, BKAR_INV_LOC, BKAR_INV_CUSORD, BKAR_INV_SHPVIA, BKAR_INV_TERMD, BKAR_INV_ENTBY, BKAR_INV_TOTAL, BKAR_INV_SLSP, invoice_num" +
                 " FROM BKARHINV LEFT JOIN wmsOrders ON BKAR_INV_NUM = invoice_num " +
-                " WHERE BKAR_INV_MAX = 0" ;
+                " WHERE BKAR_INV_MAX = 0";
                 OdbcCommand sqlCommandINV = new OdbcCommand(sqlInvoice, pSqlConn);
                 sqlCommandINV.CommandTimeout = 90;
                 pSqlConn.Open();
+
                 OdbcDataReader readerINV = sqlCommandINV.ExecuteReader();
+
                 if (readerINV.HasRows)
                 {
                     while (readerINV.Read() && test < 10)
                     {
+
                         REPRINT = false;
                         test++;
 
@@ -293,13 +267,10 @@ namespace OrderPrint
 
                         currentOrder = order;
 
-                        if(readerINV["invoice_num"].ToString() == order.invoiceNumber.ToString())
+                        if (readerINV["invoice_num"].ToString() == order.invoiceNumber.ToString())
                         {
                             REPRINT = true;
                         }
-
-                        ///////////////////////////////////////////////
-                        InvoiceForm invoiceForm = new InvoiceForm(1);
 
                         //get items for order
                         int flagPrint = 1;
@@ -326,7 +297,7 @@ namespace OrderPrint
 
 
                                     //if item has bin
-                                    if(readerItems["BIN_NAME"].ToString() != "")
+                                    if (readerItems["BIN_NAME"].ToString() != "")
                                     {
                                         item.location = "BIN " + readerItems["BIN_NAME"].ToString();
                                     }
@@ -336,11 +307,11 @@ namespace OrderPrint
                                         item.location = "A12-08-05-2";
                                     }
 
-                                    
+
                                     // Check for shipping Notes
                                     if (item.itemType == "X" && item.message.Length >= 1)
                                     {
-                                        if(item.message.Substring(0, 1) == "@")
+                                        if (item.message.Substring(0, 1) == "@")
                                         {
                                             notes.Add(item.message.TrimStart('@'));
                                         }
@@ -373,14 +344,14 @@ namespace OrderPrint
                         {
                             string creditNotes = "";
 
-                            for(int i = 0; i < crdtNotes.Count; i++)
+                            for (int i = 0; i < crdtNotes.Count; i++)
                             {
                                 creditNotes += System.Environment.NewLine + crdtNotes[i];
                             }
 
                             //add to credit table with Processed flagged false
                             string creditString = "INSERT INTO CRDTINV (CRDT_INV_NUM, CRDT_INV_CUSCOD, CRDT_INV_DATE, CRDT_INV_TOTAL, CRDT_INV_PROCESSED, CRDT_INV_USER, CRDT_INV_NOTES, CRDT_INV_SHPVIA, CRDT_INV_SLSP) " +
-                                "VALUES (" + order.invoiceNumber + ", '" + order.customerCode + "', '" + order.date + "', " + readerINV["BKAR_INV_TOTAL"].ToString() + ", 0, 'null', '"+ creditNotes +"', '"+ order.deliveryMethod +"', "+ Convert.ToInt32(readerINV["BKAR_INV_SLSP"].ToString()) +")";
+                                "VALUES (" + order.invoiceNumber + ", '" + order.customerCode + "', '" + order.date + "', " + readerINV["BKAR_INV_TOTAL"].ToString() + ", 0, 'null', '" + creditNotes + "', '" + order.deliveryMethod + "', " + Convert.ToInt32(readerINV["BKAR_INV_SLSP"].ToString()) + ")";
 
                             using (OdbcCommand creditCommand = new OdbcCommand(creditString, pSqlConn))
                             {
@@ -488,7 +459,7 @@ namespace OrderPrint
 
                             // ASSIGN PRINTER BASED OFF OF WAREHOUSE CODE
                             flagPrint = selectPrinter(strInvLoc, (order.deliveryMethod == "DELIVERY" || order.deliveryMethod == "WILL CALL"));
-                            Console.WriteLine(xlApp.ActivePrinter.ToString());
+                            writeToFile(xlApp.ActivePrinter.ToString());
 
                             // Dont print FAX
                             if (order.deliveryMethod == "FAX" || order.deliveryMethod == "RMT")
@@ -501,7 +472,7 @@ namespace OrderPrint
                             for (int x = 0; x < order.items.Count; x++)
                             {
                                 Item item = order.items[x];
-                                if(REPRINT)
+                                if (REPRINT)
                                 {
                                     xlsheet.Cells[1, 6].Value = "REPRINT";
                                 }
@@ -634,22 +605,16 @@ namespace OrderPrint
                             xlsheet.Cells[49, 3].Value = numItems.ToString();
 
                             // Print Out Final Page of Packlist
-                            if (invoiceTest)
-                            {
-                                invoiceForm.Show();
-                                //invoiceForm.Location = new System.Drawing.Point(-30000, -30000);
-                                invoiceForm.print();
-                            }
-                            else if (flagPrint == 1)
+                            if (flagPrint == 1)
                             {
                                 xlsheet.PrintOutEx(misValue, misValue, 1, false);
 
                             }
                         }
 
-                        
-                        
-                        if(!REPRINT)
+
+
+                        if (!REPRINT)
                         {
                             //add order to wmsOrders
                             //update invoice as printed
@@ -684,23 +649,49 @@ namespace OrderPrint
 
                         // CLEAN UP LINE ITEMS AND EXTRA PAGES
                         xlsheet.get_Range("A26", "I49").Clear();
-                        
+
                         // CLEAN UP NOTES
                         xlsheet.get_Range("A11", "E15").Clear();
 
                         // ALIGN CELLS PROPERLY
                         xlsheet.get_Range("A26", "I49").HorizontalAlignment = XlHAlign.xlHAlignLeft;
-                        
-                        Console.WriteLine(order.invoiceNumber);
-                        invoiceForm.Close();
+
+                        writeToFile(order.invoiceNumber.ToString());
                     }
                 }
                 readerINV.Close();
                 pSqlConn.Close();
             }
 
-            Console.WriteLine("END SET");
+            writeToFile("END SET");
             flagActive = 0;
+        }
+
+        public static void writeToFile(string message)
+        {
+            string path = AppDomain.CurrentDomain.BaseDirectory + "\\Logs";
+            if(!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+
+            string filePath = AppDomain.CurrentDomain.BaseDirectory + "\\Logs\\Service_" + DateTime.Now.Date.ToShortDateString().Replace('/', '_') + ".txt";
+
+            if(!File.Exists(filePath))
+            {
+                using(StreamWriter sw = File.CreateText(filePath))
+                {
+                    sw.WriteLine(DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss tt") + ": " + message);
+                }
+            }
+            else
+            {
+
+                using (StreamWriter sw = File.AppendText(filePath))
+                {
+                    sw.WriteLine(DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss tt") + ": " + message);
+                }
+            }
         }
 
         public static int selectPrinter(string locationcode, bool retail)
@@ -712,7 +703,7 @@ namespace OrderPrint
 
             if (locationcode == "RENO" || locationcode == "SPARKS" || locationcode == "SPARKS2")
             {
-                if(retail)
+                if (retail)
                 {
                     installedPrinter = "RICOHNV";
                 }
@@ -735,7 +726,7 @@ namespace OrderPrint
             }*/
             else if (locationcode == "FORT WORTH")
             {
-                if(retail)
+                if (retail)
                 {
                     installedPrinter = "RICOHTX";
                 }
@@ -755,18 +746,20 @@ namespace OrderPrint
             else if (locationcode == "FL")
             {
                 installedPrinter = "RICOHTX";
-            }else
+            }
+            else
             {
                 installedPrinter = null;
             }
 
-            if (installedPrinter != null) {
+            if (installedPrinter != null)
+            {
                 // GRAB REGISTRY KEY NAME/VALUE PAIRS FOR ALL PRINTERS INSTALLED ON MACHINE
                 // SEARCH FOR NAME/VALUE PAIR WITH installedPrinter AS THE NAME AND EXTRACT THE PORT NAME FROM IT
                 // USE THE PORT NAME TO SPECIFY THE ACTIVE PRINTER IN THE EXCEL INSTANCE
-                
-                //subkey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows NT\CurrentVersion\Devices", false);
-                subkey = Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\Windows NT\CurrentVersion\Print\Printers", false);
+
+                //subkey = Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\Windows NT\CurrentVersion\Print\Printers", false);
+                subkey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows NT\CurrentVersion\Devices", false);
                 foreach (string printerName in subkey.GetValueNames())
                 {
                     if (printerName == installedPrinter)
@@ -774,20 +767,22 @@ namespace OrderPrint
                         printerValue = subkey.GetValue(printerName).ToString();
                         flagPrinterFound = 1;
                     }
-                    else if(printerName == "RICOHNV")
+                    else if (printerName == "RICOHNV")
                     {
                         backupPrinter = subkey.GetValue(printerName).ToString();
                     }
                 }
                 if (flagPrinterFound == 1)
                 {
+
                     string[] arrPrinterValue = printerValue.Split(',');
                     portName = arrPrinterValue[1];
+
                     xlApp.ActivePrinter = installedPrinter + " on " + portName;
                 }
                 else
                 {
-                    Console.WriteLine("There appears to be a problem printing to " + installedPrinter);
+                    writeToFile("There appears to be a problem printing to " + installedPrinter);
                 }
             }
             return flagPrinterFound;
@@ -828,110 +823,21 @@ namespace OrderPrint
             msgMail.Dispose();
         }
 
-        /*
-         * @FUNCTION:   static void updateBins()
-         * @PURPOSE:    updates database bin locations from given excel document
-         *              
-         * @PARAM:      string updateListAddress
-         * 
-         * @RETURNS:    none
-         * @NOTES:      none
-         */
-        static void updateBins(string updateListAddress)
+        protected override void OnStop()
         {
-            //open bins excel sheet
-            Workbook tempWorkbook = Program.xlApp.Workbooks.Open(updateListAddress);
-            Worksheet tempSheet = tempWorkbook.Sheets[1];
-            Range tempRange = tempSheet.UsedRange;
+            // Close down program
+            // Allow new instances of Excel from using this applications workbook
+            OrderPrintService.xlApp.IgnoreRemoteRequests = false;
 
-            //create item list
-            List<Item> items = new List<Item>();
+            OrderPrintService.xlWorkBook.Close(false, misValue, misValue);
+            OrderPrintService.xlApp.Application.Quit();
+            OrderPrintService.xlApp.Quit();
 
-            //for each row in the sheet
-            for (int i = 2; tempSheet.Cells[i, 1].Value != null; i++)
-            {
-                Item item = new Item();
+            releaseObject(xlsheet);
+            releaseObject(OrderPrintService.xlWorkBook);
+            releaseObject(OrderPrintService.xlApp);
 
-                //get part code
-                item.partCode = tempSheet.Cells[i, 1].Value;
-
-                //if the partcode starts with 14/is a compressor
-                if (item.partCode.Substring(0, 2) == "14")
-                {
-                    //add to list
-                    item.location = "RENO";
-                    item.quantity = Convert.ToInt32(tempSheet.Cells[i, 11].Value);
-                    item.locationCode = "D";
-
-                    items.Add(item);
-                }
-            }
-
-            //connect to database
-            string strConnection = "DSN=Ranshu20190831";
-            OdbcConnection pSqlConn = null;
-            using (pSqlConn = new OdbcConnection(strConnection))
-            {
-                //get all bin parts and locations
-                string sqlInvoice = "SELECT BIN_PART, BIN_LOC FROM wmsLocations";
-                OdbcCommand sqlCommandINV = new OdbcCommand(sqlInvoice, pSqlConn);
-                sqlCommandINV.CommandTimeout = 90;
-                pSqlConn.Open();
-                OdbcDataReader binReader = sqlCommandINV.ExecuteReader();
-
-                //if table has rows
-                if (binReader.HasRows)
-                {
-                    while (binReader.Read())
-                    {
-                        //compare current list to database
-                        for (int i = 0; i < items.Count; i++)
-                        {
-                            //if part and location match database entry
-                            if (binReader["BIN_PART"].ToString() == items[i].partCode && binReader["BIN_LOC"].ToString() == items[i].location)
-                            {
-                                //update current entry with bin name and quantity
-                                string updateString = "UPDATE wmsLocations " +
-                                    "SET BIN_NAME = '" + items[i].locationCode + "', BIN_QTY = " + items[i].quantity + " " +
-                                    "WHERE BIN_PART = '" + items[i].partCode + "' AND BIN_LOC = '" + items[i].location + "'";
-
-                                using (OdbcCommand updateCommand = new OdbcCommand(updateString, pSqlConn))
-                                {
-                                    updateCommand.ExecuteNonQuery();
-                                }
-
-                                //remove part from list
-                                items.RemoveAt(i);
-                                i--;
-                            }
-                        }
-                    }
-                }
-
-                //if the list still has parts
-                for (int i = 0; i < items.Count; i++)
-                {
-                    //add them to the database
-                    string addString = "INSERT INTO wmsLocations (BIN_NAME, BIN_LOC, BIN_PART, BIN_QTY) " +
-                        "VALUES ('" + items[i].locationCode + "', '" + items[i].location + "', '" + items[i].partCode + "', " + items[i].quantity + ")";
-
-                    using (OdbcCommand addCommand = new OdbcCommand(addString, pSqlConn))
-                    {
-                        addCommand.ExecuteNonQuery();
-                    }
-
-                }
-
-                //close database connection
-                binReader.Close();
-                pSqlConn.Close();
-            }
-
-            //release xl assets
-            releaseObject(tempSheet);
-            releaseObject(tempWorkbook);
+            writeToFile("Service Stopped");
         }
-    }    
-
-
+    }
 }

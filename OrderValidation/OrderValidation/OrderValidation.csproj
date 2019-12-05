@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{5F75F1FB-342A-4B9A-A477-67FAF12D1BCA}</ProjectGuid>
+    <ProjectGuid>{9A7B86A4-994E-4068-B9AB-1B88E8EA6ADE}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>OrderPrintForms</RootNamespace>
-    <AssemblyName>OrderPrintForms</AssemblyName>
+    <RootNamespace>OrderValidation</RootNamespace>
+    <AssemblyName>OrderValidation</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -46,23 +46,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="InvoiceForm.cs">
+    <Compile Include="ValidationForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="InvoiceForm.designer.cs">
-      <DependentUpon>InvoiceForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Order.cs" />
-    <Compile Include="Form1.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="ValidationForm.Designer.cs">
+      <DependentUpon>ValidationForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="InvoiceForm.resx">
-      <DependentUpon>InvoiceForm.cs</DependentUpon>
+    <EmbeddedResource Include="ValidationForm.resx">
+      <DependentUpon>ValidationForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

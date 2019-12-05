@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("OrderPrintForms")]
+[assembly: AssemblyTitle("RanshuPrintService")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("OrderPrintForms")]
+[assembly: AssemblyProduct("RanshuPrintService")]
 [assembly: AssemblyCopyright("Copyright ©  2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("5f75f1fb-342a-4b9a-a477-67faf12d1bca")]
+[assembly: Guid("c98d55bc-1757-4830-81d6-61597189f972")]
 
 // Version information for an assembly consists of the following four values:
 //

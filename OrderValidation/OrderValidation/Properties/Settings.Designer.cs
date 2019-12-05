@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace OrderPrintForms.Properties
+namespace OrderValidation.Properties
 {
 
 
