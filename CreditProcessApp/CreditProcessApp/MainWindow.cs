@@ -29,6 +29,7 @@ namespace CreditProcessApp
         string held;
         string processOrderBy;
         string completeOrderBy;
+        Account account;
         Login login;
         Timer refreshTimer;
         
@@ -445,6 +446,12 @@ namespace CreditProcessApp
             //set current invoice
             currentInvoice = clicked.Tag as Invoice;
             showData(currentInvoice);
+            if(AccountInfoTable.Visible)
+            {
+                AccountInfoTable.Hide();
+                DataTable.Show();
+            }
+            AccountDataButton.Enabled = true;
 
             //for every row in flagged table
             for (int i = 1; i <= table.RowCount; i++)
@@ -555,6 +562,7 @@ namespace CreditProcessApp
 
                 //clear current invoice
                 currentInvoice = null;
+                AccountDataButton.Enabled = false;
             }
         }
 
@@ -633,6 +641,14 @@ namespace CreditProcessApp
             //reset UI
             currentInvoice = null;
             ProcessButton.Enabled = false;
+        }
+
+        private void populatePaymentTable(Payment payment)
+        {
+            AccountNameText.Text = currentInvoice.account;
+            CardNumText.Text = payment.cardNum;
+            ExpText.Text = payment.expiration;
+            PaymentNotesText.Text = payment.cardNotes;
         }
 
         /*
@@ -824,7 +840,52 @@ namespace CreditProcessApp
 
         private void AccountDataButton_Click(object sender, EventArgs e)
         {
+            if(currentInvoice != null)
+            {
+                //establish database connection
+                string strConnection = "DSN=Ranshu";
+                OdbcConnection pSqlConn = null;
+                using (pSqlConn = new OdbcConnection(strConnection))
+                {
+                    //get unprocessed invoices from database
+                    string creditCommand = "SELECT BKAR_CCRD_NUM, BKAR_CCRD_EXP, BKAR_CCRD_NAME FROM BKARCCRD WHERE BKAR_CCRD_CODE = '" + currentInvoice.account + "'";
 
+                    OdbcCommand cmd = new OdbcCommand(creditCommand, pSqlConn);
+                    pSqlConn.Open();
+                    OdbcDataReader creditReader = cmd.ExecuteReader();
+                    if (creditReader.HasRows)
+                    {
+                        List<Payment> payments = new List<Payment>();
+                        while (creditReader.Read())
+                        {
+                            Payment payment = new Payment(creditReader["BKAR_CCRD_NUM"].ToString().TrimEnd(), creditReader["BKAR_CCRD_EXP"].ToString().TrimEnd(), creditReader["BKAR_CCRD_NAME"].ToString().TrimEnd());
+                            payments.Add(payment);
+                        }
+                        account = new Account(payments);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Account does not have any stored payment methods.", "ATTENTION");
+                        return;
+                    }
+                    pSqlConn.Close();
+                }
+
+                populatePaymentTable(account.getPayment());
+                PreviousPaymentButton.Enabled = false;
+
+                if (accountPayments.Count > 1)
+                {
+                    NextPaymentButton.Enabled = true;
+                }
+                else
+                {
+                    NextPaymentButton.Enabled = false;
+                }
+
+                DataTable.Hide();
+                AccountInfoTable.Show();
+            }
         }
 
         private void OtherInvoicesTable_Paint(object sender, PaintEventArgs e)
@@ -882,6 +943,22 @@ namespace CreditProcessApp
                     (sender as Button).BackColor = Color.FromArgb(255, 250, 128, 114);
                     break;
             }
+        }
+
+        private void AccountDataCloseButton_Click(object sender, EventArgs e)
+        {
+            AccountInfoTable.Hide();
+            DataTable.Show();
+        }
+
+        private void PreviousPaymentButton_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void NextPaymentButton_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

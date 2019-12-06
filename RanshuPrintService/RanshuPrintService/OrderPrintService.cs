@@ -14,6 +14,7 @@ using System.Data.SqlClient;
 using System.Net;
 using System.Net.Mail;
 using System.Drawing;
+using System.Drawing.Printing;
 using System.Printing;
 using Microsoft.Win32;
 using Microsoft.Office.Interop.Excel;
@@ -694,6 +695,38 @@ namespace RanshuPrintService
             }
         }
 
+        public static void condenseFile()
+        {
+
+            string path = AppDomain.CurrentDomain.BaseDirectory + "\\Logs";
+            if (!Directory.Exists(path))
+            {
+                return;
+            }
+
+            string filePath = AppDomain.CurrentDomain.BaseDirectory + "\\Logs\\Service_" + DateTime.Now.Date.ToShortDateString().Replace('/', '_') + ".txt";
+
+            if (!File.Exists(filePath))
+            {
+                return;
+            }
+            else
+            {
+                List<string> rawFile = File.ReadAllLines(filePath).ToList<string>();
+
+                for(int i = 0; i < rawFile.Count; i++)
+                {
+                    if(rawFile[i].Contains("END SET"))
+                    {
+                        rawFile.RemoveAt(i);
+                        i--;
+                    }
+                }
+
+                File.WriteAllLines(filePath, rawFile);
+            }
+        }
+
         public static int selectPrinter(string locationcode, bool retail)
         {
             int flagPrinterFound = 0;
@@ -838,6 +871,7 @@ namespace RanshuPrintService
             releaseObject(OrderPrintService.xlApp);
 
             writeToFile("Service Stopped");
+            condenseFile();
         }
     }
 }
