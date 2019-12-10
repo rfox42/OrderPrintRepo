@@ -29,12 +29,13 @@ namespace CreditProcessApp
     {
         List<Payment> paymentMethods;
         int paymentIndex;
-        int count;
+        public int count;
 
         public Account(List<Payment> payments)
         {
             paymentMethods = payments;
             paymentIndex = 0;
+            count = paymentMethods.Count;
         }
 
         ~Account()

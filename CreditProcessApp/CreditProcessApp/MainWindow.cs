@@ -874,7 +874,7 @@ namespace CreditProcessApp
                 populatePaymentTable(account.getPayment());
                 PreviousPaymentButton.Enabled = false;
 
-                if (accountPayments.Count > 1)
+                if (account.count > 1)
                 {
                     NextPaymentButton.Enabled = true;
                 }

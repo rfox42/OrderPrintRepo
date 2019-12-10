@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Order.cs" />
     <Compile Include="ValidationForm.cs">
       <SubType>Form</SubType>
     </Compile>
