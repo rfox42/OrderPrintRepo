@@ -68,6 +68,7 @@
             this.InvoiceList = new System.Windows.Forms.TableLayoutPanel();
             this.label6 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
+            this.ReprintButton = new System.Windows.Forms.Button();
             this.InfoPanel.SuspendLayout();
             this.RightTable.SuspendLayout();
             this.LeftPanel.SuspendLayout();
@@ -99,17 +100,19 @@
             this.RightTable.BackColor = System.Drawing.SystemColors.ScrollBar;
             this.RightTable.ColumnCount = 1;
             this.RightTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.RightTable.Controls.Add(this.ReprintButton, 0, 4);
             this.RightTable.Controls.Add(this.ErrorText, 0, 1);
-            this.RightTable.Controls.Add(this.CancelButton, 0, 4);
+            this.RightTable.Controls.Add(this.CancelButton, 0, 5);
             this.RightTable.Controls.Add(this.FinalizeButton, 0, 3);
             this.RightTable.Controls.Add(this.EnterField, 0, 0);
             this.RightTable.Controls.Add(this.EnterButton, 0, 2);
             this.RightTable.Dock = System.Windows.Forms.DockStyle.Fill;
             this.RightTable.Location = new System.Drawing.Point(0, 0);
             this.RightTable.Name = "RightTable";
-            this.RightTable.RowCount = 6;
+            this.RightTable.RowCount = 7;
             this.RightTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 55F));
             this.RightTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 94F));
+            this.RightTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.RightTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.RightTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.RightTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -137,7 +140,7 @@
             this.CancelButton.Enabled = false;
             this.CancelButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.CancelButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CancelButton.Location = new System.Drawing.Point(0, 269);
+            this.CancelButton.Location = new System.Drawing.Point(0, 329);
             this.CancelButton.Margin = new System.Windows.Forms.Padding(0);
             this.CancelButton.Name = "CancelButton";
             this.CancelButton.Padding = new System.Windows.Forms.Padding(0, 5, 0, 5);
@@ -647,6 +650,23 @@
             this.label8.Text = "1344925";
             this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // ReprintButton
+            // 
+            this.ReprintButton.BackColor = System.Drawing.SystemColors.InactiveCaption;
+            this.ReprintButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ReprintButton.Enabled = false;
+            this.ReprintButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ReprintButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ReprintButton.Location = new System.Drawing.Point(0, 269);
+            this.ReprintButton.Margin = new System.Windows.Forms.Padding(0);
+            this.ReprintButton.Name = "ReprintButton";
+            this.ReprintButton.Padding = new System.Windows.Forms.Padding(0, 5, 0, 5);
+            this.ReprintButton.Size = new System.Drawing.Size(237, 60);
+            this.ReprintButton.TabIndex = 5;
+            this.ReprintButton.Text = "Reprint Invoice";
+            this.ReprintButton.UseVisualStyleBackColor = false;
+            this.ReprintButton.Visible = false;
+            // 
             // ValidationForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -726,6 +746,7 @@
         private System.Windows.Forms.Label InvoiceNumLabel;
         private System.Windows.Forms.Label InvoiceNumText;
         private System.Windows.Forms.Label ErrorText;
+        private System.Windows.Forms.Button ReprintButton;
     }
 }
 
