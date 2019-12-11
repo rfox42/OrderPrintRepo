@@ -79,7 +79,7 @@ namespace OrderValidation
                 addToTable(InvoiceList, new List<string>() { invoices[i].invoiceNumber.ToString(), invoices[i].date }, invoices[i]);
             }
 
-            FinalizeButton.Hide();
+            FinalizeButton.Enabled = false;
         }
 
         private void addToTable(TableLayoutPanel table, List<string> columns, Object tag, Color? color = null)
@@ -124,7 +124,14 @@ namespace OrderValidation
                         item.description = invoiceReader["BKAR_INVL_PDESC"].ToString().TrimEnd(); ;
                         item.vendorPart = invoiceReader["BKIC_VND_PART"].ToString().TrimEnd();
                         item.shipQuantity = Convert.ToInt32(invoiceReader["BKAR_INVL_PQTY"].ToString());
-                        item.quantity = 0;
+                        if(currentOrder.validated == null)
+                        {
+                            item.quantity = 0;
+                        }
+                        else
+                        {
+                            item.quantity = item.shipQuantity;
+                        }
 
                         items.Add(item);
                     }
@@ -194,6 +201,8 @@ namespace OrderValidation
 
             FinalizeButton.Enabled = orderComplete;
 
+            if (currentOrder.validated != null) FinalizeButton.Enabled = false;
+
             InvoicePanel.Hide();
             ItemsPanel.Show();
             EnterButton.Text = "Edit Quantity";
@@ -202,7 +211,6 @@ namespace OrderValidation
             EnterButton.Enabled = false;
             CancelButton.Enabled = true;
             currentItem = null;
-            FinalizeButton.Show();
             TotalText.Text = total.ToString();
             this.ActiveControl = EnterField;
         }

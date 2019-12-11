@@ -171,23 +171,30 @@ namespace RanshuPrintService
             timer.Stop();
             newOrders();
 
-            //checks for errors on the installed printer
-            PrintServer printServer = new PrintServer(installedPrinter);
-            PrintQueueCollection printQueues = printServer.GetPrintQueues();
-            foreach (PrintQueue pq in printQueues)
+            try
             {
-                pq.Refresh();
-                PrintJobInfoCollection pCollection = pq.GetPrintJobInfoCollection();
-                if ((pq.QueueStatus & PrintQueueStatus.Error) == PrintQueueStatus.Error || (pq.QueueStatus & PrintQueueStatus.None) != PrintQueueStatus.None)
+                //checks for errors on the installed printer
+                PrintServer printServer = new PrintServer(installedPrinter);
+                PrintQueueCollection printQueues = printServer.GetPrintQueues();
+                foreach (PrintQueue pq in printQueues)
                 {
-                    //emails error report to IT
-                    string text = "There appears to be a problem printing order " + currentOrder.invoiceNumber + " to " + installedPrinter + ".";
-                    text += System.Environment.NewLine + "Please check the printer.";
-                    SendEmail(installedPrinter, text);
+                    pq.Refresh();
+                    PrintJobInfoCollection pCollection = pq.GetPrintJobInfoCollection();
+                    if ((pq.QueueStatus & PrintQueueStatus.Error) == PrintQueueStatus.Error || (pq.QueueStatus & PrintQueueStatus.None) != PrintQueueStatus.None)
+                    {
+                        //emails error report to IT
+                        string text = "There appears to be a problem printing order " + currentOrder.invoiceNumber + " to " + installedPrinter + ".";
+                        text += System.Environment.NewLine + "Please check the printer.";
+                        SendEmail(installedPrinter, text);
 
-                    //breaks loop once error found
-                    break;
+                        //breaks loop once error found
+                        break;
+                    }
                 }
+            }
+            catch
+            {
+
             }
 
             GC.Collect();
@@ -368,7 +375,7 @@ namespace RanshuPrintService
                                 {
                                     cmd.ExecuteNonQuery();
                                 }
-                                return;
+                                continue;
                             }
                         }
                         else if (!(order.deliveryMethod == "DELIVERY" || order.deliveryMethod == "WILL CALL"))
@@ -478,14 +485,6 @@ namespace RanshuPrintService
                             if (order.deliveryMethod == "FAX" || order.deliveryMethod == "RMT")
                             {
                                 flagPrint = 0;
-                                string sqlMarkPrint = "UPDATE BKARHINV " +
-                                            "SET BKAR_INV_MAX = 1 " +
-                                            "WHERE BKAR_INV_NUM = " + order.invoiceNumber;
-                                using (OdbcCommand cmd = new OdbcCommand(sqlMarkPrint, pSqlConn))
-                                {
-                                    cmd.ExecuteNonQuery();
-                                }
-                                return;
                             }
 
                             int numPageItems = 0;
@@ -632,17 +631,29 @@ namespace RanshuPrintService
 
                             }
                         }
+                        else
+                        {
+                            installedPrinter = "RETAIL" + order.items[0].locationCode;
+                        }
 
-
-
-                        if (!REPRINT)
+                        if (order.deliveryMethod == "FAX" || order.deliveryMethod == "RMT")
+                        {
+                            string sqlMarkPrint = "UPDATE BKARHINV " +
+                                        "SET BKAR_INV_MAX = 1 " +
+                                        "WHERE BKAR_INV_NUM = " + order.invoiceNumber;
+                            using (OdbcCommand cmd = new OdbcCommand(sqlMarkPrint, pSqlConn))
+                            {
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+                        else if (!REPRINT)
                         {
                             //add order to wmsOrders
                             //update invoice as printed
                             strCurrentDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
                             sqlUpdateList = "INSERT INTO wmsOrders (invoice_num,printed,printer) " +
                                             "VALUES (" + order.invoiceNumber + ", '" + strCurrentDateTime.ToString() +
-                                            "', '" + xlApp.ActivePrinter.ToString() + "');" +
+                                            "', '" + installedPrinter + "');" +
                                             "UPDATE BKARHINV " +
                                             "SET BKAR_INV_MAX = 1 " +
                                             "WHERE BKAR_INV_NUM = " + order.invoiceNumber;
@@ -657,7 +668,7 @@ namespace RanshuPrintService
                             strCurrentDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
                             sqlUpdateList = "UPDATE wmsOrders " +
                                             "SET printed = '" + strCurrentDateTime.ToString() + "', " +
-                                            "printer = '" + xlApp.ActivePrinter.ToString() + "'" +
+                                            "printer = '" + installedPrinter + "'" +
                                             "WHERE invoice_num = " + order.invoiceNumber + ";" +
                                             "UPDATE BKARHINV " +
                                             "SET BKAR_INV_MAX = 1 " +
@@ -684,7 +695,7 @@ namespace RanshuPrintService
                 pSqlConn.Close();
             }
 
-            writeToFile("END SET");
+            writeToFile("END SET - Test");
         }
 
         public static void writeToFile(string message)
