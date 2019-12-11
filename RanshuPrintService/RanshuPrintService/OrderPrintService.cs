@@ -168,10 +168,8 @@ namespace RanshuPrintService
 
         private static void timerProgram(object sender, ElapsedEventArgs e)
         {
-            if (flagActive == 0)
-            {
-                newOrders();
-            }
+            timer.Stop();
+            newOrders();
 
             //checks for errors on the installed printer
             PrintServer printServer = new PrintServer(installedPrinter);
@@ -180,7 +178,7 @@ namespace RanshuPrintService
             {
                 pq.Refresh();
                 PrintJobInfoCollection pCollection = pq.GetPrintJobInfoCollection();
-                if ((pq.QueueStatus & PrintQueueStatus.Error) == PrintQueueStatus.Error || (pq.QueueStatus & PrintQueueStatus.Offline) == PrintQueueStatus.Offline || (pq.QueueStatus & PrintQueueStatus.None) != PrintQueueStatus.None)
+                if ((pq.QueueStatus & PrintQueueStatus.Error) == PrintQueueStatus.Error || (pq.QueueStatus & PrintQueueStatus.None) != PrintQueueStatus.None)
                 {
                     //emails error report to IT
                     string text = "There appears to be a problem printing order " + currentOrder.invoiceNumber + " to " + installedPrinter + ".";
@@ -193,6 +191,7 @@ namespace RanshuPrintService
             }
 
             GC.Collect();
+            timer.Start();
         }
 
 
@@ -358,6 +357,19 @@ namespace RanshuPrintService
                             {
                                 creditCommand.ExecuteNonQuery();
                             }
+
+                            if (order.deliveryMethod == "FAX" || order.deliveryMethod == "RMT")
+                            {
+                                flagPrint = 0;
+                                string sqlMarkPrint = "UPDATE BKARHINV " +
+                                            "SET BKAR_INV_MAX = 1 " +
+                                            "WHERE BKAR_INV_NUM = " + order.invoiceNumber;
+                                using (OdbcCommand cmd = new OdbcCommand(sqlMarkPrint, pSqlConn))
+                                {
+                                    cmd.ExecuteNonQuery();
+                                }
+                                return;
+                            }
                         }
                         else if (!(order.deliveryMethod == "DELIVERY" || order.deliveryMethod == "WILL CALL"))
                         {
@@ -466,6 +478,14 @@ namespace RanshuPrintService
                             if (order.deliveryMethod == "FAX" || order.deliveryMethod == "RMT")
                             {
                                 flagPrint = 0;
+                                string sqlMarkPrint = "UPDATE BKARHINV " +
+                                            "SET BKAR_INV_MAX = 1 " +
+                                            "WHERE BKAR_INV_NUM = " + order.invoiceNumber;
+                                using (OdbcCommand cmd = new OdbcCommand(sqlMarkPrint, pSqlConn))
+                                {
+                                    cmd.ExecuteNonQuery();
+                                }
+                                return;
                             }
 
                             int numPageItems = 0;
@@ -665,7 +685,6 @@ namespace RanshuPrintService
             }
 
             writeToFile("END SET");
-            flagActive = 0;
         }
 
         public static void writeToFile(string message)

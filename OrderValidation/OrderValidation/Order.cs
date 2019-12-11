@@ -70,11 +70,14 @@ namespace OrderValidation
         /// </summary>
         public string enteredBy;
 
+        public string validated;
+
         public Order(int invNum)
         {
             invoiceNumber = invNum;
             shipAddress = new Address();
             billAddress = new Address();
+            validated = null;
         }
 
         ~Order()

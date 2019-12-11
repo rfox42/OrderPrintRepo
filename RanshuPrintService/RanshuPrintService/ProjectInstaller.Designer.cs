@@ -41,8 +41,8 @@
             // serviceInstaller1
             // 
             this.serviceInstaller1.Description = "Print Service demo";
-            this.serviceInstaller1.DisplayName = "OrderPrintService.Demo";
-            this.serviceInstaller1.ServiceName = "Service1";
+            this.serviceInstaller1.DisplayName = "RanshuPrintService";
+            this.serviceInstaller1.ServiceName = "RanshuPrintService";
             // 
             // ProjectInstaller
             // 
