@@ -19,19 +19,19 @@ namespace OrderValidation
         int selectedRow;
         Order currentOrder;
         Item currentItem;
+        string invNot;
+        string dateQualifier;
 
         public ValidationForm()
         {
             InitializeComponent();
 
             ItemsPanel.Hide();
-            InvoicePanel.Show();
-
-            populateInvoices();
         }
 
         private void populateInvoices()
         {
+            List<Order> orders = null;
             //establish database connection
             string strConnection = "DSN=Ranshu";
             OdbcConnection pSqlConn = null;
@@ -40,7 +40,8 @@ namespace OrderValidation
                 //get unprocessed invoices from database
                 string cmdString = "SELECT BKAR_INV_NUM, printed " +
                                     "from wmsOrders w inner join BKARHINV b on w.invoice_num = b.BKAR_INV_NUM " +
-                                    "where w.validated is null " +
+                                    "where w.validated is "+ invNot +" null " +
+                                    dateQualifier+
                                     "ORDER BY printed";
 
                 OdbcCommand cmd = new OdbcCommand(cmdString, pSqlConn);
@@ -48,7 +49,7 @@ namespace OrderValidation
                 OdbcDataReader invoiceReader = cmd.ExecuteReader();
                 if (invoiceReader.HasRows)
                 {
-                    List<Order> orders = new List<Order>();
+                    orders = new List<Order>();
                     while (invoiceReader.Read())
                     {
                         Order order = new Order(Convert.ToInt32(invoiceReader["BKAR_INV_NUM"].ToString())); 
@@ -56,9 +57,11 @@ namespace OrderValidation
 
                         orders.Add(order);
                     }
-
-                    refreshInvoices(orders);
                 }
+
+                InvoiceListPanel.Hide();
+                refreshInvoices(orders);
+                InvoiceListPanel.Show();
 
                 invoiceReader.Close();
                 pSqlConn.Close();
@@ -73,13 +76,17 @@ namespace OrderValidation
             InvoiceList.RowCount = 0;
 
             //for each invoice in the list
-            for (int i = 0; i < invoices.Count; i++)
+            if(invoices != null)
             {
-                //add invoice to table
-                addToTable(InvoiceList, new List<string>() { invoices[i].invoiceNumber.ToString(), invoices[i].date }, invoices[i]);
+                for (int i = 0; i < invoices.Count; i++)
+                {
+                    //add invoice to table
+                    addToTable(InvoiceList, new List<string>() { invoices[i].invoiceNumber.ToString(), invoices[i].date }, invoices[i]);
+                }
             }
 
             FinalizeButton.Enabled = false;
+            ReprintButton.Enabled = false;
         }
 
         private void addToTable(TableLayoutPanel table, List<string> columns, Object tag, Color? color = null)
@@ -124,14 +131,7 @@ namespace OrderValidation
                         item.description = invoiceReader["BKAR_INVL_PDESC"].ToString().TrimEnd(); ;
                         item.vendorPart = invoiceReader["BKIC_VND_PART"].ToString().TrimEnd();
                         item.shipQuantity = Convert.ToInt32(invoiceReader["BKAR_INVL_PQTY"].ToString());
-                        if(currentOrder.validated == null)
-                        {
-                            item.quantity = 0;
-                        }
-                        else
-                        {
-                            item.quantity = item.shipQuantity;
-                        }
+                        item.quantity = 0;
 
                         items.Add(item);
                     }
@@ -176,34 +176,40 @@ namespace OrderValidation
             Color color;
             ItemList.Controls.Clear();
             ItemList.RowCount = 0;
+            if (currentOrder.validated != "" && currentOrder.validated != null) 
+                currentOrder.items.Select(x => { x.quantity = x.shipQuantity; return x; }).ToList();
 
-            for (int i = 0; i < currentOrder.items.Count; i++)
+            if(currentOrder.items != null)
             {
-                if (currentOrder.items[i].quantity != currentOrder.items[i].shipQuantity)
+                for (int i = 0; i < currentOrder.items.Count; i++)
                 {
-                    color = Color.Yellow;
-                    orderComplete = false;
-                }
-                else color = Color.FromArgb(255, 240, 240, 240);
-
-                addToTable(ItemList,
-                    new List<string>()
+                    if (currentOrder.items[i].quantity != currentOrder.items[i].shipQuantity)
                     {
+                        color = Color.Yellow;
+                        orderComplete = false;
+                    }
+                    else color = Color.FromArgb(255, 240, 240, 240);
+
+                    addToTable(ItemList,
+                        new List<string>()
+                        {
                                 currentOrder.items[i].partCode,
                                 currentOrder.items[i].vendorPart,
                                 currentOrder.items[i].description,
                                 currentOrder.items[i].shipQuantity.ToString(),
                                 currentOrder.items[i].quantity.ToString()
-                    },
-                    currentOrder.items[i], color);
-                total += currentOrder.items[i].quantity;
+                        },
+                        currentOrder.items[i], color);
+                    total += currentOrder.items[i].quantity;
+                }
             }
 
             FinalizeButton.Enabled = orderComplete;
 
-            if (currentOrder.validated != null) FinalizeButton.Enabled = false;
+            if (currentOrder.validated != "" && currentOrder.validated != null) 
+                FinalizeButton.Enabled = false;
 
-            InvoicePanel.Hide();
+            //InvoicePanel.Hide();
             ItemsPanel.Show();
             EnterButton.Text = "Edit Quantity";
             EnterField.Text = "";
@@ -235,7 +241,8 @@ namespace OrderValidation
 
                 //set current invoice
                 currentOrder = clicked.Tag as Order;
-                ErrorText.Text = (DateTime.Now - Convert.ToDateTime(currentOrder.date)).ToString();
+                //ErrorText.Text = (DateTime.Now - Convert.ToDateTime(currentOrder.date)).ToString();
+                ReprintButton.Enabled = true;
                 currentItem = null;
             }
             //else if invoice is in complete table
@@ -275,7 +282,7 @@ namespace OrderValidation
                         if(currentItem != null)
                         {
                             Item item = table.GetControlFromPosition(j, i).Tag as Item;
-                            if (item.quantity < item.shipQuantity)
+                            if (item.quantity != item.shipQuantity)
                             {
                                 backColor = Color.Yellow;
                             }
@@ -295,41 +302,59 @@ namespace OrderValidation
 
         private void EnterField_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if(e.KeyChar == (char)Keys.Return)
+            if (e.KeyChar == (char)Keys.Return)
             {
-                if (InvoicePanel.Visible)
+                try 
                 {
-                    try
+                    if (ItemsPanel.Visible)
                     {
-                        currentOrder = getOrderFromNum(Convert.ToInt32(EnterField.Text));
-                        if(currentOrder.items == null)
+                        if (EnterField.Text == "FINALIZE")
                         {
-                            throw new Exception("Error: Invoice number " + EnterField.Text + " is invalid.");
+                            if (FinalizeButton.Enabled)
+                            {
+                                InvokeOnClick(FinalizeButton, new EventArgs());
+                            }
+                            else if (currentOrder.validated != "" && currentOrder.validated != null)
+                            {
+                                throw new Exception("Cannot validate already validated invoice.");
+                            }
+                            else
+                            {
+                                throw new Exception("Please enter all items before validating order.");
+                            }
+                        }
+                        else
+                        {
+                            try
+                            {
+                                currentOrder.items.Find(x => x.partCode == EnterField.Text).quantity++;
+                                populateOrder();
+                            }
+                            catch
+                            {
+                                throw new Exception("Part " + EnterField.Text + " not found.");
+                            }
                         }
                     }
-                    catch(Exception ex)
+                    else
                     {
-                        EnterField.Text = "";
-                        ErrorText.Text = ex.Message;
-                        return;
-                    }
+                        currentOrder = getOrderFromNum(Convert.ToInt32(EnterField.Text));
+                        if (currentOrder.items == null)
+                        {
+                            throw new Exception("Invoice number " + EnterField.Text + " is invalid.");
+                        }
 
-                    populateOrder();
-                    InvoiceNumText.Text = currentOrder.invoiceNumber.ToString();
-                }
-                else if(ItemsPanel.Visible)
-                {
-                    try
-                    {
-                        currentOrder.items.Find(x => x.partCode == EnterField.Text).quantity++;
                         populateOrder();
-                    }
-                    catch
-                    {
-                        ErrorText.Text = "Error: Part " + EnterField.Text +" not found.";
-                        EnterField.Text = "";
+                        ReprintButton.Enabled = true;
+                        InvoiceNumText.Text = currentOrder.invoiceNumber.ToString();
                     }
                 }
+                catch(Exception ex)
+                {
+                    new MessageForm(ex.Message, "Error").ShowDialog();
+                }
+
+                EnterField.Text = "";
             }
         }
 
@@ -352,6 +377,7 @@ namespace OrderValidation
             }
 
             InvokeOnClick(CancelButton, new EventArgs());
+            FinalizeButton.Enabled = false;
         }
 
         private void EnterButton_Click(object sender, EventArgs e)
@@ -370,11 +396,12 @@ namespace OrderValidation
                     try
                     {
                         currentItem.quantity = Convert.ToInt32(Interaction.InputBox("Quantity:", "Edit item quantity", currentItem.quantity.ToString()));
+                        ItemsPanel.Hide();
                         populateOrder();
                     }
                     catch(Exception ex)
                     {
-                        MessageBox.Show(ex.Message, "Error");
+                        new MessageForm(ex.Message, "Error").ShowDialog();
                     }
                 }
             }
@@ -382,14 +409,15 @@ namespace OrderValidation
 
         private void CancelButton_Click(object sender, EventArgs e)
         {
-            populateInvoices();
+            //populateInvoices();
             currentItem = null;
             currentOrder = null;
             ItemsPanel.Hide();
-            InvoicePanel.Show();
+            //InvoicePanel.Show();
             CancelButton.Enabled = false;
             EnterField.Text = "";
-            EnterButton.Text = "Open Invoice <Enter>";
+            //EnterButton.Text = "Open Invoice <Enter>";
+            this.ActiveControl = EnterField;
         }
 
         private void ValidationForm_KeyPress(object sender, KeyPressEventArgs e)
@@ -404,12 +432,58 @@ namespace OrderValidation
             }
         }
 
-        private void EnterButton_KeyPress(object sender, KeyPressEventArgs e)
+        private void ReprintButton_Click(object sender, EventArgs e)
         {
-            if(e.KeyChar == (char)Keys.K)
+            if(currentOrder != null)
             {
-                ErrorText.Text = "Test";
+                //establish database connection
+                string strConnection = "DSN=Ranshu";
+                OdbcConnection pSqlConn = null;
+                using (pSqlConn = new OdbcConnection(strConnection))
+                {
+                    //get unprocessed invoices from database
+                    string cmdString = "UPDATE BKARHINV " +
+                        "SET BKAR_INV_MAX = 0 " +
+                        "WHERE BKAR_INV_NUM = " + currentOrder.invoiceNumber;
+
+                    OdbcCommand cmd = new OdbcCommand(cmdString, pSqlConn);
+                    pSqlConn.Open();
+                    cmd.ExecuteNonQuery();
+                    pSqlConn.Close();
+                }
             }
+        }
+
+        private void InvoiceTypeButton_Click(object sender, EventArgs e)
+        {
+            if(invNot == "")
+            {
+                invNot = "not";
+                InvoiceTypeButton.Text = "View Current Invoices"; 
+                dateQualifier = "and (w.printed >= '" + DateTime.Now.ToString("yyyy-MM-dd") + "' and w.printed < '" + DateTime.Now.AddDays(1).ToString("yyyy-MM-dd") + "') ";
+                CalendarButton.Show();
+                populateInvoices();
+            }
+            else
+            {
+                invNot = "";
+                InvoiceTypeButton.Text = "View Previous Invoices";
+                dateQualifier = "";
+                CalendarButton.Hide();
+                populateInvoices();
+            }
+        }
+
+        private void Calendar_DateSelected(object sender, DateRangeEventArgs e)
+        {
+            dateQualifier = "and (w.printed >= '" + Calendar.SelectionStart.ToString("yyyy-MM-dd") + "' and w.printed < '" + Calendar.SelectionEnd.AddDays(1).ToString("yyyy-MM-dd") + "') ";
+            CalendarPanel.Hide();
+            populateInvoices();
+        }
+
+        private void CalendarButton_Click(object sender, EventArgs e)
+        {
+            CalendarPanel.Visible = !CalendarPanel.Visible;
         }
     }
 }

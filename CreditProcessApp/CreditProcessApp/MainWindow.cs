@@ -70,7 +70,7 @@ namespace CreditProcessApp
 
             populateTables();
 
-            if(CurrentUser.security_lvl <=1)
+            if(CurrentUser.security_lvl <=2)
             {
                 HeldViewButton.Show();
             }
@@ -93,6 +93,8 @@ namespace CreditProcessApp
         private void populateTables()
         {
             ProcessButton.Enabled = false;
+            ExitButton.Enabled = false;
+            OtherOrdersButton.Enabled = false;
             releaseInvoice();
             clearData();
             refreshTimer.Stop();
@@ -179,8 +181,8 @@ namespace CreditProcessApp
 
             
 
-            ProcessInvoiceList.Hide();
-            CompleteInvoiceList.Hide();
+            ProcessInvoicePanel.Hide();
+            CompleteInvoicePanel.Hide();
 
             try
             {
@@ -192,8 +194,8 @@ namespace CreditProcessApp
             }
             finally
             {
-                ProcessInvoiceList.Show();
-                CompleteInvoiceList.Show();
+                ProcessInvoicePanel.Show();
+                CompleteInvoicePanel.Show();
             }
 
             refreshTimer.Start();
@@ -386,6 +388,8 @@ namespace CreditProcessApp
          */
         private void tempLabel_Click(object sender, EventArgs e)
         {
+            ExitButton.Enabled = ProcessButton.Enabled = false;
+
             //get invoice and display data
             Label clicked = (Label)sender;
 
@@ -398,7 +402,7 @@ namespace CreditProcessApp
             if (ProcessInvoiceList == (sender as Label).Parent)
             {
                 //flag table
-                ProcessButton.Enabled = true;
+                ExitButton.Enabled = ProcessButton.Enabled = true;
                 row = ProcessInvoiceList.GetRow(clicked);
                 table = ProcessInvoiceList;
                 offTable = CompleteInvoiceList;
@@ -411,7 +415,7 @@ namespace CreditProcessApp
                     pSqlConn.Open();
                     string creditCommand = "UPDATE CRDTINV SET CRDT_INV_USER = '" + CurrentUser.user_code + "' " +
                         "WHERE CRDT_INV_NUM = " + ((Invoice)clicked.Tag).invoiceNumber + " " +
-                        "AND CRDT_INV_USER = 'null'";
+                        "AND (CRDT_INV_USER "+ held +"= 'null' OR CRDT_INV_USER = '" + CurrentUser.user_code + "')";
                     using (OdbcCommand cmd = new OdbcCommand(creditCommand, pSqlConn))
                     {
                         //if invoice is being processed by another user
@@ -431,13 +435,18 @@ namespace CreditProcessApp
             //else if invoice is in complete table
             else if(CompleteInvoiceList == (sender as Label).Parent)
             {
+                //ExitButton.Enabled = ProcessButton.Enabled = false;
                 //flag table
-                ProcessButton.Enabled = false;
                 row = CompleteInvoiceList.GetRow(clicked);
                 table = CompleteInvoiceList;
                 offTable = ProcessInvoiceList;
             }
 
+            if(OtherInvoicesPanel.Visible)
+            {
+                OtherInvoicesPanel.Hide();
+                BottomPanel.Show();
+            }
             OtherOrdersButton.Enabled = true;
 
             //release previous invoice
@@ -453,37 +462,39 @@ namespace CreditProcessApp
             }
             AccountDataButton.Enabled = true;
 
-            //for every row in flagged table
-            for (int i = 1; i <= table.RowCount; i++)
-            {
-                //if row matches invoice row
-                if(i == row)
+            if(table != null)
+            {//for every row in flagged table
+                for (int i = 1; i <= table.RowCount; i++)
                 {
-                    //iterate through row
-                    for (int j = 0; j < table.ColumnCount; j++)
+                    //if row matches invoice row
+                    if (i == row)
                     {
-                        //paint "selected" color
-                        table.GetControlFromPosition(j, row).BackColor = Color.LightGray;
+                        //iterate through row
+                        for (int j = 0; j < table.ColumnCount; j++)
+                        {
+                            //paint "selected" color
+                            table.GetControlFromPosition(j, row).BackColor = Color.LightGray;
+                        }
+                    }
+                    else
+                    {
+                        //iterate through row
+                        for (int j = 0; j < table.ColumnCount; j++)
+                        {
+                            //paint default color
+                            table.GetControlFromPosition(j, i).BackColor = Color.FromArgb(255, 240, 240, 240);
+                        }
                     }
                 }
-                else
+
+                //for all items in unflagged table
+                for (int i = 1; i <= offTable.RowCount; i++)
                 {
-                    //iterate through row
-                    for (int j = 0; j < table.ColumnCount; j++)
+                    for (int j = 0; j < offTable.ColumnCount; j++)
                     {
                         //paint default color
-                        table.GetControlFromPosition(j, i).BackColor = Color.FromArgb(255, 240, 240, 240);
+                        offTable.GetControlFromPosition(j, i).BackColor = Color.FromArgb(255, 240, 240, 240);
                     }
-                }
-            }
-
-            //for all items in unflagged table
-            for(int i = 1; i <= offTable.RowCount; i++)
-            {
-                for(int j = 0; j < offTable.ColumnCount; j++)
-                {
-                    //paint default color
-                    offTable.GetControlFromPosition(j, i).BackColor = Color.FromArgb(255, 240, 240, 240);
                 }
             }
 
@@ -633,14 +644,10 @@ namespace CreditProcessApp
                     cmd.ExecuteNonQuery();
                     pSqlConn.Close();
                 }
-
-                //refresh tables
-                populateTables();
             }
 
-            //reset UI
-            currentInvoice = null;
-            ProcessButton.Enabled = false;
+            //refresh tables
+            populateTables();
         }
 
         private void populatePaymentTable(Payment payment)
@@ -784,57 +791,60 @@ namespace CreditProcessApp
 
         private void OtherOrdersButton_Click(object sender, EventArgs e)
         {
-            BottomPanel.Hide();
-            OtherInvoicesPanel.Show();
-            List<Invoice> incomplete = new List<Invoice>();
-
-            //establish database connection
-            string strConnection = "DSN=Ranshu";
-            OdbcConnection pSqlConn = null;
-            using (pSqlConn = new OdbcConnection(strConnection))
+            if(currentInvoice != null)
             {
-                //get unprocessed invoices from database
-                string creditCommand = "SELECT BKAR_INV_NUM, BKAR_INV_CUSCOD, BKAR_INV_INVDTE, BKAR_INV_TOTAL, BKAR_INV_SHPVIA, BKAR_INV_SLSP, BKAR_INV_LOC, INVOICE_NUM, TRACKING_NUM " +
-                    "FROM BKARHINV INNER JOIN TRACKING ON BKAR_INV_NUM = INVOICE_NUM " +
-                    "WHERE TRACKING_NUM <= '' and BKAR_INV_CUSCOD = '"+ currentInvoice.account +"' " +
-                    "ORDER BY " + (sender as Button).Tag.ToString();
+                BottomPanel.Hide();
+                OtherInvoicesPanel.Show();
+                List<Invoice> incomplete = new List<Invoice>();
 
-                OdbcCommand cmd = new OdbcCommand(creditCommand, pSqlConn);
-                pSqlConn.Open();
-                OdbcDataReader creditReader = cmd.ExecuteReader();
-                if (creditReader.HasRows)
+                //establish database connection
+                string strConnection = "DSN=Ranshu";
+                OdbcConnection pSqlConn = null;
+                using (pSqlConn = new OdbcConnection(strConnection))
                 {
-                    while (creditReader.Read())
+                    //get unprocessed invoices from database
+                    string creditCommand = "SELECT invoice_num, BKAR_INV_NUM, BKAR_INV_CUSCOD, BKAR_INV_INVDTE, BKAR_INV_TOTAL, BKAR_INV_SHPVIA, BKAR_INV_SLSP, BKAR_INV_LOC " +
+                        "FROM wmsOrders w inner join BKARHINV b ON w.invoice_num = b.BKAR_INV_NUM " +
+                        "WHERE w.validated is null and b.BKAR_INV_CUSCOD = '" + currentInvoice.account + "' and w.invoice_num != " + currentInvoice.invoiceNumber +
+                        "ORDER BY " + (sender as Button).Tag.ToString();
+
+                    OdbcCommand cmd = new OdbcCommand(creditCommand, pSqlConn);
+                    pSqlConn.Open();
+                    OdbcDataReader creditReader = cmd.ExecuteReader();
+                    if (creditReader.HasRows)
                     {
-                        //create and fill invoice
-                        Invoice invoice = new Invoice();
+                        while (creditReader.Read())
+                        {
+                            //create and fill invoice
+                            Invoice invoice = new Invoice();
 
-                        invoice.invoiceNumber = Convert.ToInt32(creditReader["BKAR_INV_NUM"].ToString());
-                        invoice.account = creditReader["BKAR_INV_CUSCOD"].ToString().TrimEnd();
-                        invoice.date = creditReader["BKAR_INV_DATE"].ToString().TrimEnd();
-                        invoice.total = Convert.ToDouble(creditReader["BKAR_INV_TOTAL"].ToString());
-                        invoice.deliveryMethod = creditReader["BKAR_INV_SHPVIA"].ToString().TrimEnd();
-                        invoice.salesPerson = Convert.ToInt32(creditReader["BKAR_INV_SLSP"].ToString());
-                        invoice.setLocation(creditReader["BKAR_INV_LOC"].ToString());
+                            invoice.invoiceNumber = Convert.ToInt32(creditReader["BKAR_INV_NUM"].ToString());
+                            invoice.account = creditReader["BKAR_INV_CUSCOD"].ToString().TrimEnd();
+                            invoice.date = creditReader["BKAR_INV_INVDTE"].ToString().TrimEnd();
+                            invoice.total = Convert.ToDouble(creditReader["BKAR_INV_TOTAL"].ToString());
+                            invoice.deliveryMethod = creditReader["BKAR_INV_SHPVIA"].ToString().TrimEnd();
+                            invoice.salesPerson = Convert.ToInt32(creditReader["BKAR_INV_SLSP"].ToString());
+                            invoice.setLocation(creditReader["BKAR_INV_LOC"].ToString());
 
-                        //add invoice to list
-                        incomplete.Add(invoice);
+                            //add invoice to list
+                            incomplete.Add(invoice);
+                        }
                     }
+
+                    creditReader.Close();
+                    pSqlConn.Close();
                 }
 
-                creditReader.Close();
-                pSqlConn.Close();
-            }
+                OtherInvoicesPanel.Hide();
 
-            OtherInvoicesList.Hide();
-
-            try
-            {
-                refreshTable(OtherInvoicesList, incomplete);
-            }
-            finally
-            {
-                OtherInvoicesList.Show();
+                try
+                {
+                    refreshTable(OtherInvoicesList, incomplete);
+                }
+                finally
+                {
+                    OtherInvoicesPanel.Show();
+                }
             }
         }
 
@@ -953,12 +963,26 @@ namespace CreditProcessApp
 
         private void PreviousPaymentButton_Click(object sender, EventArgs e)
         {
-            
+            populatePaymentTable(account.previousPayment());
+            NextPaymentButton.Enabled = true;
+            if (account.paymentIndex > 0)
+                PreviousPaymentButton.Enabled = true;
+            else
+                PreviousPaymentButton.Enabled = false;
         }
 
         private void NextPaymentButton_Click(object sender, EventArgs e)
         {
+            populatePaymentTable(account.nextPayment());
+            PreviousPaymentButton.Enabled = true;
+            if (account.paymentIndex + 1 < account.count)
+                NextPaymentButton.Enabled = true;
+            else
+                NextPaymentButton.Enabled = false;
+        }
 
+        private void OtherInvoicesPanel_VisibleChanged(object sender, EventArgs e)
+        {
         }
     }
 }

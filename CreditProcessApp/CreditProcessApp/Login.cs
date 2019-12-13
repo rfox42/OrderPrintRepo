@@ -29,6 +29,8 @@ namespace CreditProcessApp
         public Login()
         {
             InitializeComponent();
+
+            this.ActiveControl = UsernameTextBox;
         }
 
         /*
@@ -53,7 +55,7 @@ namespace CreditProcessApp
                 using (pSqlConn = new OdbcConnection(strConnection))
                 {
                     //get user code and security lvl from database with given username and password
-                    string creditCommand = "SELECT BKSY_USER_CODE, BKSY_USER_SCTY FROM BKSYUSER WHERE BKSY_USER_CODE = '" + UsernameTextBox.Text + "' AND BKSY_USER_PSWD = '" + PasswordTextBox.Text + "'";
+                    string creditCommand = "SELECT BKSY_USER_CODE, BKSY_USER_SCTY FROM BKSYUSER WHERE BKSY_USER_CODE = '" + UsernameTextBox.Text.ToUpper() + "' AND BKSY_USER_PSWD = '" + PasswordTextBox.Text.ToUpper() + "'";
                     OdbcCommand cmd = new OdbcCommand(creditCommand, pSqlConn);
                     pSqlConn.Open();
                     OdbcDataReader userReader = cmd.ExecuteReader();
@@ -69,7 +71,7 @@ namespace CreditProcessApp
                     }
 
                     //if security level isn't high enough
-                    if(CurrentUser.security_lvl > 2)
+                    if(CurrentUser.security_lvl > 3)
                     {
                         //report failure
                         throw new Exception("You do not have the security level to access this application");

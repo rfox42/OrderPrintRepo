@@ -195,7 +195,7 @@
             this.PasswordTextBox.Multiline = false;
             this.PasswordTextBox.Name = "PasswordTextBox";
             this.PasswordTextBox.Size = new System.Drawing.Size(195, 28);
-            this.PasswordTextBox.TabIndex = 4;
+            this.PasswordTextBox.TabIndex = 1;
             this.PasswordTextBox.Text = "";
             this.PasswordTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.PasswordTextBox_KeyPress);
             // 
@@ -233,7 +233,7 @@
             this.UsernameTextBox.Multiline = false;
             this.UsernameTextBox.Name = "UsernameTextBox";
             this.UsernameTextBox.Size = new System.Drawing.Size(195, 28);
-            this.UsernameTextBox.TabIndex = 3;
+            this.UsernameTextBox.TabIndex = 0;
             this.UsernameTextBox.Text = "";
             // 
             // Login

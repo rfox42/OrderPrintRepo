@@ -169,7 +169,18 @@ namespace RanshuPrintService
         private static void timerProgram(object sender, ElapsedEventArgs e)
         {
             timer.Stop();
-            newOrders();
+
+            try
+            {
+                newOrders();
+            }
+            catch(Exception ex)
+            {
+                string error = new StackTrace(ex, true).GetFrame(0).GetFileLineNumber() + " " + ex.Message;
+                writeToFile(error);
+                SendEmail("Failure on invoice: " + currentOrder.invoiceNumber, error);
+                return;
+            }
 
             try
             {
@@ -185,7 +196,7 @@ namespace RanshuPrintService
                         //emails error report to IT
                         string text = "There appears to be a problem printing order " + currentOrder.invoiceNumber + " to " + installedPrinter + ".";
                         text += System.Environment.NewLine + "Please check the printer.";
-                        SendEmail(installedPrinter, text);
+                        SendEmail("Print Failure on " + installedPrinter, text);
 
                         //breaks loop once error found
                         break;
@@ -215,14 +226,15 @@ namespace RanshuPrintService
             string[] arrNotes = new string[10];
 
             // Copy all invoices from Addsum not listed in wmsOrders table
-            string strConnection = "DSN=Ranshu";
+            string strConnection = "DSN=RANSHU";
             OdbcConnection pSqlConn = null;
             using (pSqlConn = new OdbcConnection(strConnection))
             {
                 //get order information
                 string sqlInvoice =
-                "SELECT BKAR_INV_NUM, BKAR_INV_INVDTE, BKAR_INV_CUSCOD, BKAR_INV_CUSNME, BKAR_INV_CUSA1, BKAR_INV_CUSA2, BKAR_INV_CUSCTY, BKAR_INV_CUSST, BKAR_INV_CUSZIP, BKAR_INV_CUSCUN, BKAR_INV_SHPNME, BKAR_INV_SHPA1, BKAR_INV_SHPA2, BKAR_INV_SHPCTY, BKAR_INV_SHPST, BKAR_INV_SHPZIP, BKAR_INV_SHPCUN, BKAR_INV_LOC, BKAR_INV_CUSORD, BKAR_INV_SHPVIA, BKAR_INV_TERMD, BKAR_INV_ENTBY, BKAR_INV_TOTAL, BKAR_INV_SLSP, invoice_num" +
+                "SELECT BKAR_INV_NUM, BKAR_INV_INVDTE, BKAR_INV_CUSCOD, BKAR_INV_CUSNME, BKAR_INV_CUSA1, BKAR_INV_CUSA2, BKAR_INV_CUSCTY, BKAR_INV_CUSST, BKAR_INV_CUSZIP, BKAR_INV_CUSCUN, BKAR_INV_SHPNME, BKAR_INV_SHPA1, BKAR_INV_SHPA2, BKAR_INV_SHPCTY, BKAR_INV_SHPST, BKAR_INV_SHPZIP, BKAR_INV_SHPCUN, BKAR_INV_LOC, BKAR_INV_CUSORD, BKAR_INV_SHPVIA, BKAR_INV_TERMD, BKAR_INV_ENTBY, BKAR_INV_TOTAL, BKAR_INV_SLSP, invoice_num, CRDT_INV_NUM" +
                 " FROM BKARHINV LEFT JOIN wmsOrders ON BKAR_INV_NUM = invoice_num " +
+                "LEFT JOIN CRDTINV on BKAR_INV_NUM = CRDT_INV_NUM" +
                 " WHERE BKAR_INV_MAX = 0";
                 OdbcCommand sqlCommandINV = new OdbcCommand(sqlInvoice, pSqlConn);
                 sqlCommandINV.CommandTimeout = 90;
@@ -347,7 +359,7 @@ namespace RanshuPrintService
                         }
 
                         //if order is paid by credit
-                        if (order.paymentTerms == "VISA/MC" && !REPRINT)
+                        if (order.paymentTerms == "VISA/MC" && readerINV["CRDT_INV_NUM"].ToString() != order.invoiceNumber.ToString())
                         {
                             string creditNotes = "";
 
@@ -364,27 +376,16 @@ namespace RanshuPrintService
                             {
                                 creditCommand.ExecuteNonQuery();
                             }
-
-                            if (order.deliveryMethod == "FAX" || order.deliveryMethod == "RMT")
-                            {
-                                flagPrint = 0;
-                                string sqlMarkPrint = "UPDATE BKARHINV " +
-                                            "SET BKAR_INV_MAX = 1 " +
-                                            "WHERE BKAR_INV_NUM = " + order.invoiceNumber;
-                                using (OdbcCommand cmd = new OdbcCommand(sqlMarkPrint, pSqlConn))
-                                {
-                                    cmd.ExecuteNonQuery();
-                                }
-                                continue;
-                            }
                         }
-                        else if (!(order.deliveryMethod == "DELIVERY" || order.deliveryMethod == "WILL CALL"))
+                        else if (!(order.deliveryMethod == "FAX" || order.deliveryMethod == "RMT"))
                         {
                             int numItems = 0;
                             int numPage = 1;
 
+                            strInvLoc = order.location;
+
                             // Find first location code
-                            strInvLoc = order.items[0].locationCode;
+                            /*strInvLoc = order.items[0].locationCode;
                             foreach (Item item in order.items)
                             {
                                 //if Type is not message line 'X' or non-stock 'N'
@@ -395,7 +396,7 @@ namespace RanshuPrintService
                                     break;
                                 }
 
-                            }
+                            }*/
 
 
                             //update excel template
@@ -479,13 +480,13 @@ namespace RanshuPrintService
 
                             // ASSIGN PRINTER BASED OFF OF WAREHOUSE CODE
                             flagPrint = selectPrinter(strInvLoc, (order.deliveryMethod == "DELIVERY" || order.deliveryMethod == "WILL CALL"));
-                            writeToFile(xlApp.ActivePrinter.ToString());
+                            writeToFile(installedPrinter);
 
                             // Dont print FAX
-                            if (order.deliveryMethod == "FAX" || order.deliveryMethod == "RMT")
+                            /*if (order.deliveryMethod == "FAX" || order.deliveryMethod == "RMT")
                             {
                                 flagPrint = 0;
-                            }
+                            }*/
 
                             int numPageItems = 0;
                             int currentRow = 26;
@@ -630,53 +631,60 @@ namespace RanshuPrintService
                                 xlsheet.PrintOutEx(misValue, misValue, 1, false);
 
                             }
-                        }
-                        else
-                        {
-                            installedPrinter = "RETAIL" + order.items[0].locationCode;
+
+                            if (!REPRINT)
+                            {
+                                //add order to wmsOrders
+                                //update invoice as printed
+                                strCurrentDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
+                                sqlUpdateList = "INSERT INTO wmsOrders (invoice_num,printed,printer) " +
+                                                "VALUES (" + order.invoiceNumber + ", '" + strCurrentDateTime.ToString() +
+                                                "', '" + installedPrinter + "');" +
+                                                "UPDATE BKARHINV " +
+                                                "SET BKAR_INV_MAX = 1 " +
+                                                "WHERE BKAR_INV_NUM = " + order.invoiceNumber;
+                                using (OdbcCommand cmd = new OdbcCommand(sqlUpdateList, pSqlConn))
+                                {
+                                    cmd.ExecuteNonQuery();
+                                }
+                            }
+                            else
+                            {
+                                //update invoice as printed
+                                strCurrentDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
+                                sqlUpdateList = "UPDATE wmsOrders " +
+                                                "SET printed = '" + strCurrentDateTime.ToString() + "', " +
+                                                "printer = '" + installedPrinter + "'" +
+                                                "WHERE invoice_num = " + order.invoiceNumber + ";" +
+                                                "UPDATE BKARHINV " +
+                                                "SET BKAR_INV_MAX = 1 " +
+                                                "WHERE BKAR_INV_NUM = " + order.invoiceNumber;
+                                using (OdbcCommand cmd = new OdbcCommand(sqlUpdateList, pSqlConn))
+                                {
+                                    cmd.ExecuteNonQuery();
+                                }
+                            }
+
+                            if(order.deliveryMethod == "DELIVERY" || order.deliveryMethod == "WILL CALL")
+                            {
+                                strCurrentDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
+                                sqlUpdateList = "UPDATE wmsOrders " +
+                                                "SET validated = '" + strCurrentDateTime.ToString()+ "' " +
+                                                "WHERE invoice_num = " + order.invoiceNumber;
+                                using (OdbcCommand cmd = new OdbcCommand(sqlUpdateList, pSqlConn))
+                                {
+                                    cmd.ExecuteNonQuery();
+                                }
+                            }
+
                         }
 
-                        if (order.deliveryMethod == "FAX" || order.deliveryMethod == "RMT")
+                        string sqlMarkPrint = "UPDATE BKARHINV " +
+                                    "SET BKAR_INV_MAX = 1 " +
+                                    "WHERE BKAR_INV_NUM = " + order.invoiceNumber;
+                        using (OdbcCommand cmd = new OdbcCommand(sqlMarkPrint, pSqlConn))
                         {
-                            string sqlMarkPrint = "UPDATE BKARHINV " +
-                                        "SET BKAR_INV_MAX = 1 " +
-                                        "WHERE BKAR_INV_NUM = " + order.invoiceNumber;
-                            using (OdbcCommand cmd = new OdbcCommand(sqlMarkPrint, pSqlConn))
-                            {
-                                cmd.ExecuteNonQuery();
-                            }
-                        }
-                        else if (!REPRINT)
-                        {
-                            //add order to wmsOrders
-                            //update invoice as printed
-                            strCurrentDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
-                            sqlUpdateList = "INSERT INTO wmsOrders (invoice_num,printed,printer) " +
-                                            "VALUES (" + order.invoiceNumber + ", '" + strCurrentDateTime.ToString() +
-                                            "', '" + installedPrinter + "');" +
-                                            "UPDATE BKARHINV " +
-                                            "SET BKAR_INV_MAX = 1 " +
-                                            "WHERE BKAR_INV_NUM = " + order.invoiceNumber;
-                            using (OdbcCommand cmd = new OdbcCommand(sqlUpdateList, pSqlConn))
-                            {
-                                cmd.ExecuteNonQuery();
-                            }
-                        }
-                        else
-                        {
-                            //update invoice as printed
-                            strCurrentDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
-                            sqlUpdateList = "UPDATE wmsOrders " +
-                                            "SET printed = '" + strCurrentDateTime.ToString() + "', " +
-                                            "printer = '" + installedPrinter + "'" +
-                                            "WHERE invoice_num = " + order.invoiceNumber + ";" +
-                                            "UPDATE BKARHINV " +
-                                            "SET BKAR_INV_MAX = 1 " +
-                                            "WHERE BKAR_INV_NUM = " + order.invoiceNumber;
-                            using (OdbcCommand cmd = new OdbcCommand(sqlUpdateList, pSqlConn))
-                            {
-                                cmd.ExecuteNonQuery();
-                            }
+                            cmd.ExecuteNonQuery();
                         }
 
                         // CLEAN UP LINE ITEMS AND EXTRA PAGES
@@ -695,7 +703,7 @@ namespace RanshuPrintService
                 pSqlConn.Close();
             }
 
-            writeToFile("END SET - Test");
+            writeToFile("END SET");
         }
 
         public static void writeToFile(string message)
@@ -763,56 +771,53 @@ namespace RanshuPrintService
             string backupPrinter;
 
             // ASSIGN PRINTER BASED OFF OF WAREHOUSE CODE
-
-            if (locationcode == "RENO" || locationcode == "SPARKS" || locationcode == "SPARKS2")
+            if(retail)
             {
-                if (retail)
-                {
-                    installedPrinter = "RICOHNV";
-                }
-                else
-                {
-                    installedPrinter = "RICOHNV";
-                }
-            }
-            /*else if (locationcode == "SPARKS")
-            {
-                installedPrinter = "RICOHNV";
-            }
-            else if (locationcode == "SPARKS2")
-            {
-                installedPrinter = "RICOHNV";
-            }
-            else if (locationcode == "")
-            {
-                installedPrinter = "RICOHNV";
-            }*/
-            else if (locationcode == "FORT WORTH")
-            {
-                if (retail)
-                {
-                    installedPrinter = "RICOHTX";
-                }
-                else
-                {
-                    installedPrinter = "RICOHTX";
-                }
-            }
-            else if (locationcode == "TX CONSIGN")
-            {
-                installedPrinter = "RICOHTX";
-            }
-            else if (locationcode == "PA")
-            {
-                installedPrinter = "RICOHTX";
-            }
-            else if (locationcode == "FL")
-            {
-                installedPrinter = "RICOHTX";
+                installedPrinter = "RETAIL " + locationcode;
+                return 0;
             }
             else
             {
-                installedPrinter = null;
+                if (locationcode == "RENO" || locationcode == "SPARKS" || locationcode == "SPARKS2")
+                {
+                    installedPrinter = "RICOHNV";
+                }
+                /*else if (locationcode == "SPARKS")
+                {
+                    installedPrinter = "RICOHNV";
+                }
+                else if (locationcode == "SPARKS2")
+                {
+                    installedPrinter = "RICOHNV";
+                }
+                else if (locationcode == "")
+                {
+                    installedPrinter = "RICOHNV";
+                }*/
+                else if (locationcode == "FORT WORTH")
+                {
+                    installedPrinter = "RICOHTX";
+                }
+                else if (locationcode == "TX CONSIGN")
+                {
+                    installedPrinter = "RICOHTX";
+                }
+                else if (locationcode == "PA")
+                {
+                    installedPrinter = "RICOHTX";
+                }
+                else if (locationcode == "FL")
+                {
+                    installedPrinter = "RICOHTX";
+                }
+                else if(locationcode == "MEI")
+                {
+                    installedPrinter = "RICOHTX";
+                }
+                else
+                {
+                    installedPrinter = null;
+                }
             }
 
             if (installedPrinter != null)
@@ -875,7 +880,7 @@ namespace RanshuPrintService
             MailMessage msgMail;
             msgMail = new MailMessage(new MailAddress("orders@ranshu.com"), new MailAddress("ryan@ranshu.com"));
             //msgMail.CC.Add(new MailAddress("jeremy@ranshu.com"));
-            msgMail.Subject = "Print Error on " + subject;
+            msgMail.Subject = "Ranshu Print Service Error: " + subject;
             msgMail.Body = msgText;
             msgMail.IsBodyHtml = true;
 

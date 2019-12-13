@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 using System.Timers;
 using System.IO;
@@ -195,10 +196,18 @@ namespace OrderPrint
         static void timerProgram(object sender, ElapsedEventArgs e)
         {
             timer.Stop();
-
-            if (flagActive == 0)
+            Console.WriteLine("Tick");
+            try
             {
-                newOrders();
+                if (flagActive == 0)
+                {
+                    newOrders();
+                    Console.WriteLine("test");
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(new StackTrace(ex, true).GetFrame(0).GetFileLineNumber() + " " + ex.Message);
             }
 
             //checks for errors on the installed printer
@@ -237,7 +246,7 @@ namespace OrderPrint
             string[] arrNotes = new string[10];
 
             // Copy all invoices from Addsum not listed in wmsOrders table
-            string strConnection = "DSN=Ranshu";
+            string strConnection = "DSN=RANSHU";
             OdbcConnection pSqlConn = null;
             using (pSqlConn = new OdbcConnection(strConnection))
             {
@@ -247,9 +256,11 @@ namespace OrderPrint
                 " FROM BKARHINV LEFT JOIN wmsOrders ON BKAR_INV_NUM = invoice_num " +
                 " WHERE BKAR_INV_MAX = 0" ;
                 OdbcCommand sqlCommandINV = new OdbcCommand(sqlInvoice, pSqlConn);
-                sqlCommandINV.CommandTimeout = 90;
+                sqlCommandINV.CommandTimeout = 120;
                 pSqlConn.Open();
+                Console.WriteLine("connection");
                 OdbcDataReader readerINV = sqlCommandINV.ExecuteReader();
+                Console.WriteLine("Query");
                 if (readerINV.HasRows)
                 {
                     while (readerINV.Read() && test < 10)
@@ -765,8 +776,8 @@ namespace OrderPrint
                 // SEARCH FOR NAME/VALUE PAIR WITH installedPrinter AS THE NAME AND EXTRACT THE PORT NAME FROM IT
                 // USE THE PORT NAME TO SPECIFY THE ACTIVE PRINTER IN THE EXCEL INSTANCE
                 
-                //subkey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows NT\CurrentVersion\Devices", false);
-                subkey = Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\Windows NT\CurrentVersion\Print\Printers", false);
+                subkey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows NT\CurrentVersion\Devices", false);
+                //subkey = Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\Windows NT\CurrentVersion\Print\Printers", false);
                 foreach (string printerName in subkey.GetValueNames())
                 {
                     if (printerName == installedPrinter)
@@ -868,7 +879,7 @@ namespace OrderPrint
             }
 
             //connect to database
-            string strConnection = "DSN=Ranshu20190831";
+            string strConnection = "DSN=RANSHU";
             OdbcConnection pSqlConn = null;
             using (pSqlConn = new OdbcConnection(strConnection))
             {

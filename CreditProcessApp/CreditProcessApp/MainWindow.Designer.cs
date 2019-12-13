@@ -657,7 +657,7 @@
             this.ProcessInvoiceList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 18.16038F));
             this.ProcessInvoiceList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 13.91509F));
             this.ProcessInvoiceList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 13.4434F));
-            this.ProcessInvoiceList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 108F));
+            this.ProcessInvoiceList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 109F));
             this.ProcessInvoiceList.Controls.Add(this.label1, 2, 0);
             this.ProcessInvoiceList.Controls.Add(this.label5, 4, 0);
             this.ProcessInvoiceList.Controls.Add(this.label4, 3, 0);
@@ -677,7 +677,7 @@
             this.label1.AutoSize = true;
             this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(220, 1);
+            this.label1.Location = new System.Drawing.Point(219, 1);
             this.label1.Margin = new System.Windows.Forms.Padding(1);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(71, 36);
@@ -690,7 +690,7 @@
             this.label5.AutoSize = true;
             this.label5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(349, 1);
+            this.label5.Location = new System.Drawing.Point(347, 1);
             this.label5.Margin = new System.Windows.Forms.Padding(1);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(52, 36);
@@ -703,10 +703,10 @@
             this.label4.AutoSize = true;
             this.label4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(293, 1);
+            this.label4.Location = new System.Drawing.Point(292, 1);
             this.label4.Margin = new System.Windows.Forms.Padding(1);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(54, 36);
+            this.label4.Size = new System.Drawing.Size(53, 36);
             this.label4.TabIndex = 7;
             this.label4.Text = "SLSP";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -717,10 +717,10 @@
             this.label6.BackColor = System.Drawing.SystemColors.Control;
             this.label6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(403, 1);
+            this.label6.Location = new System.Drawing.Point(401, 1);
             this.label6.Margin = new System.Windows.Forms.Padding(1);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(107, 36);
+            this.label6.Size = new System.Drawing.Size(109, 36);
             this.label6.TabIndex = 3;
             this.label6.Text = "08/20/2019";
             this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -734,7 +734,7 @@
             this.label7.Location = new System.Drawing.Point(91, 1);
             this.label7.Margin = new System.Windows.Forms.Padding(1);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(127, 36);
+            this.label7.Size = new System.Drawing.Size(126, 36);
             this.label7.TabIndex = 2;
             this.label7.Text = "AUTOAIROL";
             this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -937,7 +937,7 @@
             this.CardDataTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 31.01604F));
             this.CardDataTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 68.98396F));
             this.CardDataTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 49F));
-            this.CardDataTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 47F));
+            this.CardDataTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 48F));
             this.CardDataTable.Controls.Add(this.NextPaymentButton, 3, 0);
             this.CardDataTable.Controls.Add(this.PreviousPaymentButton, 2, 0);
             this.CardDataTable.Controls.Add(this.PaymentNotesText, 1, 2);
@@ -966,10 +966,10 @@
             this.NextPaymentButton.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
             this.NextPaymentButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.NextPaymentButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.NextPaymentButton.Location = new System.Drawing.Point(420, 0);
+            this.NextPaymentButton.Location = new System.Drawing.Point(419, 0);
             this.NextPaymentButton.Margin = new System.Windows.Forms.Padding(0);
             this.NextPaymentButton.Name = "NextPaymentButton";
-            this.NextPaymentButton.Size = new System.Drawing.Size(48, 49);
+            this.NextPaymentButton.Size = new System.Drawing.Size(49, 49);
             this.NextPaymentButton.TabIndex = 16;
             this.NextPaymentButton.Tag = "BKAR_INV_NUM";
             this.NextPaymentButton.Text = ">";
@@ -984,7 +984,7 @@
             this.PreviousPaymentButton.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
             this.PreviousPaymentButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.PreviousPaymentButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.PreviousPaymentButton.Location = new System.Drawing.Point(371, 0);
+            this.PreviousPaymentButton.Location = new System.Drawing.Point(370, 0);
             this.PreviousPaymentButton.Margin = new System.Windows.Forms.Padding(0);
             this.PreviousPaymentButton.Name = "PreviousPaymentButton";
             this.PreviousPaymentButton.Size = new System.Drawing.Size(49, 49);
@@ -1041,7 +1041,7 @@
             this.CardNumText.Location = new System.Drawing.Point(116, 1);
             this.CardNumText.Margin = new System.Windows.Forms.Padding(1);
             this.CardNumText.Name = "CardNumText";
-            this.CardNumText.Size = new System.Drawing.Size(254, 47);
+            this.CardNumText.Size = new System.Drawing.Size(253, 47);
             this.CardNumText.TabIndex = 7;
             this.CardNumText.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -1077,7 +1077,7 @@
             this.AccountNameTable.ColumnCount = 3;
             this.AccountNameTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.AccountNameTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.AccountNameTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 65F));
+            this.AccountNameTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 67F));
             this.AccountNameTable.Controls.Add(this.AccountDataCloseButton, 0, 0);
             this.AccountNameTable.Controls.Add(this.AccountNameText, 0, 0);
             this.AccountNameTable.Controls.Add(this.AccountNameLabel, 0, 0);
@@ -1097,10 +1097,10 @@
             this.AccountDataCloseButton.FlatAppearance.BorderColor = System.Drawing.Color.Gray;
             this.AccountDataCloseButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.AccountDataCloseButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.AccountDataCloseButton.Location = new System.Drawing.Point(401, 1);
+            this.AccountDataCloseButton.Location = new System.Drawing.Point(399, 1);
             this.AccountDataCloseButton.Margin = new System.Windows.Forms.Padding(0);
             this.AccountDataCloseButton.Name = "AccountDataCloseButton";
-            this.AccountDataCloseButton.Size = new System.Drawing.Size(66, 41);
+            this.AccountDataCloseButton.Size = new System.Drawing.Size(68, 41);
             this.AccountDataCloseButton.TabIndex = 20;
             this.AccountDataCloseButton.Text = "Close";
             this.AccountDataCloseButton.UseVisualStyleBackColor = false;
@@ -1111,10 +1111,10 @@
             this.AccountNameText.AutoSize = true;
             this.AccountNameText.Dock = System.Windows.Forms.DockStyle.Fill;
             this.AccountNameText.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.AccountNameText.Location = new System.Drawing.Point(202, 2);
+            this.AccountNameText.Location = new System.Drawing.Point(201, 2);
             this.AccountNameText.Margin = new System.Windows.Forms.Padding(1);
             this.AccountNameText.Name = "AccountNameText";
-            this.AccountNameText.Size = new System.Drawing.Size(197, 39);
+            this.AccountNameText.Size = new System.Drawing.Size(196, 39);
             this.AccountNameText.TabIndex = 7;
             this.AccountNameText.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
@@ -1126,7 +1126,7 @@
             this.AccountNameLabel.Location = new System.Drawing.Point(2, 2);
             this.AccountNameLabel.Margin = new System.Windows.Forms.Padding(1);
             this.AccountNameLabel.Name = "AccountNameLabel";
-            this.AccountNameLabel.Size = new System.Drawing.Size(197, 39);
+            this.AccountNameLabel.Size = new System.Drawing.Size(196, 39);
             this.AccountNameLabel.TabIndex = 3;
             this.AccountNameLabel.Text = "Account:";
             this.AccountNameLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1501,6 +1501,7 @@
             this.OtherInvoicesPanel.Size = new System.Drawing.Size(952, 198);
             this.OtherInvoicesPanel.TabIndex = 3;
             this.OtherInvoicesPanel.Visible = false;
+            this.OtherInvoicesPanel.VisibleChanged += new System.EventHandler(this.OtherInvoicesPanel_VisibleChanged);
             // 
             // OtherInvoicesTable
             // 
@@ -1832,8 +1833,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(952, 613);
-            this.Controls.Add(this.BottomPanel);
             this.Controls.Add(this.OtherInvoicesPanel);
+            this.Controls.Add(this.BottomPanel);
             this.Controls.Add(this.CalendarPanel);
             this.Controls.Add(this.TopPanel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;

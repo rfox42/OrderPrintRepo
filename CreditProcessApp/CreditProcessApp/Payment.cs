@@ -28,7 +28,7 @@ namespace CreditProcessApp
     class Account
     {
         List<Payment> paymentMethods;
-        int paymentIndex;
+        public int paymentIndex;
         public int count;
 
         public Account(List<Payment> payments)
@@ -63,7 +63,7 @@ namespace CreditProcessApp
 
         public Payment previousPayment()
         {
-            if (paymentMethods.Count > paymentIndex - 1)
+            if (paymentIndex > 0)
             {
                 paymentIndex--;
                 return paymentMethods[paymentIndex];

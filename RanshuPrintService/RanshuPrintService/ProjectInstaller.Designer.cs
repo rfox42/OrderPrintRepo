@@ -36,7 +36,7 @@
             // 
             this.serviceProcessInstaller1.Account = System.ServiceProcess.ServiceAccount.User;
             this.serviceProcessInstaller1.Password = "Twisparkle007*";
-            this.serviceProcessInstaller1.Username = @"RPC\rfox";
+            this.serviceProcessInstaller1.Username = @"RPC\admin4";
             // 
             // serviceInstaller1
             // 
