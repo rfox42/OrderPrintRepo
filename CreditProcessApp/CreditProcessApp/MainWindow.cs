@@ -92,6 +92,7 @@ namespace CreditProcessApp
          */
         private void populateTables()
         {
+            ReprocessButton.Enabled = false;
             ProcessButton.Enabled = false;
             ExitButton.Enabled = false;
             OtherOrdersButton.Enabled = false;
@@ -310,7 +311,7 @@ namespace CreditProcessApp
             {
                 //add total to row
                 //add click event
-                tempLabel = new Label() { Text = invoice.total.ToString(), TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Microsoft Sans Serif", 11, FontStyle.Regular), Dock = DockStyle.Fill, Margin = new Padding(0, 1, 0, 1), Tag = invoice, Parent = table };
+                tempLabel = new Label() { Text = "$" + invoice.total.ToString(), TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Microsoft Sans Serif", 11, FontStyle.Regular), Dock = DockStyle.Fill, Margin = new Padding(0, 1, 0, 1), Tag = invoice, Parent = table };
                 tempLabel.Click += new EventHandler(tempLabel_Click);
                 table.Controls.Add(tempLabel, column, table.RowCount);
                 column++;
@@ -403,6 +404,7 @@ namespace CreditProcessApp
             {
                 //flag table
                 ExitButton.Enabled = ProcessButton.Enabled = true;
+                ReprocessButton.Enabled = false;
                 row = ProcessInvoiceList.GetRow(clicked);
                 table = ProcessInvoiceList;
                 offTable = CompleteInvoiceList;
@@ -440,6 +442,8 @@ namespace CreditProcessApp
                 row = CompleteInvoiceList.GetRow(clicked);
                 table = CompleteInvoiceList;
                 offTable = ProcessInvoiceList;
+
+                ReprocessButton.Enabled = true;
             }
 
             if(OtherInvoicesPanel.Visible)
@@ -794,7 +798,7 @@ namespace CreditProcessApp
             if(currentInvoice != null)
             {
                 BottomPanel.Hide();
-                OtherInvoicesPanel.Show();
+                OtherOrdersTitle.Text = "ACCOUNT: " + currentInvoice.account;
                 List<Invoice> incomplete = new List<Invoice>();
 
                 //establish database connection
@@ -983,6 +987,28 @@ namespace CreditProcessApp
 
         private void OtherInvoicesPanel_VisibleChanged(object sender, EventArgs e)
         {
+        }
+
+        private void ReprocessButton_Click(object sender, EventArgs e)
+        {
+            if(currentInvoice != null)
+            {
+                if(currentInvoice.user != "" || currentInvoice.user != null)
+                {
+                    string strConnection = "DSN=Ranshu";
+                    OdbcConnection pSQLConn = null;
+                    using (pSQLConn = new OdbcConnection(strConnection))
+                    {
+                        string creditCommand = "UPDATE CRDTINV SET CRDT_INV_USER = 'null', CRDT_INV_PROCESSED = 0, CRDT_INV_CHARGETIME = null WHERE CRDT_INV_NUM = " + currentInvoice.invoiceNumber + " AND CRDT_INV_PROCESSED = 1";
+                        OdbcCommand cmd = new OdbcCommand(creditCommand, pSQLConn);
+                        pSQLConn.Open();
+                        cmd.ExecuteNonQuery();
+                        pSQLConn.Close();
+                    }
+
+                    populateTables();
+                }
+            }
         }
     }
 }
