@@ -7,24 +7,38 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using System.Drawing.Printing;
 
 namespace RanshuPrintService
 {
     static class Program
     {
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         static void Main()
         {
+            bool printerReady;
+
             try
             {
-                ServiceBase[] ServicesToRun;
-                ServicesToRun = new ServiceBase[]
+                printerReady = printers.SetDefaultPrinter("RICOHNV");
+
+                if(printerReady)
                 {
+                    ServiceBase[] ServicesToRun;
+                    ServicesToRun = new ServiceBase[]
+                    {
                 new OrderPrintService()
-                };
-                ServiceBase.Run(ServicesToRun);
+                    };
+                    ServiceBase.Run(ServicesToRun);
+                }
+                else
+                {
+                    throw new Exception("ERROR - Please install printers to use the Rnashu Print Service");
+                }
+
             }
             catch(Exception ex)
             {

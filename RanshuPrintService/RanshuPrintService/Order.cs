@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.InteropServices;
 
 namespace RanshuPrintService
 {
@@ -192,5 +193,11 @@ namespace RanshuPrintService
         {
 
         }
+    }
+
+    public static class printers
+    {
+        [DllImport("winspool.drv", CharSet = CharSet.Auto, SetLastError = true)]
+        public static extern bool SetDefaultPrinter(string Name);
     }
 }
