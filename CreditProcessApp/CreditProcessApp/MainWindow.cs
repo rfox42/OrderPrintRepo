@@ -137,6 +137,10 @@ namespace CreditProcessApp
                         invoice.deliveryMethod = creditReader["CRDT_INV_SHPVIA"].ToString().TrimEnd();
                         invoice.salesPerson = Convert.ToInt32(creditReader["CRDT_INV_SLSP"].ToString());
                         invoice.setLocation(creditReader["BKAR_INV_LOC"].ToString().TrimEnd());
+                        if (invoice.deliveryMethod == "DELIVERY" || invoice.deliveryMethod == "WILL CALL")
+                            invoice.retail = 'R';
+                        else
+                            invoice.retail = 'N';
 
                         //add invoice to list
                         incomplete.Add(invoice);
@@ -169,6 +173,10 @@ namespace CreditProcessApp
                         invoice.notes = creditReader["CRDT_INV_NOTES"].ToString().Trim();
                         invoice.deliveryMethod = creditReader["CRDT_INV_SHPVIA"].ToString().TrimEnd();
                         invoice.salesPerson = Convert.ToInt32(creditReader["CRDT_INV_SLSP"].ToString());
+                        if (invoice.deliveryMethod == "DELIVERY" || invoice.deliveryMethod == "WILL CALL")
+                            invoice.retail = 'R';
+                        else
+                            invoice.retail = 'N';
 
                         //add invoice to list
                         complete.Add(invoice);
@@ -214,24 +222,77 @@ namespace CreditProcessApp
          */
         private void refreshTable(TableLayoutPanel table, List<Invoice> invoices)
         {
-            //clear and hide table during refresh
-            //table.Hide();
-            try
-            {
-                table.Controls.Clear();
-                table.RowCount = 0;
 
-                //for each invoice in the list
-                for (int i = 0; i < invoices.Count; i++)
-                {
-                    //add invoice to table
-                    addToTable(table, invoices[i]);
-                }
-            }
-            finally
+            //clear and hide table during refresh
+            table.Controls.Clear();
+            table.RowCount = 0;
+
+            switch(table.Name)
             {
-                //display table
-                //table.Show();
+                case "ProcessInvoiceList":
+                    Color textColor;
+                    //for each invoice in the list
+                    for (int i = 0; i < invoices.Count; i++)
+                    {
+                        if (invoices[i].total <= 0)
+                            textColor = Color.Red;
+                        else
+                            textColor = SystemColors.ControlText;
+
+                        //add invoice to table
+                        addToTable(table,
+                            new List<string>()
+                            {
+                            invoices[i].invoiceNumber.ToString(),
+                            invoices[i].account,
+                            invoices[i].location,
+                            invoices[i].salesPerson.ToString(),
+                            invoices[i].retail.ToString(),
+                            invoices[i].date
+                            },
+                            invoices[i],
+                            textColor);
+                    }
+                    break;
+
+                case "CompleteInvoiceList":
+                    //for each invoice in the list
+                    for (int i = 0; i < invoices.Count; i++)
+                    {
+
+                        //add invoice to table
+                        addToTable(table,
+                            new List<string>()
+                            {
+                            invoices[i].invoiceNumber.ToString(),
+                            invoices[i].account,
+                            invoices[i].salesPerson.ToString(),
+                            invoices[i].retail.ToString(),
+                            Convert.ToDateTime(invoices[i].chargeTime).ToString("MM/dd/yyyy")
+                            },
+                            invoices[i]);
+                    }
+                    break;
+
+                case "OtherInvoicesList":
+                    //for each invoice in the list
+                    for (int i = 0; i < invoices.Count; i++)
+                    {
+
+                        //add invoice to table
+                        addToTable(table,
+                            new List<string>()
+                            {
+                            invoices[i].invoiceNumber.ToString(),
+                            invoices[i].location,
+                            invoices[i].salesPerson.ToString(),
+                            invoices[i].retail.ToString(),
+                            "$" + invoices[i].total.ToString(),
+                            invoices[i].date
+                            },
+                            invoices[i]);
+                    }
+                    break;
             }
 
         }
@@ -249,21 +310,20 @@ namespace CreditProcessApp
          * @RETURNS:    none
          * @NOTES:      none
          */
-        private void addToTable(TableLayoutPanel table, Invoice invoice)
+        private void addToTable(TableLayoutPanel table, List<string> data, Invoice invoice, Color? color = null)
         {
-            int column = 0;
-
             //increment rowcount of given table and add new row
             table.RowCount++;
             table.RowStyles.Add(new RowStyle() { SizeType = SizeType.Absolute, Height = 30 });
 
-            //add invoice number to row
-            //add click event
-            Label tempLabel = new Label() { Text = invoice.invoiceNumber.ToString(), TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Microsoft Sans Serif", 11, FontStyle.Regular), Dock = DockStyle.Fill, Margin = new Padding(0,1,0,1), Tag = invoice, Parent = table };
-            tempLabel.Click += new EventHandler(tempLabel_Click);
-            table.Controls.Add(tempLabel, column, table.RowCount);
-            column++;
+            for (int i = 0; i < data.Count; i++)
+            {
+                Label tempLabel = new Label() { Text = data[i], TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Microsoft Sans Serif", 11, FontStyle.Regular), Dock = DockStyle.Fill, Margin = new Padding(0, 1, 0, 1), Tag = invoice, Parent = table, ForeColor = color ?? SystemColors.ControlText, UseMnemonic = false };
+                tempLabel.Click += new EventHandler(tempLabel_Click);
+                table.Controls.Add(tempLabel, i, table.RowCount);
+            }
 
+            /*
             if(table.Name != "OtherInvoicesList")
             {
                 //add account to row
@@ -334,7 +394,7 @@ namespace CreditProcessApp
             //add click event
             tempLabel.Click += new EventHandler(tempLabel_Click);
             table.Controls.Add(tempLabel, column, table.RowCount);
-            column++;
+            column++;*/
         }
 
         /*
@@ -1009,6 +1069,11 @@ namespace CreditProcessApp
                     populateTables();
                 }
             }
+        }
+
+        private void AccountData_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText((sender as Label).Text);
         }
     }
 }
