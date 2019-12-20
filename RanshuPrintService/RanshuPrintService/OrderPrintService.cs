@@ -45,14 +45,44 @@ namespace RanshuPrintService
         static Order currentOrder;
         static bool REPRINT;
         static Timer timer;
+        static List<string> vendNames;
+        static OdbcConnection pSqlConn;
+        static List<string> heldPrinters;
 
         public OrderPrintService()
         {
             InitializeComponent();
         }
 
+        /*
+         * @FUNCTION:   protected override void OnStart()
+         * @PURPOSE:    when the service is initialized
+         *              set initial formatting for the excel pages
+         *              add vendors to list
+         *              write start to log file
+         *              initialize timer
+         *              
+         * @PARAM:      string[] args
+         * 
+         * @RETURNS:    none
+         * @NOTES:      none
+         */
         protected override void OnStart(string[] args)
         {
+            heldPrinters = new List<string>();
+
+            //set vendor names
+            vendNames = new List<string>() 
+            { 
+                "MERIDIAN",
+                "RADEXPRESS",
+                "CUMMINGS",
+                "800DEPOT",
+                "THERADSTOR",
+                "OMEGA",
+                "MEI",
+            };
+
             // Temporarily Prevent new instances of Excel from using this applications workbook
             xlApp.IgnoreRemoteRequests = true;
             // Hide this instance of excel
@@ -113,11 +143,12 @@ namespace RanshuPrintService
             xlBarcodeBottom.Font.Size = 40;
 
             // Item Details
-            xlsheet.get_Range("A26", "A49").HorizontalAlignment = XlHAlign.xlHAlignLeft;
-            xlsheet.get_Range("C26", "C49").HorizontalAlignment = XlHAlign.xlHAlignLeft;
-            xlsheet.get_Range("D26", "D49").HorizontalAlignment = XlHAlign.xlHAlignLeft;
-            xlsheet.get_Range("G26", "G49").HorizontalAlignment = XlHAlign.xlHAlignLeft;
-            xlsheet.get_Range("I26", "I49").HorizontalAlignment = XlHAlign.xlHAlignLeft;
+            xlsheet.get_Range("A25", "A49").HorizontalAlignment = XlHAlign.xlHAlignLeft;
+            xlsheet.get_Range("B24", "B49").HorizontalAlignment = XlHAlign.xlHAlignCenter;
+            xlsheet.get_Range("C25", "C49").HorizontalAlignment = XlHAlign.xlHAlignLeft;
+            xlsheet.get_Range("F25", "F49").HorizontalAlignment = XlHAlign.xlHAlignLeft;
+            xlsheet.get_Range("H25", "H49").HorizontalAlignment = XlHAlign.xlHAlignLeft;
+            xlsheet.get_Range("L24", "L49").HorizontalAlignment = XlHAlign.xlHAlignRight;
 
             // BOTTOM Header Section
             xlsheet.Cells[17, 1].Value = "Ship To:";
@@ -133,13 +164,14 @@ namespace RanshuPrintService
             xlsheet.Cells[17, 10].Value = "Pack List";
             xlsheet.Cells[17, 10].Font.Size = 28;
             xlsheet.Cells[17, 10].Font.Bold = true;
+            xlsheet.get_Range("A17").RowHeight = 50;
 
             xlsheet.get_Range("A24", "L24").Font.Bold = true;
             xlsheet.Cells[24, 1].Value = "Location";
-            xlsheet.Cells[24, 3].Value = "Qty";
-            xlsheet.Cells[24, 4].Value = "Part No";
-            xlsheet.Cells[24, 7].Value = "Cust Part No";
-            xlsheet.Cells[24, 9].Value = "Description";
+            xlsheet.Cells[24, 2].Value = "Qty";
+            xlsheet.Cells[24, 3].Value = "Part No";
+            xlsheet.Cells[24, 6].Value = "Cust Part No";
+            xlsheet.Cells[24, 8].Value = "Description";
 
             writeToFile("Service Started");
 
@@ -148,6 +180,15 @@ namespace RanshuPrintService
             timer.Enabled = true;
         }
 
+        /*
+         * @FUNCTION:   private static void releaseObject()
+         * @PURPOSE:    forcibly releases objects from memory
+         *              
+         * @PARAM:      object obj
+         * 
+         * @RETURNS:    none
+         * @NOTES:      none
+         */
         private static void releaseObject(object obj)
         {
             try
@@ -166,19 +207,57 @@ namespace RanshuPrintService
             }
         }
 
+        /*
+         * @FUNCTION:   private static void timerProgram()
+         * @PURPOSE:    checks for new orders
+         *              sends error reports when exceptions occur
+         *              
+         * @PARAM:      object sender
+         *              ElapsedEventArgs e
+         * 
+         * @RETURNS:    none
+         * @NOTES:      none
+         */
         private static void timerProgram(object sender, ElapsedEventArgs e)
         {
+            //stop the timer
             timer.Stop();
 
             try
             {
+                //check for new orders
                 newOrders();
             }
             catch(Exception ex)
             {
+                //report error to IT
                 string error = new StackTrace(ex, true).GetFrame(0).GetFileLineNumber() + " " + ex.Message;
                 writeToFile(error);
-                SendEmail("Failure on invoice: " + currentOrder.invoiceNumber, error);
+                if (currentOrder != null)
+                {
+                    SendEmail("Failure on invoice: " + currentOrder.invoiceNumber, error);
+                    if(pSqlConn.State == ConnectionState.Open)
+                        pSqlConn.Close();
+                    string strConnection = "DSN=RANSHU";
+                    pSqlConn = null;
+                    using (pSqlConn = new OdbcConnection(strConnection))
+                    {
+                        //get all new invoices
+                        string sqlInvoice = "INSERT INTO wmsTrouble (trouble_invoice) VALUES (" + currentOrder.invoiceNumber + ")";
+                        OdbcCommand cmd = new OdbcCommand(sqlInvoice, pSqlConn);
+                        pSqlConn.Open();
+                        cmd.ExecuteNonQuery();
+                        pSqlConn.Close();
+                    }
+
+                    timer.Start();
+                }
+                else
+                {
+                    SendEmail("URGENT: System Failure", error);
+                }
+
+                //stop cycle
                 return;
             }
 
@@ -191,28 +270,79 @@ namespace RanshuPrintService
                 {
                     pq.Refresh();
                     PrintJobInfoCollection pCollection = pq.GetPrintJobInfoCollection();
-                    if ((pq.QueueStatus & PrintQueueStatus.Error) == PrintQueueStatus.Error || (pq.QueueStatus & PrintQueueStatus.None) != PrintQueueStatus.None)
+                    if (!heldPrinters.Contains(pq.Name) && ((pq.QueueStatus & PrintQueueStatus.Error) == PrintQueueStatus.Error || (pq.QueueStatus & PrintQueueStatus.None) != PrintQueueStatus.None))
                     {
-                        //emails error report to IT
-                        string text = "There appears to be a problem printing order " + currentOrder.invoiceNumber + " to " + installedPrinter + ".";
-                        text += System.Environment.NewLine + "Please check the printer.";
-                        SendEmail("Print Failure on " + installedPrinter, text);
+                        if (pSqlConn.State == ConnectionState.Open)
+                            pSqlConn.Close();
+                        string strConnection = "DSN=RANSHU";
+                        pSqlConn = null;
+                        using (pSqlConn = new OdbcConnection(strConnection))
+                        {
+                            //get all new invoices
+                            string sqlInvoice = "insert into wmsTrouble(trouble_printer) " +
+                                "select distinct printer_name from wmsPrinters " +
+                                "where printer_name = '" + pq.Name + "' " +
+                                "and printer_name not in (select trouble_printer " +
+                                "from wmsTrouble where trouble_printer = printer_name)";
 
-                        //breaks loop once error found
-                        break;
+                            OdbcCommand cmd = new OdbcCommand(sqlInvoice, pSqlConn);
+                            pSqlConn.Open();
+
+                            if(cmd.ExecuteNonQuery() > 0)
+                            {
+                                //emails error report to IT
+                                string text = "There appears to be a problem printing order to " + pq.Name + ". ERROR: " + pq.QueueStatus.ToString();
+                                text += System.Environment.NewLine + "Please check the printer.";
+                                SendEmail("Print Failure on " + pq.Name, text);
+                            }
+
+                            heldPrinters.Add(pq.Name);
+                            pSqlConn.Close();
+                        }
+                    }
+                    else if(heldPrinters.Contains(pq.Name) && !((pq.QueueStatus & PrintQueueStatus.Error) == PrintQueueStatus.Error || (pq.QueueStatus & PrintQueueStatus.None) != PrintQueueStatus.None))
+                    {
+                        if (pSqlConn.State == ConnectionState.Open)
+                            pSqlConn.Close();
+                        string strConnection = "DSN=RANSHU";
+                        pSqlConn = null;
+                        using (pSqlConn = new OdbcConnection(strConnection))
+                        {
+                            //get all new invoices
+                            string sqlInvoice = "delete from wmsTrouble " +
+                                "where printer_name = '" + pq.Name + "'";
+
+                            OdbcCommand cmd = new OdbcCommand(sqlInvoice, pSqlConn);
+                            pSqlConn.Open();
+                            cmd.ExecuteNonQuery();
+                            heldPrinters.Remove(pq.Name);
+                            pSqlConn.Close();
+                        }
                     }
                 }
             }
-            catch
+            catch(Exception ex)
             {
-
+                //report error to IT
+                string error = new StackTrace(ex, true).GetFrame(0).GetFileLineNumber() + " " + ex.Message;
+                writeToFile(error);
             }
 
             GC.Collect();
             timer.Start();
         }
 
-
+        /*
+         * @FUNCTION:   public static void newOrders()
+         * @PURPOSE:    retrieves new invoices from database
+         *              prints each invoice to the correct location
+         *              updates database accordingly
+         *              
+         * @PARAM:      none
+         * 
+         * @RETURNS:    none
+         * @NOTES:      none
+         */
         static void newOrders()
         {
             int test = 0;
@@ -224,30 +354,32 @@ namespace RanshuPrintService
             string strInvLoc;
 
             string[] arrNotes = new string[10];
+            currentOrder = null;
 
-            // Copy all invoices from Addsum not listed in wmsOrders table
+            //connect to database
             string strConnection = "DSN=RANSHU";
-            OdbcConnection pSqlConn = null;
+            pSqlConn = null;
             using (pSqlConn = new OdbcConnection(strConnection))
             {
-                //get order information
-                string sqlInvoice =
-                "SELECT BKAR_INV_NUM, BKAR_INV_INVDTE, BKAR_INV_CUSCOD, BKAR_INV_CUSNME, BKAR_INV_CUSA1, BKAR_INV_CUSA2, BKAR_INV_CUSCTY, BKAR_INV_CUSST, BKAR_INV_CUSZIP, BKAR_INV_CUSCUN, BKAR_INV_SHPNME, BKAR_INV_SHPA1, BKAR_INV_SHPA2, BKAR_INV_SHPCTY, BKAR_INV_SHPST, BKAR_INV_SHPZIP, BKAR_INV_SHPCUN, BKAR_INV_LOC, BKAR_INV_CUSORD, BKAR_INV_SHPVIA, BKAR_INV_TERMD, BKAR_INV_ENTBY, BKAR_INV_TOTAL, BKAR_INV_SLSP, invoice_num, CRDT_INV_NUM" +
-                " FROM BKARHINV LEFT JOIN wmsOrders ON BKAR_INV_NUM = invoice_num " +
-                "LEFT JOIN CRDTINV on BKAR_INV_NUM = CRDT_INV_NUM" +
-                " WHERE BKAR_INV_MAX = 0";
-                OdbcCommand sqlCommandINV = new OdbcCommand(sqlInvoice, pSqlConn);
+                OdbcCommand sqlCommandINV = new OdbcCommand("{call getOrders}", pSqlConn);
+                sqlCommandINV.CommandType = CommandType.StoredProcedure;
                 sqlCommandINV.CommandTimeout = 90;
                 pSqlConn.Open();
 
                 OdbcDataReader readerINV = sqlCommandINV.ExecuteReader();
 
+                //if reader has rows
                 if (readerINV.HasRows)
                 {
+                    //read row
                     while (readerINV.Read() && test < 10)
                     {
-
+                        //variable declaration
+                        bool invoice = false;
                         REPRINT = false;
+                        currentOrder = null;
+
+                        //increment print set
                         test++;
 
                         //create new notes for order
@@ -278,28 +410,44 @@ namespace RanshuPrintService
                         order.shipAddress.country = readerINV["BKAR_INV_SHPCUN"].ToString().TrimEnd();
 
                         //populate details
-                        order.location = readerINV["BKAR_INV_LOC"].ToString().TrimEnd(); //never used
+                        order.location = readerINV["BKAR_INV_LOC"].ToString().TrimEnd();
                         order.customerPO = readerINV["BKAR_INV_CUSORD"].ToString().TrimEnd();
                         order.deliveryMethod = readerINV["BKAR_INV_SHPVIA"].ToString().TrimEnd();
                         order.paymentTerms = readerINV["BKAR_INV_TERMD"].ToString().TrimEnd();
                         order.enteredBy = readerINV["BKAR_INV_ENTBY"].ToString().TrimEnd();
 
+                        //set currentOrder
                         currentOrder = order;
 
+
+                        //if order in wmsOrders
                         if (readerINV["invoice_num"].ToString() == order.invoiceNumber.ToString())
                         {
+                            //mark as reprint
                             REPRINT = true;
                         }
 
+
+                        //if account is vendor
+                        if (vendNames.Contains(order.customerCode))
+                            //order is not invoice
+                            invoice = false;
+                        //if order is going to purchaser
+                        else if (order.billAddress == order.shipAddress)
+                            //order is invoice
+                            invoice = true;
+
                         //get items for order
                         int flagPrint = 1;
-                        string sqlItems = "SELECT BKAR_INVL_PCODE, BKAR_INVL_ITYPE, BKAR_INVL_PQTY, BKAR_INVL_PDESC, BKAR_INVL_LOC, BKAR_INVL_MSG, BKIC_VND_PART, BIN_NAME " +
+                        /*string sqlItems = "SELECT BKAR_INVL_PCODE, BKAR_INVL_ITYPE, BKAR_INVL_PQTY, BKAR_INVL_PDESC, BKAR_INVL_LOC, BKAR_INVL_MSG, BKAR_INVL_PEXT, BKIC_VND_PART, BIN_NAME " +
                             "FROM BKARHINV INNER JOIN BKARHIVL ON BKAR_INV_NUM = BKAR_INVL_INVNM " +
                             "LEFT JOIN BKICCUST ON (BKAR_INVL_PCODE = BKIC_VND_PCODE AND BKAR_INV_CUSCOD = BKIC_VND_VENDOR)" +
                             "LEFT JOIN wmsLocations ON (BIN_PART = BKAR_INVL_PCODE AND BIN_LOC = BKAR_INVL_LOC) " +
-                            "WHERE BKAR_INV_NUM = '" + order.invoiceNumber + "'";
-                        using (OdbcCommand sqlCommandItems = new OdbcCommand(sqlItems, pSqlConn))
+                            "WHERE BKAR_INV_NUM = '" + order.invoiceNumber + "'";*/
+                        using (OdbcCommand sqlCommandItems = new OdbcCommand("{call getItems (?)}", pSqlConn))
                         {
+                            sqlCommandItems.CommandType = CommandType.StoredProcedure;
+                            sqlCommandItems.Parameters.AddWithValue(":invNum", order.invoiceNumber);
                             OdbcDataReader readerItems = sqlCommandItems.ExecuteReader();
                             if (readerItems.HasRows)
                             {
@@ -313,6 +461,7 @@ namespace RanshuPrintService
                                     item.message = readerItems["BKAR_INVL_MSG"].ToString().TrimEnd().TrimStart();
                                     item.locationCode = readerItems["BKAR_INVL_LOC"].ToString().TrimEnd();
                                     item.vendorPart = readerItems["BKIC_VND_PART"].ToString();
+                                    item.price = readerItems["BKAR_INVL_PEXT"].ToString();
 
 
                                     //if item has bin
@@ -323,54 +472,72 @@ namespace RanshuPrintService
                                     //else print standard location code
                                     else
                                     {
-                                        item.location = "A12-08-05-2";
+                                        item.location = "";
                                     }
 
 
                                     // Check for shipping Notes
                                     if (item.itemType == "X" && item.message.Length >= 1)
                                     {
+                                        //if order note mark present
                                         if (item.message.Substring(0, 1) == "@")
                                         {
+                                            //add message to top notes
                                             notes.Add(item.message.TrimStart('@'));
                                         }
                                         else
                                         {
+                                            //add message to credit notes
                                             crdtNotes.Add(item.message);
                                         }
+
+                                        //if message declares invoice
+                                        if ((item.message.ToUpper() == "@INVOICE" || item.message.ToUpper() == "INVOICE") && !crdtNotes.Contains("NO INVOICE"))
+                                            //order is invoice
+                                            invoice = true;
+                                        else if (item.message.ToUpper() == "NO INVOICE")
+                                            invoice = false;
                                     }
                                     else
                                     {
+                                        //if regular item set quantity
                                         item.quantity = Convert.ToInt32(Convert.ToDouble(readerItems["BKAR_INVL_PQTY"].ToString()));
                                     }
 
-                                    //add item(s) to order
+                                    //add item to order
                                     order.items.Add(item);
                                 }
                             }
                             readerItems.Close();
                         }
 
+                        if(invoice)
+                            xlsheet.Cells[17, 10].Value = "Ranshu";
+                        else
+                            xlsheet.Cells[17, 10].Value = "Pack List";
+
                         //if order is cash on demand
                         if (order.paymentTerms.Contains("COD"))
                         {
                             //add to notes
                             notes.Add(order.paymentTerms);
+                            order.paymentTerms = order.paymentTerms + " $" + readerINV["BKAR_INV_TOTAL"].ToString();
+                        }
+
+                        string creditNotes = "";
+
+                        for (int i = 0; i < crdtNotes.Count; i++)
+                        {
+                            creditNotes += System.Environment.NewLine + crdtNotes[i];
                         }
 
                         //if order is paid by credit
                         if (order.paymentTerms == "VISA/MC" && readerINV["CRDT_INV_NUM"].ToString() != order.invoiceNumber.ToString())
                         {
-                            string creditNotes = "";
-
-                            for (int i = 0; i < crdtNotes.Count; i++)
-                            {
-                                creditNotes += System.Environment.NewLine + crdtNotes[i];
-                            }
 
                             //add to credit table with Processed flagged false
-                            string creditString = "INSERT INTO CRDTINV (CRDT_INV_NUM, CRDT_INV_CUSCOD, CRDT_INV_DATE, CRDT_INV_TOTAL, CRDT_INV_PROCESSED, CRDT_INV_USER, CRDT_INV_NOTES, CRDT_INV_SHPVIA, CRDT_INV_SLSP) " +
-                                "VALUES (" + order.invoiceNumber + ", '" + order.customerCode + "', '" + order.date + "', " + readerINV["BKAR_INV_TOTAL"].ToString() + ", 0, 'null', '" + creditNotes + "', '" + order.deliveryMethod + "', " + Convert.ToInt32(readerINV["BKAR_INV_SLSP"].ToString()) + ")";
+                            string creditString = "INSERT INTO CRDTINV (CRDT_INV_NUM, CRDT_INV_CUSCOD, CRDT_INV_DATE, CRDT_INV_TOTAL, CRDT_INV_PROCESSED, CRDT_INV_USER, CRDT_INV_NOTES, CRDT_INV_SHPVIA, CRDT_INV_SLSP, CRDT_INV_DECLINED) " +
+                                "VALUES (" + order.invoiceNumber + ", '" + order.customerCode + "', '" + order.date + "', " + readerINV["BKAR_INV_TOTAL"].ToString() + ", 0, 'null', '" + creditNotes.Replace("'", "") + "', '" + order.deliveryMethod + "', " + Convert.ToInt32(readerINV["BKAR_INV_SLSP"].ToString()) + ", 0 )";
 
                             using (OdbcCommand creditCommand = new OdbcCommand(creditString, pSqlConn))
                             {
@@ -385,9 +552,10 @@ namespace RanshuPrintService
                             strInvLoc = order.location;
 
                             // Find first location code
-                            /*strInvLoc = order.items[0].locationCode;
+                            /*
                             foreach (Item item in order.items)
                             {
+                                if(item.locationCode != null && item.locationCode != "")
                                 //if Type is not message line 'X' or non-stock 'N'
                                 if (item.itemType != "X" && item.itemType != "N")
                                 {
@@ -461,7 +629,6 @@ namespace RanshuPrintService
                                 currentNoteRow++;
                             }
 
-
                             // BOTTOM Header Section
                             xlBarcodeBottom.Value = "*" + order.invoiceNumber + "*";
 
@@ -489,10 +656,12 @@ namespace RanshuPrintService
                             }*/
 
                             int numPageItems = 0;
-                            int currentRow = 26;
+                            int currentRow = 25;
+                            double subCheck = 0.0f;
                             for (int x = 0; x < order.items.Count; x++)
                             {
                                 Item item = order.items[x];
+
                                 if (REPRINT)
                                 {
                                     xlsheet.Cells[1, 6].Value = "REPRINT";
@@ -502,10 +671,9 @@ namespace RanshuPrintService
                                     xlsheet.Cells[1, 6].Value = "";
                                 }
 
-                                if ((numPageItems > 21) && (strInvLoc == item.locationCode))
+                                if ((numPageItems > 19) && (strInvLoc == item.locationCode))
                                 {
-
-                                    xlsheet.Cells[49, 4].Value = "Continued on Next Page...";
+                                    xlsheet.Cells[46, 4].Value = "Continued on Next Page...";
 
                                     // Print Out Current PackList
                                     if (flagPrint == 1)
@@ -515,7 +683,7 @@ namespace RanshuPrintService
 
                                     numPage = numPage + 1;
                                     numPageItems = 0;
-                                    currentRow = 26;
+                                    currentRow = 25;
 
                                     // CLEAR OUT TOP Header Sections
                                     xlsheet.Cells[3, 5].Value = "";
@@ -538,16 +706,51 @@ namespace RanshuPrintService
                                     xlsheet.get_Range("A11", "E15").HorizontalAlignment = XlHAlign.xlHAlignLeft;
 
                                     // Clear out previous line items
-                                    xlsheet.get_Range("A26", "I49").Clear();
-                                    xlsheet.get_Range("A26", "I49").HorizontalAlignment = XlHAlign.xlHAlignLeft;
+                                    xlsheet.get_Range("A25", "L49").Clear();
+                                    xlsheet.get_Range("A25", "L49").HorizontalAlignment = XlHAlign.xlHAlignLeft;
+                                    xlsheet.get_Range("B24", "B49").HorizontalAlignment = XlHAlign.xlHAlignCenter;
+                                    xlsheet.get_Range("L24", "L49").HorizontalAlignment = XlHAlign.xlHAlignRight;
 
                                 }
-                                else if ((strInvLoc != item.locationCode) && (item.itemType != "X") && (item.itemType != "N"))
+                                else if (strInvLoc != item.locationCode && (item.itemType != "X" && item.itemType != "N"))
                                 {
-                                    xlsheet.Cells[49, 4].Clear();
+                                    xlsheet.Cells[46, 4].Clear();
+                                    xlsheet.Cells[47, 1].Value = "Total Qty";
+                                    xlsheet.Cells[47, 2].Value = numItems.ToString();
 
-                                    xlsheet.Cells[49, 2].Value = "Total Qty";
-                                    xlsheet.Cells[49, 3].Value = numItems.ToString();
+                                    //if invoice
+                                    if (invoice)
+                                    {
+                                        xlsheet.Cells[46, 4].Value = "Remit Payment to:";
+                                        xlsheet.Cells[46, 7].Value = "Ranshu";
+                                        xlsheet.Cells[47, 7].Value = "P.O. Box 913317";
+                                        xlsheet.Cells[48, 7].Value = "Denver, CO 80291-3317";
+
+                                        if(order.paymentTerms == "NET 5TH")
+                                        {
+                                            xlsheet.Cells[49, 5].Value = "Pay by the 5th and save $" + ((Convert.ToDouble(readerINV["BKAR_INV_SUBTOT"].ToString()) + Convert.ToDouble(readerINV["BKAR_INV_TAXAMT"].ToString())) * .05f).ToString("N2");
+                                        }
+
+
+                                        if (subCheck < Convert.ToDouble(readerINV["BKAR_INV_SUBTOT"].ToString()))
+                                        {
+                                            xlsheet.Cells[45, 9].Value = "Items shipped separately:";
+                                            xlsheet.Cells[45, 12].Value = "$" + (Convert.ToDouble(readerINV["BKAR_INV_SUBTOT"].ToString()) - subCheck).ToString("N2");
+                                        }
+                                        else
+                                        {
+                                            xlsheet.get_Range("I45", "L45").Clear();
+                                        }
+
+                                        xlsheet.Cells[46, 11].Value = "Subtotal:";
+                                        xlsheet.Cells[46, 12].Value = "$" + Convert.ToDouble(readerINV["BKAR_INV_SUBTOT"].ToString()).ToString("N2");
+                                        xlsheet.Cells[47, 11].Value = "Tax:";
+                                        xlsheet.Cells[47, 12].Value = "$" + Convert.ToDouble(readerINV["BKAR_INV_TAXAMT"].ToString()).ToString("N2");
+                                        xlsheet.Cells[48, 11].Value = "Freight:";
+                                        xlsheet.Cells[48, 12].Value = "$" + Convert.ToDouble(readerINV["BKAR_INV_FRGHT"].ToString()).ToString("N2");
+                                        xlsheet.Cells[49, 11].Value = "Total:";
+                                        xlsheet.Cells[49, 12].Value = "$" + Convert.ToDouble(readerINV["BKAR_INV_TOTAL"].ToString()).ToString("N2");
+                                    }
 
                                     // Print Out Current PackList
                                     if (flagPrint == 1)
@@ -555,11 +758,13 @@ namespace RanshuPrintService
                                         xlsheet.PrintOutEx(misValue, misValue, 1, false);
                                     }
 
+                                    //reset items
                                     numItems = 0;
                                     numPage = 1;
                                     numPageItems = 0;
-                                    currentRow = 26;
+                                    currentRow = 25;
 
+                                    //set new location code
                                     strInvLoc = item.locationCode;
 
                                     // ASSIGN PRINTER BASED OFF OF WAREHOUSE CODE
@@ -590,28 +795,56 @@ namespace RanshuPrintService
                                     xlsheet.get_Range("A10", "G10").Borders[XlBordersIndex.xlEdgeBottom].Weight = 2d;
 
                                     // Clear out previous line items
-                                    xlsheet.get_Range("A26", "I49").Clear();
-                                    xlsheet.get_Range("A26", "I49").HorizontalAlignment = XlHAlign.xlHAlignLeft;
+                                    xlsheet.get_Range("A25", "L49").Clear();
+                                    xlsheet.get_Range("A25", "H49").HorizontalAlignment = XlHAlign.xlHAlignLeft;
 
                                 }
 
                                 xlsheet.Cells[15, 11].value = "Page";
                                 xlsheet.Cells[15, 12].value = numPage.ToString();
 
-                                xlsheet.Cells[50, 11].value = "Page";
-                                xlsheet.Cells[50, 12].value = numPage.ToString();
+                                xlsheet.Cells[49, 1].value = "Page";
+                                xlsheet.Cells[49, 2].value = numPage.ToString();
 
                                 if (item.itemType == "X")
                                 {
                                     xlsheet.Cells[currentRow, 4].value = "  " + item.message;
                                 }
+                                else if(item.itemType == "N")
+                                {
+                                    if (!(item.partCode.Contains("PROP65")))
+                                    {
+                                        xlsheet.Cells[currentRow, 4].value = "  " + item.message;
+
+                                        if (invoice)
+                                        {
+                                            xlsheet.Cells[24, 12].value = "Price";
+                                            xlsheet.Cells[currentRow, 12].value = "$" + Convert.ToDouble(item.price).ToString("N2");
+                                        }
+                                        else
+                                        {
+                                            xlsheet.Cells[24, 12].value = "";
+                                        }
+                                    }
+                                }
                                 else
                                 {
                                     xlsheet.Cells[currentRow, 1].value = item.location;
-                                    xlsheet.Cells[currentRow, 3].value = item.quantity;
-                                    xlsheet.Cells[currentRow, 4].value = item.partCode;
-                                    xlsheet.Cells[currentRow, 7].value = item.vendorPart;
-                                    xlsheet.Cells[currentRow, 9].value = item.description;
+                                    xlsheet.Cells[currentRow, 2].value = item.quantity;
+                                    xlsheet.Cells[currentRow, 3].value = item.partCode;
+                                    xlsheet.Cells[currentRow, 6].value = item.vendorPart;
+                                    xlsheet.Cells[currentRow, 8].value = item.description;
+
+                                    if (invoice)
+                                    {
+                                        xlsheet.Cells[24, 12].value = "Price";
+                                        xlsheet.Cells[currentRow, 12].value = "$" + Convert.ToDouble(item.price).ToString("N2");
+                                        subCheck += Convert.ToDouble(item.price);
+                                    }
+                                    else
+                                    {
+                                        xlsheet.Cells[24, 12].value = "";
+                                    }
                                     numItems = numItems + item.quantity;
 
                                 }
@@ -620,10 +853,41 @@ namespace RanshuPrintService
                                 numPageItems++;
                             }
 
-                            xlsheet.Cells[49, 4].Clear();
+                            xlsheet.Cells[46, 4].Clear();
 
-                            xlsheet.Cells[49, 2].Value = "Total Qty";
-                            xlsheet.Cells[49, 3].Value = numItems.ToString();
+                            xlsheet.Cells[47, 1].Value = "Total Qty";
+                            xlsheet.Cells[47, 2].Value = numItems.ToString();
+
+                            if (invoice)
+                            {
+                                xlsheet.Cells[46, 4].Value = "Remit Payment to:";
+                                xlsheet.Cells[46, 7].Value = "Ranshu";
+                                xlsheet.Cells[47, 7].Value = "P.O. Box 913317";
+                                xlsheet.Cells[48, 7].Value = "Denver, CO 80291-3317";
+
+                                if(order.paymentTerms == "NET 5TH")
+                                {
+                                    xlsheet.Cells[49, 5].Value = "Pay by the 5th and save $" + ((Convert.ToDouble(readerINV["BKAR_INV_SUBTOT"].ToString()) + Convert.ToDouble(readerINV["BKAR_INV_TAXAMT"].ToString())) * .05f).ToString("N2");
+                                }
+
+                                if(subCheck < Convert.ToDouble(readerINV["BKAR_INV_SUBTOT"].ToString()))
+                                {
+                                    xlsheet.Cells[45, 9].Value = "Items shipped separately:";
+                                    xlsheet.Cells[45, 12].Value = "$" + (Convert.ToDouble(readerINV["BKAR_INV_SUBTOT"].ToString()) - subCheck).ToString("N2");
+                                }
+                                else
+                                {
+                                    xlsheet.get_Range("I45", "L45").Clear();
+                                }
+                                xlsheet.Cells[46, 11].Value = "Subtotal:";
+                                xlsheet.Cells[46, 12].Value = "$" + Convert.ToDouble(readerINV["BKAR_INV_SUBTOT"].ToString()).ToString("N2");
+                                xlsheet.Cells[47, 11].Value = "Tax:";
+                                xlsheet.Cells[47, 12].Value = "$" + Convert.ToDouble(readerINV["BKAR_INV_TAXAMT"].ToString()).ToString("N2");
+                                xlsheet.Cells[48, 11].Value = "Freight:";
+                                xlsheet.Cells[48, 12].Value = "$" + Convert.ToDouble(readerINV["BKAR_INV_FRGHT"].ToString()).ToString("N2");
+                                xlsheet.Cells[49, 11].Value = "Total:";
+                                xlsheet.Cells[49, 12].Value = "$" + Convert.ToDouble(readerINV["BKAR_INV_TOTAL"].ToString()).ToString("N2");
+                            }
 
                             // Print Out Final Page of Packlist
                             if (flagPrint == 1)
@@ -632,14 +896,15 @@ namespace RanshuPrintService
 
                             }
 
+                            //if not a reprint
                             if (!REPRINT)
                             {
                                 //add order to wmsOrders
                                 //update invoice as printed
                                 strCurrentDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
-                                sqlUpdateList = "INSERT INTO wmsOrders (invoice_num,printed,printer) " +
+                                sqlUpdateList = "INSERT INTO wmsOrders (invoice_num,printed,printer, notes) " +
                                                 "VALUES (" + order.invoiceNumber + ", '" + strCurrentDateTime.ToString() +
-                                                "', '" + installedPrinter + "');" +
+                                                "', '" + installedPrinter + "', '" + creditNotes.Replace("'", "") +"'); " +
                                                 "UPDATE BKARHINV " +
                                                 "SET BKAR_INV_MAX = 1 " +
                                                 "WHERE BKAR_INV_NUM = " + order.invoiceNumber;
@@ -650,7 +915,7 @@ namespace RanshuPrintService
                             }
                             else
                             {
-                                //update invoice as printed
+                                //update invoice on database
                                 strCurrentDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
                                 sqlUpdateList = "UPDATE wmsOrders " +
                                                 "SET printed = '" + strCurrentDateTime.ToString() + "', " +
@@ -665,8 +930,10 @@ namespace RanshuPrintService
                                 }
                             }
 
+                            //if retail invoice
                             if(order.deliveryMethod == "DELIVERY" || order.deliveryMethod == "WILL CALL")
                             {
+                                //mark invoice as validated
                                 strCurrentDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
                                 sqlUpdateList = "UPDATE wmsOrders " +
                                                 "SET validated = '" + strCurrentDateTime.ToString()+ "' " +
@@ -679,6 +946,7 @@ namespace RanshuPrintService
 
                         }
 
+                        //mark invoice as printed
                         string sqlMarkPrint = "UPDATE BKARHINV " +
                                     "SET BKAR_INV_MAX = 1 " +
                                     "WHERE BKAR_INV_NUM = " + order.invoiceNumber;
@@ -688,38 +956,54 @@ namespace RanshuPrintService
                         }
 
                         // CLEAN UP LINE ITEMS AND EXTRA PAGES
-                        xlsheet.get_Range("A26", "I49").Clear();
+                        xlsheet.get_Range("A25", "L49").Clear();
 
                         // CLEAN UP NOTES
                         xlsheet.get_Range("A11", "E15").Clear();
 
                         // ALIGN CELLS PROPERLY
-                        xlsheet.get_Range("A26", "I49").HorizontalAlignment = XlHAlign.xlHAlignLeft;
+                        xlsheet.get_Range("A25", "I49").HorizontalAlignment = XlHAlign.xlHAlignLeft;
+                        xlsheet.get_Range("B24", "B49").HorizontalAlignment = XlHAlign.xlHAlignCenter;
+                        xlsheet.get_Range("L24", "L49").HorizontalAlignment = XlHAlign.xlHAlignRight;
 
                         writeToFile(order.invoiceNumber.ToString());
                     }
                 }
+
+                //close database connections
                 readerINV.Close();
                 pSqlConn.Close();
             }
 
+            //denote tick
             writeToFile("END SET");
         }
 
+        /*
+         * @FUNCTION:   public static void writeToFile()
+         * @PURPOSE:    writes message to log file
+         *              
+         * @PARAM:      string message
+         * 
+         * @RETURNS:    none
+         * @NOTES:      none
+         */
         public static void writeToFile(string message)
         {
+            //open/create log directory
             string path = AppDomain.CurrentDomain.BaseDirectory + "\\Logs";
             if(!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
             }
 
+            //open/create log file
             string filePath = AppDomain.CurrentDomain.BaseDirectory + "\\Logs\\Service_" + DateTime.Now.Date.ToShortDateString().Replace('/', '_') + ".txt";
-
             if(!File.Exists(filePath))
             {
                 using(StreamWriter sw = File.CreateText(filePath))
                 {
+                    //write message to file
                     sw.WriteLine(DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss tt") + ": " + message);
                 }
             }
@@ -728,43 +1012,69 @@ namespace RanshuPrintService
 
                 using (StreamWriter sw = File.AppendText(filePath))
                 {
+                    //write message to file
                     sw.WriteLine(DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss tt") + ": " + message);
                 }
             }
         }
 
+        /*
+         * @FUNCTION:   public static void condenseFile()
+         * @PURPOSE:    removes "END SET" lines from the log file
+         *              
+         * @PARAM:      none
+         * 
+         * @RETURNS:    none
+         * @NOTES:      none
+         */
         public static void condenseFile()
         {
-
+            //open log directory or exit if not present
             string path = AppDomain.CurrentDomain.BaseDirectory + "\\Logs";
             if (!Directory.Exists(path))
             {
                 return;
             }
 
+            //open log file or exit if not present
             string filePath = AppDomain.CurrentDomain.BaseDirectory + "\\Logs\\Service_" + DateTime.Now.Date.ToShortDateString().Replace('/', '_') + ".txt";
-
             if (!File.Exists(filePath))
             {
                 return;
             }
             else
             {
+                //read file to list
                 List<string> rawFile = File.ReadAllLines(filePath).ToList<string>();
 
+                //for each log line
                 for(int i = 0; i < rawFile.Count; i++)
                 {
+                    //if line contatins "END SET"
                     if(rawFile[i].Contains("END SET"))
                     {
+                        //remove line
                         rawFile.RemoveAt(i);
                         i--;
                     }
                 }
 
+                //rewrite file
                 File.WriteAllLines(filePath, rawFile);
             }
         }
 
+        /*
+         * @FUNCTION:   public static int selectPrinter()
+         * @PURPOSE:    Select printer based on location
+         *              mark as retail if retail
+         *              
+         * @PARAM:      string locationCode
+         *              bool retail
+         * 
+         * @RETURNS:    none
+         * @NOTES:      none
+         */
         public static int selectPrinter(string locationcode, bool retail)
         {
             int flagPrinterFound = 0;
@@ -810,12 +1120,13 @@ namespace RanshuPrintService
                 {
                     installedPrinter = "RICOHTX";
                 }
-                else if(locationcode == "MEI")
+                else if(locationcode == "MEI" || locationcode == "APAIR")
                 {
                     installedPrinter = "RICOHTX";
                 }
                 else
                 {
+                    writeToFile("Printer at " + locationcode + " not installed");
                     installedPrinter = null;
                 }
             }
@@ -891,6 +1202,17 @@ namespace RanshuPrintService
             msgMail.Dispose();
         }
 
+        /*
+         * @FUNCTION:   protected override void OnStop()
+         * @PURPOSE:    free floating excel memory
+         *              condense log file
+         *              stop the service
+         *              
+         * @PARAM:      none
+         * 
+         * @RETURNS:    none
+         * @NOTES:      none
+         */
         protected override void OnStop()
         {
             // Close down program
@@ -905,6 +1227,7 @@ namespace RanshuPrintService
             releaseObject(OrderPrintService.xlWorkBook);
             releaseObject(OrderPrintService.xlApp);
 
+            //log stop to file and condense file
             writeToFile("Service Stopped");
             condenseFile();
         }

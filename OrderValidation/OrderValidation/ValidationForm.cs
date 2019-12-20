@@ -70,7 +70,6 @@ namespace OrderValidation
 
         private void refreshInvoices(List<Order> invoices)
         {
-            ErrorText.ResetText();
             EnterButton.Enabled = false;
             InvoiceList.Controls.Clear();
             InvoiceList.RowCount = 0;
@@ -213,7 +212,6 @@ namespace OrderValidation
             ItemsPanel.Show();
             EnterButton.Text = "Edit Quantity";
             EnterField.Text = "";
-            ErrorText.ResetText();
             EnterButton.Enabled = false;
             CancelButton.Enabled = true;
             currentItem = null;
@@ -410,6 +408,8 @@ namespace OrderValidation
         private void CancelButton_Click(object sender, EventArgs e)
         {
             //populateInvoices();
+            EnterButton.Enabled = false;
+            ReprintButton.Enabled = false;
             currentItem = null;
             currentOrder = null;
             ItemsPanel.Hide();

@@ -33,7 +33,6 @@
             this.RightTable = new System.Windows.Forms.TableLayoutPanel();
             this.InvoiceTypeButton = new System.Windows.Forms.Button();
             this.ReprintButton = new System.Windows.Forms.Button();
-            this.ErrorText = new System.Windows.Forms.Label();
             this.CancelButton = new System.Windows.Forms.Button();
             this.FinalizeButton = new System.Windows.Forms.Button();
             this.EnterField = new System.Windows.Forms.RichTextBox();
@@ -73,6 +72,10 @@
             this.label8 = new System.Windows.Forms.Label();
             this.Calendar = new System.Windows.Forms.MonthCalendar();
             this.CalendarPanel = new System.Windows.Forms.Panel();
+            this.EmptyPanel = new System.Windows.Forms.Panel();
+            this.EmptyPanelTable = new System.Windows.Forms.TableLayoutPanel();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.BannerPanel = new System.Windows.Forms.Panel();
             this.CalendarButton = new System.Windows.Forms.Button();
             this.InfoPanel.SuspendLayout();
             this.RightTable.SuspendLayout();
@@ -90,6 +93,8 @@
             this.InvoiceListPanel.SuspendLayout();
             this.InvoiceList.SuspendLayout();
             this.CalendarPanel.SuspendLayout();
+            this.EmptyPanel.SuspendLayout();
+            this.EmptyPanelTable.SuspendLayout();
             this.SuspendLayout();
             // 
             // InfoPanel
@@ -107,25 +112,22 @@
             this.RightTable.BackColor = System.Drawing.SystemColors.ScrollBar;
             this.RightTable.ColumnCount = 1;
             this.RightTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.RightTable.Controls.Add(this.InvoiceTypeButton, 0, 5);
-            this.RightTable.Controls.Add(this.ReprintButton, 0, 4);
-            this.RightTable.Controls.Add(this.ErrorText, 0, 1);
-            this.RightTable.Controls.Add(this.CancelButton, 0, 6);
-            this.RightTable.Controls.Add(this.FinalizeButton, 0, 3);
+            this.RightTable.Controls.Add(this.InvoiceTypeButton, 0, 4);
+            this.RightTable.Controls.Add(this.ReprintButton, 0, 3);
+            this.RightTable.Controls.Add(this.CancelButton, 0, 5);
+            this.RightTable.Controls.Add(this.FinalizeButton, 0, 2);
             this.RightTable.Controls.Add(this.EnterField, 0, 0);
-            this.RightTable.Controls.Add(this.EnterButton, 0, 2);
+            this.RightTable.Controls.Add(this.EnterButton, 0, 1);
             this.RightTable.Dock = System.Windows.Forms.DockStyle.Fill;
             this.RightTable.Location = new System.Drawing.Point(0, 0);
             this.RightTable.Name = "RightTable";
-            this.RightTable.RowCount = 8;
+            this.RightTable.RowCount = 6;
             this.RightTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 55F));
-            this.RightTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 64F));
+            this.RightTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.RightTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.RightTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.RightTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.RightTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.RightTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.RightTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.RightTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.RightTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.RightTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.RightTable.Size = new System.Drawing.Size(237, 523);
             this.RightTable.TabIndex = 0;
             // 
@@ -135,7 +137,7 @@
             this.InvoiceTypeButton.Dock = System.Windows.Forms.DockStyle.Fill;
             this.InvoiceTypeButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.InvoiceTypeButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.InvoiceTypeButton.Location = new System.Drawing.Point(0, 299);
+            this.InvoiceTypeButton.Location = new System.Drawing.Point(0, 361);
             this.InvoiceTypeButton.Margin = new System.Windows.Forms.Padding(0);
             this.InvoiceTypeButton.Name = "InvoiceTypeButton";
             this.InvoiceTypeButton.Padding = new System.Windows.Forms.Padding(0, 5, 0, 5);
@@ -152,29 +154,16 @@
             this.ReprintButton.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ReprintButton.Enabled = false;
             this.ReprintButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ReprintButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ReprintButton.Location = new System.Drawing.Point(0, 239);
+            this.ReprintButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ReprintButton.Location = new System.Drawing.Point(0, 259);
             this.ReprintButton.Margin = new System.Windows.Forms.Padding(0);
             this.ReprintButton.Name = "ReprintButton";
             this.ReprintButton.Padding = new System.Windows.Forms.Padding(0, 5, 0, 5);
-            this.ReprintButton.Size = new System.Drawing.Size(237, 60);
+            this.ReprintButton.Size = new System.Drawing.Size(237, 102);
             this.ReprintButton.TabIndex = 5;
             this.ReprintButton.Text = "Reprint Invoice";
             this.ReprintButton.UseVisualStyleBackColor = false;
             this.ReprintButton.Click += new System.EventHandler(this.ReprintButton_Click);
-            // 
-            // ErrorText
-            // 
-            this.ErrorText.AutoSize = true;
-            this.ErrorText.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ErrorText.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ErrorText.ForeColor = System.Drawing.Color.Red;
-            this.ErrorText.Location = new System.Drawing.Point(1, 56);
-            this.ErrorText.Margin = new System.Windows.Forms.Padding(1);
-            this.ErrorText.Name = "ErrorText";
-            this.ErrorText.Size = new System.Drawing.Size(235, 62);
-            this.ErrorText.TabIndex = 4;
-            this.ErrorText.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // CancelButton
             // 
@@ -182,12 +171,12 @@
             this.CancelButton.Dock = System.Windows.Forms.DockStyle.Fill;
             this.CancelButton.Enabled = false;
             this.CancelButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.CancelButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CancelButton.Location = new System.Drawing.Point(0, 359);
+            this.CancelButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CancelButton.Location = new System.Drawing.Point(0, 421);
             this.CancelButton.Margin = new System.Windows.Forms.Padding(0);
             this.CancelButton.Name = "CancelButton";
             this.CancelButton.Padding = new System.Windows.Forms.Padding(0, 5, 0, 5);
-            this.CancelButton.Size = new System.Drawing.Size(237, 60);
+            this.CancelButton.Size = new System.Drawing.Size(237, 102);
             this.CancelButton.TabIndex = 3;
             this.CancelButton.Text = "Cancel";
             this.CancelButton.UseVisualStyleBackColor = false;
@@ -199,12 +188,12 @@
             this.FinalizeButton.Dock = System.Windows.Forms.DockStyle.Fill;
             this.FinalizeButton.Enabled = false;
             this.FinalizeButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.FinalizeButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FinalizeButton.Location = new System.Drawing.Point(0, 179);
+            this.FinalizeButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FinalizeButton.Location = new System.Drawing.Point(0, 157);
             this.FinalizeButton.Margin = new System.Windows.Forms.Padding(0);
             this.FinalizeButton.Name = "FinalizeButton";
             this.FinalizeButton.Padding = new System.Windows.Forms.Padding(0, 5, 0, 5);
-            this.FinalizeButton.Size = new System.Drawing.Size(237, 60);
+            this.FinalizeButton.Size = new System.Drawing.Size(237, 102);
             this.FinalizeButton.TabIndex = 2;
             this.FinalizeButton.Text = "Finalize Shipment";
             this.FinalizeButton.UseVisualStyleBackColor = false;
@@ -231,12 +220,12 @@
             this.EnterButton.Dock = System.Windows.Forms.DockStyle.Fill;
             this.EnterButton.Enabled = false;
             this.EnterButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.EnterButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.EnterButton.Location = new System.Drawing.Point(0, 119);
+            this.EnterButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.EnterButton.Location = new System.Drawing.Point(0, 55);
             this.EnterButton.Margin = new System.Windows.Forms.Padding(0);
             this.EnterButton.Name = "EnterButton";
             this.EnterButton.Padding = new System.Windows.Forms.Padding(0, 5, 0, 5);
-            this.EnterButton.Size = new System.Drawing.Size(237, 60);
+            this.EnterButton.Size = new System.Drawing.Size(237, 102);
             this.EnterButton.TabIndex = 1;
             this.EnterButton.Text = "Edit Quantity";
             this.EnterButton.UseVisualStyleBackColor = false;
@@ -246,6 +235,7 @@
             // 
             this.LeftPanel.Controls.Add(this.ItemsPanel);
             this.LeftPanel.Controls.Add(this.InvoicePanel);
+            this.LeftPanel.Controls.Add(this.EmptyPanel);
             this.LeftPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.LeftPanel.Location = new System.Drawing.Point(0, 0);
             this.LeftPanel.Name = "LeftPanel";
@@ -300,7 +290,7 @@
             this.ItemsHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.27273F));
             this.ItemsHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 41.77489F));
             this.ItemsHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.ItemsHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 77F));
+            this.ItemsHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 85F));
             this.ItemsHeaderTable.Controls.Add(this.label3, 4, 0);
             this.ItemsHeaderTable.Controls.Add(this.label1, 3, 0);
             this.ItemsHeaderTable.Controls.Add(this.CustomPartHeader, 0, 0);
@@ -320,10 +310,10 @@
             this.label3.AutoSize = true;
             this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(478, 1);
+            this.label3.Location = new System.Drawing.Point(470, 1);
             this.label3.Margin = new System.Windows.Forms.Padding(1);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(76, 35);
+            this.label3.Size = new System.Drawing.Size(84, 35);
             this.label3.TabIndex = 4;
             this.label3.Text = "Qty";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -333,7 +323,7 @@
             this.label1.AutoSize = true;
             this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(419, 1);
+            this.label1.Location = new System.Drawing.Point(411, 1);
             this.label1.Margin = new System.Windows.Forms.Padding(1);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(57, 35);
@@ -346,10 +336,10 @@
             this.CustomPartHeader.AutoSize = true;
             this.CustomPartHeader.Dock = System.Windows.Forms.DockStyle.Fill;
             this.CustomPartHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CustomPartHeader.Location = new System.Drawing.Point(130, 1);
+            this.CustomPartHeader.Location = new System.Drawing.Point(128, 1);
             this.CustomPartHeader.Margin = new System.Windows.Forms.Padding(1);
             this.CustomPartHeader.Name = "CustomPartHeader";
-            this.CustomPartHeader.Size = new System.Drawing.Size(112, 35);
+            this.CustomPartHeader.Size = new System.Drawing.Size(110, 35);
             this.CustomPartHeader.TabIndex = 2;
             this.CustomPartHeader.Text = "Cust Part #";
             this.CustomPartHeader.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -359,10 +349,10 @@
             this.ItemDescriptionHeader.AutoSize = true;
             this.ItemDescriptionHeader.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ItemDescriptionHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ItemDescriptionHeader.Location = new System.Drawing.Point(244, 1);
+            this.ItemDescriptionHeader.Location = new System.Drawing.Point(240, 1);
             this.ItemDescriptionHeader.Margin = new System.Windows.Forms.Padding(1);
             this.ItemDescriptionHeader.Name = "ItemDescriptionHeader";
-            this.ItemDescriptionHeader.Size = new System.Drawing.Size(173, 35);
+            this.ItemDescriptionHeader.Size = new System.Drawing.Size(169, 35);
             this.ItemDescriptionHeader.TabIndex = 1;
             this.ItemDescriptionHeader.Text = "Description";
             this.ItemDescriptionHeader.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -375,7 +365,7 @@
             this.PartNumHeader.Location = new System.Drawing.Point(1, 1);
             this.PartNumHeader.Margin = new System.Windows.Forms.Padding(1);
             this.PartNumHeader.Name = "PartNumHeader";
-            this.PartNumHeader.Size = new System.Drawing.Size(127, 35);
+            this.PartNumHeader.Size = new System.Drawing.Size(125, 35);
             this.PartNumHeader.TabIndex = 0;
             this.PartNumHeader.Text = "Part #";
             this.PartNumHeader.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -399,7 +389,7 @@
             this.ItemList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.27273F));
             this.ItemList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 41.77489F));
             this.ItemList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 59F));
-            this.ItemList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 77F));
+            this.ItemList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 85F));
             this.ItemList.Controls.Add(this.label9, 4, 0);
             this.ItemList.Controls.Add(this.label7, 3, 0);
             this.ItemList.Controls.Add(this.label2, 0, 0);
@@ -418,10 +408,10 @@
             this.label9.AutoSize = true;
             this.label9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label9.Location = new System.Drawing.Point(478, 1);
+            this.label9.Location = new System.Drawing.Point(470, 1);
             this.label9.Margin = new System.Windows.Forms.Padding(1);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(76, 36);
+            this.label9.Size = new System.Drawing.Size(84, 36);
             this.label9.TabIndex = 6;
             this.label9.Text = "Qty";
             this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -431,7 +421,7 @@
             this.label7.AutoSize = true;
             this.label7.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(419, 1);
+            this.label7.Location = new System.Drawing.Point(411, 1);
             this.label7.Margin = new System.Windows.Forms.Padding(1);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(57, 36);
@@ -444,10 +434,10 @@
             this.label2.AutoSize = true;
             this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(130, 1);
+            this.label2.Location = new System.Drawing.Point(128, 1);
             this.label2.Margin = new System.Windows.Forms.Padding(1);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(112, 36);
+            this.label2.Size = new System.Drawing.Size(110, 36);
             this.label2.TabIndex = 4;
             this.label2.Text = "60-01534";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -458,10 +448,10 @@
             this.label4.BackColor = System.Drawing.SystemColors.Control;
             this.label4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(244, 1);
+            this.label4.Location = new System.Drawing.Point(240, 1);
             this.label4.Margin = new System.Windows.Forms.Padding(1);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(173, 36);
+            this.label4.Size = new System.Drawing.Size(169, 36);
             this.label4.TabIndex = 3;
             this.label4.Text = "SD 7H15 5.9 DIESEL 4682 8 GRV";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -474,7 +464,7 @@
             this.label5.Location = new System.Drawing.Point(1, 1);
             this.label5.Margin = new System.Windows.Forms.Padding(1);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(127, 36);
+            this.label5.Size = new System.Drawing.Size(125, 36);
             this.label5.TabIndex = 1;
             this.label5.Text = "14-SD4682NEW";
             this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -727,6 +717,54 @@
             this.CalendarPanel.TabIndex = 3;
             this.CalendarPanel.Visible = false;
             // 
+            // EmptyPanel
+            // 
+            this.EmptyPanel.Controls.Add(this.EmptyPanelTable);
+            this.EmptyPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.EmptyPanel.Location = new System.Drawing.Point(3, 3);
+            this.EmptyPanel.Margin = new System.Windows.Forms.Padding(0);
+            this.EmptyPanel.Name = "EmptyPanel";
+            this.EmptyPanel.Size = new System.Drawing.Size(555, 519);
+            this.EmptyPanel.TabIndex = 7;
+            // 
+            // EmptyPanelTable
+            // 
+            this.EmptyPanelTable.ColumnCount = 1;
+            this.EmptyPanelTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.EmptyPanelTable.Controls.Add(this.panel1, 0, 1);
+            this.EmptyPanelTable.Controls.Add(this.BannerPanel, 0, 0);
+            this.EmptyPanelTable.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.EmptyPanelTable.Location = new System.Drawing.Point(0, 0);
+            this.EmptyPanelTable.Margin = new System.Windows.Forms.Padding(0);
+            this.EmptyPanelTable.Name = "EmptyPanelTable";
+            this.EmptyPanelTable.RowCount = 2;
+            this.EmptyPanelTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 26.20424F));
+            this.EmptyPanelTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 73.79576F));
+            this.EmptyPanelTable.Size = new System.Drawing.Size(555, 519);
+            this.EmptyPanelTable.TabIndex = 0;
+            // 
+            // panel1
+            // 
+            this.panel1.BackgroundImage = global::OrderValidation.Properties.Resources.Validation_Instructions1;
+            this.panel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(0, 135);
+            this.panel1.Margin = new System.Windows.Forms.Padding(0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(555, 384);
+            this.panel1.TabIndex = 1;
+            // 
+            // BannerPanel
+            // 
+            this.BannerPanel.BackgroundImage = global::OrderValidation.Properties.Resources.RanshuLogo_Transparent;
+            this.BannerPanel.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.BannerPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.BannerPanel.Location = new System.Drawing.Point(0, 0);
+            this.BannerPanel.Margin = new System.Windows.Forms.Padding(0);
+            this.BannerPanel.Name = "BannerPanel";
+            this.BannerPanel.Size = new System.Drawing.Size(555, 135);
+            this.BannerPanel.TabIndex = 0;
+            // 
             // CalendarButton
             // 
             this.CalendarButton.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
@@ -760,7 +798,6 @@
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ValidationForm_KeyPress);
             this.InfoPanel.ResumeLayout(false);
             this.RightTable.ResumeLayout(false);
-            this.RightTable.PerformLayout();
             this.LeftPanel.ResumeLayout(false);
             this.ItemsPanel.ResumeLayout(false);
             this.ItemsTable.ResumeLayout(false);
@@ -783,6 +820,8 @@
             this.InvoiceList.ResumeLayout(false);
             this.InvoiceList.PerformLayout();
             this.CalendarPanel.ResumeLayout(false);
+            this.EmptyPanel.ResumeLayout(false);
+            this.EmptyPanelTable.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -827,7 +866,6 @@
         private System.Windows.Forms.Label TotalText;
         private System.Windows.Forms.Label InvoiceNumLabel;
         private System.Windows.Forms.Label InvoiceNumText;
-        private System.Windows.Forms.Label ErrorText;
         private System.Windows.Forms.Button ReprintButton;
         private System.Windows.Forms.Button InvoiceTypeButton;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
@@ -835,6 +873,10 @@
         private System.Windows.Forms.Label DateHeader;
         private System.Windows.Forms.MonthCalendar Calendar;
         private System.Windows.Forms.Panel CalendarPanel;
+        private System.Windows.Forms.Panel EmptyPanel;
+        private System.Windows.Forms.TableLayoutPanel EmptyPanelTable;
+        private System.Windows.Forms.Panel BannerPanel;
+        private System.Windows.Forms.Panel panel1;
     }
 }
 

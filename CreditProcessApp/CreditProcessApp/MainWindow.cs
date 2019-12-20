@@ -24,7 +24,7 @@ namespace CreditProcessApp
     {
         Invoice currentInvoice;
         DateTime selectedDate;
-        int deliverySelection;
+        int deliverySelection, declined = 0;
         string[] selectedDelivery = new string[3] {"ALL", "(CRDT_INV_SHPVIA = 'DELIVERY' OR CRDT_INV_SHPVIA = 'WILL CALL')", "(CRDT_INV_SHPVIA != 'DELIVERY' AND CRDT_INV_SHPVIA != 'WILL CALL')" };
         string held;
         string processOrderBy;
@@ -152,6 +152,7 @@ namespace CreditProcessApp
                 //get processed invoices for selected date (default is currentdate)
                 creditCommand = "SELECT CRDT_INV_NUM, CRDT_INV_CUSCOD, CRDT_INV_DATE, CRDT_INV_TOTAL, CRDT_INV_CHARGETIME, CRDT_INV_USER, CRDT_INV_NOTES, CRDT_INV_SHPVIA, CRDT_INV_SLSP " +
                     "FROM CRDTINV WHERE CRDT_INV_PROCESSED = 1 " +
+                    "AND CRDT_INV_DECLINED = " + declined + " " +
                     "AND (CRDT_INV_CHARGETIME >= '" + selectedDate.ToString("yyyy-MM-dd") +"' " +
                     "AND CRDT_INV_CHARGETIME < '"+ selectedDate.AddDays(1).ToString("yyyy-MM-dd") +"') " +
                     "ORDER BY " + completeOrderBy;
@@ -698,7 +699,8 @@ namespace CreditProcessApp
                     string sqlProcess = "UPDATE CRDTINV " +
                         "SET CRDT_INV_PROCESSED = 1, " +
                         "CRDT_INV_CHARGETIME = '" + DateTime.Now.ToString("yyyy-MM-dd HH:mm") + "', " +
-                        "CRDT_INV_USER = '" + CurrentUser.user_code + "' " +
+                        "CRDT_INV_USER = '" + CurrentUser.user_code + "', " +
+                        "CRDT_INV_DECLINED = " + printFlag + " " +
                         "WHERE CRDT_INV_NUM = " + currentInvoice.invoiceNumber + "; " +
                         "UPDATE BKARHINV " +
                         "SET BKAR_INV_MAX = "+ printFlag +
@@ -867,7 +869,7 @@ namespace CreditProcessApp
                 using (pSqlConn = new OdbcConnection(strConnection))
                 {
                     //get unprocessed invoices from database
-                    string creditCommand = "SELECT invoice_num, BKAR_INV_NUM, BKAR_INV_CUSCOD, BKAR_INV_INVDTE, BKAR_INV_TOTAL, BKAR_INV_SHPVIA, BKAR_INV_SLSP, BKAR_INV_LOC " +
+                    string creditCommand = "SELECT invoice_num, notes, BKAR_INV_NUM, BKAR_INV_CUSCOD, BKAR_INV_INVDTE, BKAR_INV_TOTAL, BKAR_INV_SHPVIA, BKAR_INV_SLSP, BKAR_INV_LOC " +
                         "FROM wmsOrders w inner join BKARHINV b ON w.invoice_num = b.BKAR_INV_NUM " +
                         "WHERE w.validated is null and b.BKAR_INV_CUSCOD = '" + currentInvoice.account + "' and w.invoice_num != " + currentInvoice.invoiceNumber +
                         "ORDER BY " + (sender as Button).Tag.ToString();
@@ -889,6 +891,7 @@ namespace CreditProcessApp
                             invoice.deliveryMethod = creditReader["BKAR_INV_SHPVIA"].ToString().TrimEnd();
                             invoice.salesPerson = Convert.ToInt32(creditReader["BKAR_INV_SLSP"].ToString());
                             invoice.setLocation(creditReader["BKAR_INV_LOC"].ToString());
+                            invoice.notes = creditReader["notes"].ToString().Trim();
 
                             //add invoice to list
                             incomplete.Add(invoice);
@@ -1059,7 +1062,7 @@ namespace CreditProcessApp
                     OdbcConnection pSQLConn = null;
                     using (pSQLConn = new OdbcConnection(strConnection))
                     {
-                        string creditCommand = "UPDATE CRDTINV SET CRDT_INV_USER = 'null', CRDT_INV_PROCESSED = 0, CRDT_INV_CHARGETIME = null WHERE CRDT_INV_NUM = " + currentInvoice.invoiceNumber + " AND CRDT_INV_PROCESSED = 1";
+                        string creditCommand = "UPDATE CRDTINV SET CRDT_INV_USER = 'null', CRDT_INV_PROCESSED = 0, CRDT_INV_CHARGETIME = null, CRDT_INV_DECLINED = 0 WHERE CRDT_INV_NUM = " + currentInvoice.invoiceNumber + " AND CRDT_INV_PROCESSED = 1";
                         OdbcCommand cmd = new OdbcCommand(creditCommand, pSQLConn);
                         pSQLConn.Open();
                         cmd.ExecuteNonQuery();
@@ -1074,6 +1077,22 @@ namespace CreditProcessApp
         private void AccountData_Click(object sender, EventArgs e)
         {
             Clipboard.SetText((sender as Label).Text);
+        }
+
+        private void SwitchCompletedButton_Click(object sender, EventArgs e)
+        {
+            if(declined == 1)
+            {
+                declined = 0;
+                populateTables();
+                SwitchCompletedButton.Text = "View Declined";
+            }
+            else
+            {
+                declined = 1;
+                populateTables();
+                SwitchCompletedButton.Text = "View Charged";
+            }
         }
     }
 }

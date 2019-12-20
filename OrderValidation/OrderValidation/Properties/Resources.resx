@@ -121,4 +121,25 @@
   <data name="calendarimg" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\calendarimg.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Validation Instructions1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Validation Instructions1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Validation Instructions2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Validation Instructions.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Validation Instructions" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Validation Instructions.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="RanshuLogo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\RanshuLogo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Validation Instructions3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Validation Instructions1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Validation Instructions4" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Validation Instructions2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="RanshuLogo-Transparent" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\RanshuLogo-Transparent.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

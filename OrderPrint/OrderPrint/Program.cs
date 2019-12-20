@@ -13,6 +13,7 @@ using System.Windows.Forms;
 using System.Management;
 using System.Net;
 using System.Net.Mail;
+using System.Data;
 using System.Drawing;
 using System.Drawing.Printing;
 using System.Printing;
@@ -53,6 +54,13 @@ namespace OrderPrint
 
         static void Main(string[] args)
         {
+            bool set = printers.SetDefaultPrinter("RICOHNV");
+
+            if(set)
+            {
+                Console.WriteLine("Printer set");
+            }
+
             //if update bins flag set
             if (updateBinsFlag)
             {
@@ -118,7 +126,7 @@ namespace OrderPrint
             xlBarcodeBottom.HorizontalAlignment = XlHAlign.xlHAlignCenter;
             xlBarcodeBottom.VerticalAlignment = XlVAlign.xlVAlignCenter;
             xlBarcodeBottom.Font.Name = "Free 3 of 9";
-            xlBarcodeBottom.Font.Size = 40;
+            xlBarcodeBottom.Font.Size = 50;
 
             // Item Details
             xlsheet.get_Range("A26", "A49").HorizontalAlignment = XlHAlign.xlHAlignLeft;
@@ -141,6 +149,7 @@ namespace OrderPrint
             xlsheet.Cells[17, 10].Value = "Pack List";
             xlsheet.Cells[17, 10].Font.Size = 28;
             xlsheet.Cells[17, 10].Font.Bold = true;
+            xlsheet.get_Range("A17").RowHeight = 50;
 
             xlsheet.get_Range("A24", "L24").Font.Bold = true;
             xlsheet.Cells[24, 1].Value = "Location";
@@ -250,12 +259,9 @@ namespace OrderPrint
             OdbcConnection pSqlConn = null;
             using (pSqlConn = new OdbcConnection(strConnection))
             {
-                //get order information
-                string sqlInvoice =
-                "SELECT BKAR_INV_NUM, BKAR_INV_INVDTE, BKAR_INV_CUSCOD, BKAR_INV_CUSNME, BKAR_INV_CUSA1, BKAR_INV_CUSA2, BKAR_INV_CUSCTY, BKAR_INV_CUSST, BKAR_INV_CUSZIP, BKAR_INV_CUSCUN, BKAR_INV_SHPNME, BKAR_INV_SHPA1, BKAR_INV_SHPA2, BKAR_INV_SHPCTY, BKAR_INV_SHPST, BKAR_INV_SHPZIP, BKAR_INV_SHPCUN, BKAR_INV_LOC, BKAR_INV_CUSORD, BKAR_INV_SHPVIA, BKAR_INV_TERMD, BKAR_INV_ENTBY, BKAR_INV_TOTAL, BKAR_INV_SLSP, invoice_num" +
-                " FROM BKARHINV LEFT JOIN wmsOrders ON BKAR_INV_NUM = invoice_num " +
-                " WHERE BKAR_INV_MAX = 0" ;
-                OdbcCommand sqlCommandINV = new OdbcCommand(sqlInvoice, pSqlConn);
+                OdbcCommand sqlCommandINV = new OdbcCommand("{call getItems (?)}", pSqlConn);
+                sqlCommandINV.CommandType = CommandType.StoredProcedure;
+                sqlCommandINV.Parameters.AddWithValue(":invNum", 1378697)
                 sqlCommandINV.CommandTimeout = 120;
                 pSqlConn.Open();
                 Console.WriteLine("connection");
@@ -278,7 +284,7 @@ namespace OrderPrint
                         order.customerCode = readerINV["BKAR_INV_CUSCOD"].ToString();
 
                         //populate shipping address
-                        order.billAddress.name = readerINV["BKAR_INV_CUSNME"].ToString().TrimEnd();
+                        order.billAddress.name = readerINV["BKAR_INVL_CUSNME"].ToString().TrimEnd();
                         order.billAddress.line1 = readerINV["BKAR_INV_CUSA1"].ToString();
                         order.billAddress.line2 = readerINV["BKAR_INV_CUSA2"].ToString();
                         order.billAddress.city = readerINV["BKAR_INV_CUSCTY"].ToString().TrimEnd();
@@ -617,8 +623,8 @@ namespace OrderPrint
                                 xlsheet.Cells[15, 11].value = "Page";
                                 xlsheet.Cells[15, 12].value = numPage.ToString();
 
-                                xlsheet.Cells[50, 11].value = "Page";
-                                xlsheet.Cells[50, 12].value = numPage.ToString();
+                                xlsheet.Cells[49, 11].value = "Page";
+                                xlsheet.Cells[49, 12].value = numPage.ToString();
 
                                 if (item.itemType == "X")
                                 {
@@ -678,6 +684,7 @@ namespace OrderPrint
                         }
                         else
                         {
+                            //update order printed time
                             //update invoice as printed
                             strCurrentDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
                             sqlUpdateList = "UPDATE wmsOrders " +
@@ -714,6 +721,17 @@ namespace OrderPrint
             flagActive = 0;
         }
 
+        /*
+         * @FUNCTION:   public static int selectPrinter()
+         * @PURPOSE:    Select printer based on location
+         *              mark as retail if retail
+         *              
+         * @PARAM:      string locationCode
+         *              bool retail
+         * 
+         * @RETURNS:    none
+         * @NOTES:      none
+         */
         public static int selectPrinter(string locationcode, bool retail)
         {
             int flagPrinterFound = 0;

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.InteropServices;
+using System.Printing;
 
 namespace OrderPrint
 {
@@ -192,5 +194,11 @@ namespace OrderPrint
         {
 
         }
+    }
+
+    public static class printers
+    {
+        [DllImport("winspool.drv", CharSet = CharSet.Auto, SetLastError = true)]
+        public static extern bool SetDefaultPrinter(string Name);
     }
 }

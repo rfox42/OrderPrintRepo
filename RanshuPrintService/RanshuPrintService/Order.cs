@@ -7,6 +7,12 @@ using System.Runtime.InteropServices;
 
 namespace RanshuPrintService
 {
+    /* 
+    * @CLASS: class Order
+    * @PURPOSE: holds data for each invoice
+    * 
+    * @NOTES: none
+    */
     public class Order
     {
         /// <summary>
@@ -71,6 +77,10 @@ namespace RanshuPrintService
         /// </summary>
         public string enteredBy;
 
+        /// <summary>
+        /// class constructor
+        /// </summary>
+        /// <param name="invNum"></param>
         public Order(int invNum)
         {
             invoiceNumber = invNum;
@@ -79,11 +89,20 @@ namespace RanshuPrintService
             billAddress = new Address();
         }
 
+        /// <summary>
+        /// class destructor
+        /// </summary>
         ~Order()
         {
         }
     }
 
+    /* 
+     * @CLASS: class Address
+     * @PURPOSE: holds address data
+     * 
+     * @NOTES: none
+     */
     public class Address
     {
         /// <summary>
@@ -121,6 +140,29 @@ namespace RanshuPrintService
         /// </summary>
         public string zipcode;
 
+        public static bool operator ==(Address address1, Address address2)
+        {
+            return ((address1.name.Contains(address2.name) || address2.name.Contains(address1.name))
+                || address1.line1 == address2.line1);
+        }
+
+        public static bool operator !=(Address address1, Address address2)
+        {
+            return !((address1.name.Contains(address2.name) || address2.name.Contains(address1.name))
+                || address1.line1 == address2.line1);
+        }
+
+        public override bool Equals(object obj)
+        {
+            Address address2 = obj as Address;
+            return ((name.Contains(address2.name) || address2.name.Contains(name))
+                || line1 == address2.line1);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
 
         public Address()
         {
@@ -133,6 +175,12 @@ namespace RanshuPrintService
         }
     }
 
+    /* 
+     * @CLASS: class Item
+     * @PURPOSE: holds part/item data
+     * 
+     * @NOTES: none
+     */
     public class Item
     {
         /// <summary>
@@ -179,6 +227,12 @@ namespace RanshuPrintService
         public string vendorPart;
 
         /// <summary>
+        /// price of part
+        /// BKAR_INVL_PPRCE
+        /// </summary>
+        public string price;
+
+        /// <summary>
         /// number of parts for order
         /// BKAR_INVL_PQTY
         /// </summary>
@@ -195,6 +249,13 @@ namespace RanshuPrintService
         }
     }
 
+
+    /* 
+     * @CLASS: public static class printers
+     * @PURPOSE: sets and holds the default printer
+     * 
+     * @NOTES: none
+     */
     public static class printers
     {
         [DllImport("winspool.drv", CharSet = CharSet.Auto, SetLastError = true)]
