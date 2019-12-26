@@ -101,6 +101,7 @@
             this.CancelButton.FlatAppearance.BorderColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.CancelButton.FlatAppearance.BorderSize = 0;
             this.CancelButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.CancelButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.CancelButton.Location = new System.Drawing.Point(227, 1);
             this.CancelButton.Margin = new System.Windows.Forms.Padding(0);
             this.CancelButton.Name = "CancelButton";
@@ -117,6 +118,7 @@
             this.SignInButton.FlatAppearance.BorderColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.SignInButton.FlatAppearance.BorderSize = 0;
             this.SignInButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.SignInButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.SignInButton.Location = new System.Drawing.Point(1, 1);
             this.SignInButton.Margin = new System.Windows.Forms.Padding(0);
             this.SignInButton.Name = "SignInButton";

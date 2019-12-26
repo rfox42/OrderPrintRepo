@@ -92,9 +92,10 @@ namespace CreditProcessApp
          */
         private void populateTables()
         {
-            ReprocessButton.Enabled = false;
-            ProcessButton.Enabled = false;
-            ExitButton.Enabled = false;
+            RemoveButton.Enabled =
+            ReprocessButton.Enabled = 
+            ProcessButton.Enabled = 
+            ExitButton.Enabled = 
             OtherOrdersButton.Enabled = false;
             releaseInvoice();
             clearData();
@@ -315,11 +316,11 @@ namespace CreditProcessApp
         {
             //increment rowcount of given table and add new row
             table.RowCount++;
-            table.RowStyles.Add(new RowStyle() { SizeType = SizeType.Absolute, Height = 30 });
+            table.RowStyles.Add(new RowStyle() { SizeType = SizeType.AutoSize});
 
             for (int i = 0; i < data.Count; i++)
             {
-                Label tempLabel = new Label() { Text = data[i], TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Microsoft Sans Serif", 11, FontStyle.Regular), Dock = DockStyle.Fill, Margin = new Padding(0, 1, 0, 1), Tag = invoice, Parent = table, ForeColor = color ?? SystemColors.ControlText, UseMnemonic = false };
+                Label tempLabel = new Label() { Text = data[i], TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Microsoft Sans Serif", 10, FontStyle.Regular), Dock = DockStyle.Fill, Margin = new Padding(0, 1, 0, 1), Tag = invoice, Parent = table, ForeColor = color ?? SystemColors.ControlText, UseMnemonic = false };
                 tempLabel.Click += new EventHandler(tempLabel_Click);
                 table.Controls.Add(tempLabel, i, table.RowCount);
             }
@@ -450,7 +451,10 @@ namespace CreditProcessApp
          */
         private void tempLabel_Click(object sender, EventArgs e)
         {
-            ExitButton.Enabled = ProcessButton.Enabled = false;
+            RemoveButton.Enabled =
+                ExitButton.Enabled =
+                ProcessButton.Enabled =
+                ReprocessButton.Enabled = false;
 
             //get invoice and display data
             Label clicked = (Label)sender;
@@ -464,8 +468,10 @@ namespace CreditProcessApp
             if (ProcessInvoiceList == (sender as Label).Parent)
             {
                 //flag table
-                ExitButton.Enabled = ProcessButton.Enabled = true;
-                ReprocessButton.Enabled = false;
+                RemoveButton.Enabled =
+                    ExitButton.Enabled =
+                    ProcessButton.Enabled = true;
+
                 row = ProcessInvoiceList.GetRow(clicked);
                 table = ProcessInvoiceList;
                 offTable = CompleteInvoiceList;
@@ -504,6 +510,7 @@ namespace CreditProcessApp
                 table = CompleteInvoiceList;
                 offTable = ProcessInvoiceList;
 
+                RemoveButton.Enabled = true;
                 ReprocessButton.Enabled = true;
             }
 
@@ -1077,6 +1084,42 @@ namespace CreditProcessApp
         private void AccountData_Click(object sender, EventArgs e)
         {
             Clipboard.SetText((sender as Label).Text);
+        }
+
+        private void RemoveButton_Click(object sender, EventArgs e)
+        {
+            //if invoice is valid
+            if (currentInvoice != null)
+            {
+                //warn user of removal
+                DialogResult dialogResult = MessageBox.Show("WARNING: Removing invoice " + currentInvoice.invoiceNumber + " will delete it from the credit process app and will not print a pick ticket. " +
+                    "Retrieval after this will require direct access to the database. " +
+                    "Are you sure you wish to continue?", "Remove Invoice " + currentInvoice.invoiceNumber, MessageBoxButtons.YesNo);
+
+                //if confirmed
+                if (dialogResult == DialogResult.Yes && currentInvoice != null)
+                {
+                    //remove invoice from db
+                    string strConnection = "DSN=Ranshu";
+                    OdbcConnection pSQLConn = null;
+                    using (pSQLConn = new OdbcConnection(strConnection))
+                    {
+                        string creditCommand = "DELETE FROM CRDTINV WHERE CRDT_INV_NUM = " + currentInvoice.invoiceNumber;
+                        OdbcCommand cmd = new OdbcCommand(creditCommand, pSQLConn);
+                        pSQLConn.Open();
+                        cmd.ExecuteNonQuery();
+                        pSQLConn.Close();
+                    }
+
+                    //repopulate
+                    populateTables();
+                }
+            }
+            else
+            {
+                //disable remove button
+                RemoveButton.Enabled = false;
+            }
         }
 
         private void SwitchCompletedButton_Click(object sender, EventArgs e)

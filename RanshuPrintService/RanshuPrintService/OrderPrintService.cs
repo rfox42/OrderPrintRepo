@@ -148,7 +148,7 @@ namespace RanshuPrintService
             xlsheet.get_Range("C25", "C49").HorizontalAlignment = XlHAlign.xlHAlignLeft;
             xlsheet.get_Range("F25", "F49").HorizontalAlignment = XlHAlign.xlHAlignLeft;
             xlsheet.get_Range("H25", "H49").HorizontalAlignment = XlHAlign.xlHAlignLeft;
-            xlsheet.get_Range("L24", "L49").HorizontalAlignment = XlHAlign.xlHAlignRight;
+            xlsheet.get_Range("K24", "L49").HorizontalAlignment = XlHAlign.xlHAlignRight;
 
             // BOTTOM Header Section
             xlsheet.Cells[17, 1].Value = "Ship To:";
@@ -259,73 +259,6 @@ namespace RanshuPrintService
 
                 //stop cycle
                 return;
-            }
-
-            try
-            {
-                //checks for errors on the installed printer
-                PrintServer printServer = new PrintServer(installedPrinter);
-                PrintQueueCollection printQueues = printServer.GetPrintQueues();
-                foreach (PrintQueue pq in printQueues)
-                {
-                    pq.Refresh();
-                    PrintJobInfoCollection pCollection = pq.GetPrintJobInfoCollection();
-                    if (!heldPrinters.Contains(pq.Name) && ((pq.QueueStatus & PrintQueueStatus.Error) == PrintQueueStatus.Error || (pq.QueueStatus & PrintQueueStatus.None) != PrintQueueStatus.None))
-                    {
-                        if (pSqlConn.State == ConnectionState.Open)
-                            pSqlConn.Close();
-                        string strConnection = "DSN=RANSHU";
-                        pSqlConn = null;
-                        using (pSqlConn = new OdbcConnection(strConnection))
-                        {
-                            //get all new invoices
-                            string sqlInvoice = "insert into wmsTrouble(trouble_printer) " +
-                                "select distinct printer_name from wmsPrinters " +
-                                "where printer_name = '" + pq.Name + "' " +
-                                "and printer_name not in (select trouble_printer " +
-                                "from wmsTrouble where trouble_printer = printer_name)";
-
-                            OdbcCommand cmd = new OdbcCommand(sqlInvoice, pSqlConn);
-                            pSqlConn.Open();
-
-                            if(cmd.ExecuteNonQuery() > 0)
-                            {
-                                //emails error report to IT
-                                string text = "There appears to be a problem printing order to " + pq.Name + ". ERROR: " + pq.QueueStatus.ToString();
-                                text += System.Environment.NewLine + "Please check the printer.";
-                                SendEmail("Print Failure on " + pq.Name, text);
-                            }
-
-                            heldPrinters.Add(pq.Name);
-                            pSqlConn.Close();
-                        }
-                    }
-                    else if(heldPrinters.Contains(pq.Name) && !((pq.QueueStatus & PrintQueueStatus.Error) == PrintQueueStatus.Error || (pq.QueueStatus & PrintQueueStatus.None) != PrintQueueStatus.None))
-                    {
-                        if (pSqlConn.State == ConnectionState.Open)
-                            pSqlConn.Close();
-                        string strConnection = "DSN=RANSHU";
-                        pSqlConn = null;
-                        using (pSqlConn = new OdbcConnection(strConnection))
-                        {
-                            //get all new invoices
-                            string sqlInvoice = "delete from wmsTrouble " +
-                                "where printer_name = '" + pq.Name + "'";
-
-                            OdbcCommand cmd = new OdbcCommand(sqlInvoice, pSqlConn);
-                            pSqlConn.Open();
-                            cmd.ExecuteNonQuery();
-                            heldPrinters.Remove(pq.Name);
-                            pSqlConn.Close();
-                        }
-                    }
-                }
-            }
-            catch(Exception ex)
-            {
-                //report error to IT
-                string error = new StackTrace(ex, true).GetFrame(0).GetFileLineNumber() + " " + ex.Message;
-                writeToFile(error);
             }
 
             GC.Collect();
@@ -439,11 +372,6 @@ namespace RanshuPrintService
 
                         //get items for order
                         int flagPrint = 1;
-                        /*string sqlItems = "SELECT BKAR_INVL_PCODE, BKAR_INVL_ITYPE, BKAR_INVL_PQTY, BKAR_INVL_PDESC, BKAR_INVL_LOC, BKAR_INVL_MSG, BKAR_INVL_PEXT, BKIC_VND_PART, BIN_NAME " +
-                            "FROM BKARHINV INNER JOIN BKARHIVL ON BKAR_INV_NUM = BKAR_INVL_INVNM " +
-                            "LEFT JOIN BKICCUST ON (BKAR_INVL_PCODE = BKIC_VND_PCODE AND BKAR_INV_CUSCOD = BKIC_VND_VENDOR)" +
-                            "LEFT JOIN wmsLocations ON (BIN_PART = BKAR_INVL_PCODE AND BIN_LOC = BKAR_INVL_LOC) " +
-                            "WHERE BKAR_INV_NUM = '" + order.invoiceNumber + "'";*/
                         using (OdbcCommand sqlCommandItems = new OdbcCommand("{call getItems (?)}", pSqlConn))
                         {
                             sqlCommandItems.CommandType = CommandType.StoredProcedure;
@@ -511,10 +439,19 @@ namespace RanshuPrintService
                             readerItems.Close();
                         }
 
-                        if(invoice)
+                        Range price, priceHead = xlsheet.get_Range("K24", "L24");
+                        priceHead.Merge();
+
+                        if (invoice)
+                        {
                             xlsheet.Cells[17, 10].Value = "Ranshu";
+                            priceHead.Value = "Price";
+                        }
                         else
+                        {
+                            priceHead.Value = "";
                             xlsheet.Cells[17, 10].Value = "Pack List";
+                        }
 
                         //if order is cash on demand
                         if (order.paymentTerms.Contains("COD"))
@@ -650,10 +587,6 @@ namespace RanshuPrintService
                             writeToFile(installedPrinter);
 
                             // Dont print FAX
-                            /*if (order.deliveryMethod == "FAX" || order.deliveryMethod == "RMT")
-                            {
-                                flagPrint = 0;
-                            }*/
 
                             int numPageItems = 0;
                             int currentRow = 25;
@@ -707,9 +640,8 @@ namespace RanshuPrintService
 
                                     // Clear out previous line items
                                     xlsheet.get_Range("A25", "L49").Clear();
-                                    xlsheet.get_Range("A25", "L49").HorizontalAlignment = XlHAlign.xlHAlignLeft;
+                                    xlsheet.get_Range("A25", "I49").HorizontalAlignment = XlHAlign.xlHAlignLeft;
                                     xlsheet.get_Range("B24", "B49").HorizontalAlignment = XlHAlign.xlHAlignCenter;
-                                    xlsheet.get_Range("L24", "L49").HorizontalAlignment = XlHAlign.xlHAlignRight;
 
                                 }
                                 else if (strInvLoc != item.locationCode && (item.itemType != "X" && item.itemType != "N"))
@@ -726,30 +658,38 @@ namespace RanshuPrintService
                                         xlsheet.Cells[47, 7].Value = "P.O. Box 913317";
                                         xlsheet.Cells[48, 7].Value = "Denver, CO 80291-3317";
 
-                                        if(order.paymentTerms == "NET 5TH")
+                                        if (order.paymentTerms == "NET 5TH")
                                         {
                                             xlsheet.Cells[49, 5].Value = "Pay by the 5th and save $" + ((Convert.ToDouble(readerINV["BKAR_INV_SUBTOT"].ToString()) + Convert.ToDouble(readerINV["BKAR_INV_TAXAMT"].ToString())) * .05f).ToString("N2");
                                         }
 
-
                                         if (subCheck < Convert.ToDouble(readerINV["BKAR_INV_SUBTOT"].ToString()))
                                         {
-                                            xlsheet.Cells[45, 9].Value = "Items shipped separately:";
-                                            xlsheet.Cells[45, 12].Value = "$" + (Convert.ToDouble(readerINV["BKAR_INV_SUBTOT"].ToString()) - subCheck).ToString("N2");
+                                            xlsheet.Cells[45, 8].Value = "Items shipped separately:";
+                                            price = xlsheet.get_Range("K45", "L45");
+                                            price.Merge();
+                                            price.Value = "$" + (Convert.ToDouble(readerINV["BKAR_INV_SUBTOT"].ToString()) - subCheck).ToString("N2");
                                         }
                                         else
                                         {
-                                            xlsheet.get_Range("I45", "L45").Clear();
+                                            xlsheet.get_Range("H45", "L45").Clear();
                                         }
-
-                                        xlsheet.Cells[46, 11].Value = "Subtotal:";
-                                        xlsheet.Cells[46, 12].Value = "$" + Convert.ToDouble(readerINV["BKAR_INV_SUBTOT"].ToString()).ToString("N2");
-                                        xlsheet.Cells[47, 11].Value = "Tax:";
-                                        xlsheet.Cells[47, 12].Value = "$" + Convert.ToDouble(readerINV["BKAR_INV_TAXAMT"].ToString()).ToString("N2");
-                                        xlsheet.Cells[48, 11].Value = "Freight:";
-                                        xlsheet.Cells[48, 12].Value = "$" + Convert.ToDouble(readerINV["BKAR_INV_FRGHT"].ToString()).ToString("N2");
-                                        xlsheet.Cells[49, 11].Value = "Total:";
-                                        xlsheet.Cells[49, 12].Value = "$" + Convert.ToDouble(readerINV["BKAR_INV_TOTAL"].ToString()).ToString("N2");
+                                        xlsheet.Cells[46, 10].Value = "Subtotal:";
+                                        price = xlsheet.get_Range("K46", "L46");
+                                        price.Merge();
+                                        price.Value = "$" + Convert.ToDouble(readerINV["BKAR_INV_SUBTOT"].ToString()).ToString("N2");
+                                        xlsheet.Cells[47, 10].Value = "Tax:";
+                                        price = xlsheet.get_Range("K47", "L47");
+                                        price.Merge();
+                                        price.Value = "$" + Convert.ToDouble(readerINV["BKAR_INV_TAXAMT"].ToString()).ToString("N2");
+                                        xlsheet.Cells[48, 10].Value = "Freight:";
+                                        price = xlsheet.get_Range("K48", "L48");
+                                        price.Merge();
+                                        price.Value = "$" + Convert.ToDouble(readerINV["BKAR_INV_FRGHT"].ToString()).ToString("N2");
+                                        xlsheet.Cells[49, 10].Value = "Total:";
+                                        price = xlsheet.get_Range("K49", "L49");
+                                        price.Merge();
+                                        price.Value = "$" + Convert.ToDouble(readerINV["BKAR_INV_TOTAL"].ToString()).ToString("N2");
                                     }
 
                                     // Print Out Current PackList
@@ -806,24 +746,27 @@ namespace RanshuPrintService
                                 xlsheet.Cells[49, 1].value = "Page";
                                 xlsheet.Cells[49, 2].value = numPage.ToString();
 
+                                price = xlsheet.get_Range("K" + currentRow, "L" + currentRow);
+                                price.Merge();
+
                                 if (item.itemType == "X")
                                 {
                                     xlsheet.Cells[currentRow, 4].value = "  " + item.message;
                                 }
                                 else if(item.itemType == "N")
                                 {
-                                    if (!(item.partCode.Contains("PROP65")))
+                                    if (!(item.partCode.ToUpper().Contains("PROP65") || item.partCode.ToUpper().Contains("FREIGHT")))
                                     {
                                         xlsheet.Cells[currentRow, 4].value = "  " + item.message;
 
                                         if (invoice)
                                         {
-                                            xlsheet.Cells[24, 12].value = "Price";
-                                            xlsheet.Cells[currentRow, 12].value = "$" + Convert.ToDouble(item.price).ToString("N2");
+                                            price.Value = "$" + Convert.ToDouble(item.price).ToString("N2");
+                                            subCheck += Convert.ToDouble(item.price);
                                         }
                                         else
                                         {
-                                            xlsheet.Cells[24, 12].value = "";
+                                            price.Value = "";
                                         }
                                     }
                                 }
@@ -835,16 +778,15 @@ namespace RanshuPrintService
                                     xlsheet.Cells[currentRow, 6].value = item.vendorPart;
                                     xlsheet.Cells[currentRow, 8].value = item.description;
 
-                                    if (invoice)
-                                    {
-                                        xlsheet.Cells[24, 12].value = "Price";
-                                        xlsheet.Cells[currentRow, 12].value = "$" + Convert.ToDouble(item.price).ToString("N2");
-                                        subCheck += Convert.ToDouble(item.price);
-                                    }
-                                    else
-                                    {
-                                        xlsheet.Cells[24, 12].value = "";
-                                    }
+                                        if (invoice)
+                                        {
+                                            price.Value = "$" + Convert.ToDouble(item.price).ToString("N2");
+                                            subCheck += Convert.ToDouble(item.price);
+                                        }
+                                        else
+                                        {
+                                            price.Value = "";
+                                        }
                                     numItems = numItems + item.quantity;
 
                                 }
@@ -872,21 +814,31 @@ namespace RanshuPrintService
 
                                 if(subCheck < Convert.ToDouble(readerINV["BKAR_INV_SUBTOT"].ToString()))
                                 {
-                                    xlsheet.Cells[45, 9].Value = "Items shipped separately:";
-                                    xlsheet.Cells[45, 12].Value = "$" + (Convert.ToDouble(readerINV["BKAR_INV_SUBTOT"].ToString()) - subCheck).ToString("N2");
+                                    xlsheet.Cells[45, 8].Value = "Items shipped separately:";
+                                    price = xlsheet.get_Range("K45", "L45");
+                                    price.Merge();
+                                    price.Value = "$" + (Convert.ToDouble(readerINV["BKAR_INV_SUBTOT"].ToString()) - subCheck).ToString("N2");
                                 }
                                 else
                                 {
-                                    xlsheet.get_Range("I45", "L45").Clear();
+                                    xlsheet.get_Range("H45", "L45").Clear();
                                 }
-                                xlsheet.Cells[46, 11].Value = "Subtotal:";
-                                xlsheet.Cells[46, 12].Value = "$" + Convert.ToDouble(readerINV["BKAR_INV_SUBTOT"].ToString()).ToString("N2");
-                                xlsheet.Cells[47, 11].Value = "Tax:";
-                                xlsheet.Cells[47, 12].Value = "$" + Convert.ToDouble(readerINV["BKAR_INV_TAXAMT"].ToString()).ToString("N2");
-                                xlsheet.Cells[48, 11].Value = "Freight:";
-                                xlsheet.Cells[48, 12].Value = "$" + Convert.ToDouble(readerINV["BKAR_INV_FRGHT"].ToString()).ToString("N2");
-                                xlsheet.Cells[49, 11].Value = "Total:";
-                                xlsheet.Cells[49, 12].Value = "$" + Convert.ToDouble(readerINV["BKAR_INV_TOTAL"].ToString()).ToString("N2");
+                                xlsheet.Cells[46, 10].Value = "Subtotal:"; 
+                                price = xlsheet.get_Range("K46", "L46");
+                                price.Merge();
+                                price.Value = "$" + Convert.ToDouble(readerINV["BKAR_INV_SUBTOT"].ToString()).ToString("N2");
+                                xlsheet.Cells[47, 10].Value = "Tax:";
+                                price = xlsheet.get_Range("K47", "L47");
+                                price.Merge();
+                                price.Value = "$" + Convert.ToDouble(readerINV["BKAR_INV_TAXAMT"].ToString()).ToString("N2");
+                                xlsheet.Cells[48, 10].Value = "Freight:";
+                                price = xlsheet.get_Range("K48", "L48");
+                                price.Merge();
+                                price.Value = "$" + Convert.ToDouble(readerINV["BKAR_INV_FRGHT"].ToString()).ToString("N2");
+                                xlsheet.Cells[49, 10].Value = "Total:";
+                                price = xlsheet.get_Range("K49", "L49");
+                                price.Merge();
+                                price.Value = "$" + Convert.ToDouble(readerINV["BKAR_INV_TOTAL"].ToString()).ToString("N2");
                             }
 
                             // Print Out Final Page of Packlist
@@ -964,7 +916,6 @@ namespace RanshuPrintService
                         // ALIGN CELLS PROPERLY
                         xlsheet.get_Range("A25", "I49").HorizontalAlignment = XlHAlign.xlHAlignLeft;
                         xlsheet.get_Range("B24", "B49").HorizontalAlignment = XlHAlign.xlHAlignCenter;
-                        xlsheet.get_Range("L24", "L49").HorizontalAlignment = XlHAlign.xlHAlignRight;
 
                         writeToFile(order.invoiceNumber.ToString());
                     }
@@ -1068,6 +1019,8 @@ namespace RanshuPrintService
          * @FUNCTION:   public static int selectPrinter()
          * @PURPOSE:    Select printer based on location
          *              mark as retail if retail
+         *              find installed printer
+         *              check selected printer for errors
          *              
          * @PARAM:      string locationCode
          *              bool retail
@@ -1131,39 +1084,108 @@ namespace RanshuPrintService
                 }
             }
 
-            if (installedPrinter != null)
+            //if installed printer is valid
+            if (installedPrinter != null && installedPrinter != "" && !installedPrinter.Contains("RETAIL"))
             {
-                // GRAB REGISTRY KEY NAME/VALUE PAIRS FOR ALL PRINTERS INSTALLED ON MACHINE
-                // SEARCH FOR NAME/VALUE PAIR WITH installedPrinter AS THE NAME AND EXTRACT THE PORT NAME FROM IT
-                // USE THE PORT NAME TO SPECIFY THE ACTIVE PRINTER IN THE EXCEL INSTANCE
-
-                //subkey = Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\Windows NT\CurrentVersion\Print\Printers", false);
-                subkey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows NT\CurrentVersion\Devices", false);
-                foreach (string printerName in subkey.GetValueNames())
+                try
                 {
-                    if (printerName == installedPrinter)
+                    // GRAB REGISTRY KEY NAME/VALUE PAIRS FOR ALL PRINTERS INSTALLED ON MACHINE
+                    // SEARCH FOR NAME/VALUE PAIR WITH installedPrinter AS THE NAME AND EXTRACT THE PORT NAME FROM IT
+                    // USE THE PORT NAME TO SPECIFY THE ACTIVE PRINTER IN THE EXCEL INSTANCE
+                    subkey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows NT\CurrentVersion\Devices", false);
+                    foreach (string printerName in subkey.GetValueNames())
                     {
-                        printerValue = subkey.GetValue(printerName).ToString();
-                        flagPrinterFound = 1;
+                        if (printerName == installedPrinter)
+                        {
+                            //checks for errors on the installed printer
+                            PrintServer printServer = new PrintServer(installedPrinter);
+                            PrintQueueCollection printQueues = printServer.GetPrintQueues();
+                            foreach (PrintQueue pq in printQueues)
+                            {
+                                pq.Refresh();
+                                PrintJobInfoCollection pCollection = pq.GetPrintJobInfoCollection();
+                                if (!heldPrinters.Contains(pq.Name) && ((pq.QueueStatus & PrintQueueStatus.Error) == PrintQueueStatus.Error || (pq.QueueStatus & PrintQueueStatus.None) != PrintQueueStatus.None))
+                                {
+                                    if (pSqlConn.State == ConnectionState.Open)
+                                        pSqlConn.Close();
+                                    string strConnection = "DSN=RANSHU";
+                                    pSqlConn = null;
+                                    using (pSqlConn = new OdbcConnection(strConnection))
+                                    {
+                                        //get all new invoices
+                                        string sqlInvoice = "insert into wmsTrouble(trouble_printer) " +
+                                            "select distinct printer_name from wmsPrinters " +
+                                            "where printer_name = '" + pq.Name + "' " +
+                                            "and printer_name not in (select trouble_printer " +
+                                            "from wmsTrouble where trouble_printer = printer_name)";
+
+                                        OdbcCommand cmd = new OdbcCommand(sqlInvoice, pSqlConn);
+                                        pSqlConn.Open();
+
+                                        if (cmd.ExecuteNonQuery() > 0)
+                                        {
+                                            //emails error report to IT
+                                            string text = "There appears to be a problem printing order to " + pq.Name + ". ERROR: " + pq.QueueStatus.ToString();
+                                            text += System.Environment.NewLine + "Please check the printer.";
+                                            SendEmail("Print Failure on " + pq.Name, text);
+                                        }
+
+                                        heldPrinters.Add(pq.Name);
+                                        pSqlConn.Close();
+                                    }
+                                    return 0;
+                                }
+                                else if (heldPrinters.Contains(pq.Name) && !((pq.QueueStatus & PrintQueueStatus.Error) == PrintQueueStatus.Error || (pq.QueueStatus & PrintQueueStatus.None) != PrintQueueStatus.None))
+                                {
+                                    if (pSqlConn.State == ConnectionState.Open)
+                                        pSqlConn.Close();
+                                    string strConnection = "DSN=RANSHU";
+                                    pSqlConn = null;
+                                    using (pSqlConn = new OdbcConnection(strConnection))
+                                    {
+                                        //get all new invoices
+                                        string sqlInvoice = "delete from wmsTrouble " +
+                                            "where printer_name = '" + pq.Name + "'";
+
+                                        OdbcCommand cmd = new OdbcCommand(sqlInvoice, pSqlConn);
+                                        pSqlConn.Open();
+                                        cmd.ExecuteNonQuery();
+                                        heldPrinters.Remove(pq.Name);
+                                        pSqlConn.Close();
+                                    }
+                                }
+                            }
+
+                            printerValue = subkey.GetValue(printerName).ToString();
+                            flagPrinterFound = 1;
+                        }
+                        else if (printerName == "RICOHNV")
+                        {
+                            backupPrinter = subkey.GetValue(printerName).ToString();
+                        }
                     }
-                    else if (printerName == "RICOHNV")
+                    if (flagPrinterFound == 1)
                     {
-                        backupPrinter = subkey.GetValue(printerName).ToString();
+
+                        string[] arrPrinterValue = printerValue.Split(',');
+                        portName = arrPrinterValue[1];
+
+                        xlApp.ActivePrinter = installedPrinter + " on " + portName;
+                    }
+                    else
+                    {
+                        writeToFile("There appears to be a problem printing to " + installedPrinter);
                     }
                 }
-                if (flagPrinterFound == 1)
+                catch (Exception ex)
                 {
-
-                    string[] arrPrinterValue = printerValue.Split(',');
-                    portName = arrPrinterValue[1];
-
-                    xlApp.ActivePrinter = installedPrinter + " on " + portName;
-                }
-                else
-                {
-                    writeToFile("There appears to be a problem printing to " + installedPrinter);
+                    //report error to IT
+                    string error = new StackTrace(ex, true).GetFrame(0).GetFileLineNumber() + " " + ex.Message;
+                    writeToFile(error);
+                    return 0;
                 }
             }
+
             return flagPrinterFound;
         }
 

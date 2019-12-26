@@ -65,18 +65,18 @@
             this.InvoiceHeaderTable = new System.Windows.Forms.TableLayoutPanel();
             this.InvoiceNumHeader = new System.Windows.Forms.Label();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this.CalendarButton = new System.Windows.Forms.Button();
             this.DateHeader = new System.Windows.Forms.Label();
             this.InvoiceListPanel = new System.Windows.Forms.Panel();
             this.InvoiceList = new System.Windows.Forms.TableLayoutPanel();
             this.label6 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
-            this.Calendar = new System.Windows.Forms.MonthCalendar();
-            this.CalendarPanel = new System.Windows.Forms.Panel();
             this.EmptyPanel = new System.Windows.Forms.Panel();
             this.EmptyPanelTable = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.BannerPanel = new System.Windows.Forms.Panel();
-            this.CalendarButton = new System.Windows.Forms.Button();
+            this.Calendar = new System.Windows.Forms.MonthCalendar();
+            this.CalendarPanel = new System.Windows.Forms.Panel();
             this.InfoPanel.SuspendLayout();
             this.RightTable.SuspendLayout();
             this.LeftPanel.SuspendLayout();
@@ -92,9 +92,9 @@
             this.tableLayoutPanel2.SuspendLayout();
             this.InvoiceListPanel.SuspendLayout();
             this.InvoiceList.SuspendLayout();
-            this.CalendarPanel.SuspendLayout();
             this.EmptyPanel.SuspendLayout();
             this.EmptyPanelTable.SuspendLayout();
+            this.CalendarPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // InfoPanel
@@ -290,7 +290,7 @@
             this.ItemsHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.27273F));
             this.ItemsHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 41.77489F));
             this.ItemsHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.ItemsHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 85F));
+            this.ItemsHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 86F));
             this.ItemsHeaderTable.Controls.Add(this.label3, 4, 0);
             this.ItemsHeaderTable.Controls.Add(this.label1, 3, 0);
             this.ItemsHeaderTable.Controls.Add(this.CustomPartHeader, 0, 0);
@@ -310,10 +310,10 @@
             this.label3.AutoSize = true;
             this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(470, 1);
+            this.label3.Location = new System.Drawing.Point(468, 1);
             this.label3.Margin = new System.Windows.Forms.Padding(1);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(84, 35);
+            this.label3.Size = new System.Drawing.Size(86, 35);
             this.label3.TabIndex = 4;
             this.label3.Text = "Qty";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -323,7 +323,7 @@
             this.label1.AutoSize = true;
             this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(411, 1);
+            this.label1.Location = new System.Drawing.Point(409, 1);
             this.label1.Margin = new System.Windows.Forms.Padding(1);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(57, 35);
@@ -336,10 +336,10 @@
             this.CustomPartHeader.AutoSize = true;
             this.CustomPartHeader.Dock = System.Windows.Forms.DockStyle.Fill;
             this.CustomPartHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CustomPartHeader.Location = new System.Drawing.Point(128, 1);
+            this.CustomPartHeader.Location = new System.Drawing.Point(127, 1);
             this.CustomPartHeader.Margin = new System.Windows.Forms.Padding(1);
             this.CustomPartHeader.Name = "CustomPartHeader";
-            this.CustomPartHeader.Size = new System.Drawing.Size(110, 35);
+            this.CustomPartHeader.Size = new System.Drawing.Size(109, 35);
             this.CustomPartHeader.TabIndex = 2;
             this.CustomPartHeader.Text = "Cust Part #";
             this.CustomPartHeader.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -349,7 +349,7 @@
             this.ItemDescriptionHeader.AutoSize = true;
             this.ItemDescriptionHeader.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ItemDescriptionHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ItemDescriptionHeader.Location = new System.Drawing.Point(240, 1);
+            this.ItemDescriptionHeader.Location = new System.Drawing.Point(238, 1);
             this.ItemDescriptionHeader.Margin = new System.Windows.Forms.Padding(1);
             this.ItemDescriptionHeader.Name = "ItemDescriptionHeader";
             this.ItemDescriptionHeader.Size = new System.Drawing.Size(169, 35);
@@ -365,7 +365,7 @@
             this.PartNumHeader.Location = new System.Drawing.Point(1, 1);
             this.PartNumHeader.Margin = new System.Windows.Forms.Padding(1);
             this.PartNumHeader.Name = "PartNumHeader";
-            this.PartNumHeader.Size = new System.Drawing.Size(125, 35);
+            this.PartNumHeader.Size = new System.Drawing.Size(124, 35);
             this.PartNumHeader.TabIndex = 0;
             this.PartNumHeader.Text = "Part #";
             this.PartNumHeader.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -389,7 +389,7 @@
             this.ItemList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.27273F));
             this.ItemList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 41.77489F));
             this.ItemList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 59F));
-            this.ItemList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 85F));
+            this.ItemList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 86F));
             this.ItemList.Controls.Add(this.label9, 4, 0);
             this.ItemList.Controls.Add(this.label7, 3, 0);
             this.ItemList.Controls.Add(this.label2, 0, 0);
@@ -408,10 +408,10 @@
             this.label9.AutoSize = true;
             this.label9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label9.Location = new System.Drawing.Point(470, 1);
+            this.label9.Location = new System.Drawing.Point(468, 1);
             this.label9.Margin = new System.Windows.Forms.Padding(1);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(84, 36);
+            this.label9.Size = new System.Drawing.Size(86, 36);
             this.label9.TabIndex = 6;
             this.label9.Text = "Qty";
             this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -421,7 +421,7 @@
             this.label7.AutoSize = true;
             this.label7.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(411, 1);
+            this.label7.Location = new System.Drawing.Point(409, 1);
             this.label7.Margin = new System.Windows.Forms.Padding(1);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(57, 36);
@@ -434,10 +434,10 @@
             this.label2.AutoSize = true;
             this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(128, 1);
+            this.label2.Location = new System.Drawing.Point(127, 1);
             this.label2.Margin = new System.Windows.Forms.Padding(1);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(110, 36);
+            this.label2.Size = new System.Drawing.Size(109, 36);
             this.label2.TabIndex = 4;
             this.label2.Text = "60-01534";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -448,7 +448,7 @@
             this.label4.BackColor = System.Drawing.SystemColors.Control;
             this.label4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(240, 1);
+            this.label4.Location = new System.Drawing.Point(238, 1);
             this.label4.Margin = new System.Windows.Forms.Padding(1);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(169, 36);
@@ -464,7 +464,7 @@
             this.label5.Location = new System.Drawing.Point(1, 1);
             this.label5.Margin = new System.Windows.Forms.Padding(1);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(125, 36);
+            this.label5.Size = new System.Drawing.Size(124, 36);
             this.label5.TabIndex = 1;
             this.label5.Text = "14-SD4682NEW";
             this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -627,6 +627,24 @@
             this.tableLayoutPanel2.Size = new System.Drawing.Size(285, 37);
             this.tableLayoutPanel2.TabIndex = 1;
             // 
+            // CalendarButton
+            // 
+            this.CalendarButton.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.CalendarButton.BackgroundImage = global::OrderValidation.Properties.Resources.calendarimg;
+            this.CalendarButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.CalendarButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.CalendarButton.FlatAppearance.BorderColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.CalendarButton.FlatAppearance.BorderSize = 0;
+            this.CalendarButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.CalendarButton.Location = new System.Drawing.Point(241, 1);
+            this.CalendarButton.Margin = new System.Windows.Forms.Padding(1);
+            this.CalendarButton.Name = "CalendarButton";
+            this.CalendarButton.Size = new System.Drawing.Size(43, 35);
+            this.CalendarButton.TabIndex = 7;
+            this.CalendarButton.UseVisualStyleBackColor = false;
+            this.CalendarButton.Visible = false;
+            this.CalendarButton.Click += new System.EventHandler(this.CalendarButton_Click);
+            // 
             // DateHeader
             // 
             this.DateHeader.AutoSize = true;
@@ -699,24 +717,6 @@
             this.label8.Text = "1344925";
             this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // Calendar
-            // 
-            this.Calendar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.Calendar.Location = new System.Drawing.Point(0, 0);
-            this.Calendar.Name = "Calendar";
-            this.Calendar.TabIndex = 3;
-            this.Calendar.DateSelected += new System.Windows.Forms.DateRangeEventHandler(this.Calendar_DateSelected);
-            // 
-            // CalendarPanel
-            // 
-            this.CalendarPanel.AutoSize = true;
-            this.CalendarPanel.Controls.Add(this.Calendar);
-            this.CalendarPanel.Location = new System.Drawing.Point(329, 43);
-            this.CalendarPanel.Name = "CalendarPanel";
-            this.CalendarPanel.Size = new System.Drawing.Size(228, 163);
-            this.CalendarPanel.TabIndex = 3;
-            this.CalendarPanel.Visible = false;
-            // 
             // EmptyPanel
             // 
             this.EmptyPanel.Controls.Add(this.EmptyPanelTable);
@@ -748,10 +748,10 @@
             this.panel1.BackgroundImage = global::OrderValidation.Properties.Resources.Validation_Instructions1;
             this.panel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 135);
+            this.panel1.Location = new System.Drawing.Point(0, 136);
             this.panel1.Margin = new System.Windows.Forms.Padding(0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(555, 384);
+            this.panel1.Size = new System.Drawing.Size(555, 383);
             this.panel1.TabIndex = 1;
             // 
             // BannerPanel
@@ -762,26 +762,26 @@
             this.BannerPanel.Location = new System.Drawing.Point(0, 0);
             this.BannerPanel.Margin = new System.Windows.Forms.Padding(0);
             this.BannerPanel.Name = "BannerPanel";
-            this.BannerPanel.Size = new System.Drawing.Size(555, 135);
+            this.BannerPanel.Size = new System.Drawing.Size(555, 136);
             this.BannerPanel.TabIndex = 0;
             // 
-            // CalendarButton
+            // Calendar
             // 
-            this.CalendarButton.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.CalendarButton.BackgroundImage = global::OrderValidation.Properties.Resources.calendarimg;
-            this.CalendarButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.CalendarButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.CalendarButton.FlatAppearance.BorderColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.CalendarButton.FlatAppearance.BorderSize = 0;
-            this.CalendarButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.CalendarButton.Location = new System.Drawing.Point(241, 1);
-            this.CalendarButton.Margin = new System.Windows.Forms.Padding(1);
-            this.CalendarButton.Name = "CalendarButton";
-            this.CalendarButton.Size = new System.Drawing.Size(43, 35);
-            this.CalendarButton.TabIndex = 7;
-            this.CalendarButton.UseVisualStyleBackColor = false;
-            this.CalendarButton.Visible = false;
-            this.CalendarButton.Click += new System.EventHandler(this.CalendarButton_Click);
+            this.Calendar.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Calendar.Location = new System.Drawing.Point(0, 0);
+            this.Calendar.Name = "Calendar";
+            this.Calendar.TabIndex = 3;
+            this.Calendar.DateSelected += new System.Windows.Forms.DateRangeEventHandler(this.Calendar_DateSelected);
+            // 
+            // CalendarPanel
+            // 
+            this.CalendarPanel.AutoSize = true;
+            this.CalendarPanel.Controls.Add(this.Calendar);
+            this.CalendarPanel.Location = new System.Drawing.Point(329, 43);
+            this.CalendarPanel.Name = "CalendarPanel";
+            this.CalendarPanel.Size = new System.Drawing.Size(228, 163);
+            this.CalendarPanel.TabIndex = 3;
+            this.CalendarPanel.Visible = false;
             // 
             // ValidationForm
             // 
@@ -819,9 +819,9 @@
             this.InvoiceListPanel.PerformLayout();
             this.InvoiceList.ResumeLayout(false);
             this.InvoiceList.PerformLayout();
-            this.CalendarPanel.ResumeLayout(false);
             this.EmptyPanel.ResumeLayout(false);
             this.EmptyPanelTable.ResumeLayout(false);
+            this.CalendarPanel.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
