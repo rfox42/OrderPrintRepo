@@ -24,7 +24,7 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <UpdateUrl>\\RANSHUDC2\users_data\_Information Technology\Dev Csharp\Ranshu Projects\RFox\App builds\RanshuOrderValidation\</UpdateUrl>
-    <ApplicationRevision>39</ApplicationRevision>
+    <ApplicationRevision>42</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -91,6 +91,7 @@
     <Compile Include="AddUserForm.Designer.cs">
       <DependentUpon>AddUserForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Transaction.cs" />
     <Compile Include="LocationMenu.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -60,6 +60,26 @@
             this.UserList = new System.Windows.Forms.TableLayoutPanel();
             this.label7 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
+            this.TransactionTab = new System.Windows.Forms.TabPage();
+            this.TransactionTable = new System.Windows.Forms.TableLayoutPanel();
+            this.label1 = new System.Windows.Forms.Label();
+            this.TransactionHeaders = new System.Windows.Forms.TableLayoutPanel();
+            this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
+            this.TransactionListPanel = new System.Windows.Forms.Panel();
+            this.TransactionList = new System.Windows.Forms.TableLayoutPanel();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.TransactionOptionTable = new System.Windows.Forms.TableLayoutPanel();
+            this.SearchButton = new System.Windows.Forms.Button();
+            this.PartGroup = new System.Windows.Forms.GroupBox();
+            this.PartField = new System.Windows.Forms.TextBox();
+            this.LocationGroup = new System.Windows.Forms.GroupBox();
+            this.LocationField = new System.Windows.Forms.TextBox();
+            this.LocationHeader = new System.Windows.Forms.Button();
+            this.PartHeader = new System.Windows.Forms.Button();
+            this.TransactionHeader = new System.Windows.Forms.Button();
+            this.TransUserHeader = new System.Windows.Forms.Button();
+            this.DateHeader = new System.Windows.Forms.Button();
             this.ShippingTab.SuspendLayout();
             this.InvoicePanel.SuspendLayout();
             this.InvoiceTable.SuspendLayout();
@@ -75,6 +95,15 @@
             this.tableLayoutPanel4.SuspendLayout();
             this.UserListPanel.SuspendLayout();
             this.UserList.SuspendLayout();
+            this.TransactionTab.SuspendLayout();
+            this.TransactionTable.SuspendLayout();
+            this.TransactionHeaders.SuspendLayout();
+            this.tableLayoutPanel5.SuspendLayout();
+            this.TransactionListPanel.SuspendLayout();
+            this.TransactionList.SuspendLayout();
+            this.TransactionOptionTable.SuspendLayout();
+            this.PartGroup.SuspendLayout();
+            this.LocationGroup.SuspendLayout();
             this.SuspendLayout();
             // 
             // ShippingTab
@@ -294,6 +323,7 @@
             // 
             this.TabControl.Controls.Add(this.ShippingTab);
             this.TabControl.Controls.Add(this.Receiving);
+            this.TabControl.Controls.Add(this.TransactionTab);
             this.TabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.TabControl.Location = new System.Drawing.Point(0, 0);
             this.TabControl.Name = "TabControl";
@@ -517,6 +547,302 @@
             this.label9.Text = "Richard";
             this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // TransactionTab
+            // 
+            this.TransactionTab.Controls.Add(this.TransactionTable);
+            this.TransactionTab.Location = new System.Drawing.Point(4, 22);
+            this.TransactionTab.Name = "TransactionTab";
+            this.TransactionTab.Size = new System.Drawing.Size(792, 424);
+            this.TransactionTab.TabIndex = 3;
+            this.TransactionTab.Text = "Transactions";
+            this.TransactionTab.UseVisualStyleBackColor = true;
+            // 
+            // TransactionTable
+            // 
+            this.TransactionTable.ColumnCount = 1;
+            this.TransactionTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.TransactionTable.Controls.Add(this.label1, 0, 2);
+            this.TransactionTable.Controls.Add(this.TransactionHeaders, 0, 1);
+            this.TransactionTable.Controls.Add(this.TransactionListPanel, 0, 3);
+            this.TransactionTable.Controls.Add(this.TransactionOptionTable, 0, 0);
+            this.TransactionTable.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TransactionTable.Location = new System.Drawing.Point(0, 0);
+            this.TransactionTable.Name = "TransactionTable";
+            this.TransactionTable.RowCount = 4;
+            this.TransactionTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 64F));
+            this.TransactionTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.TransactionTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 5F));
+            this.TransactionTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.TransactionTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.TransactionTable.Size = new System.Drawing.Size(792, 424);
+            this.TransactionTable.TabIndex = 7;
+            this.TransactionTable.Paint += new System.Windows.Forms.PaintEventHandler(this.tableLayoutPanel1_Paint);
+            // 
+            // label1
+            // 
+            this.label1.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.label1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label1.Location = new System.Drawing.Point(0, 101);
+            this.label1.Margin = new System.Windows.Forms.Padding(0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(792, 3);
+            this.label1.TabIndex = 16;
+            // 
+            // TransactionHeaders
+            // 
+            this.TransactionHeaders.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
+            this.TransactionHeaders.ColumnCount = 5;
+            this.TransactionHeaders.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.TransactionHeaders.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.TransactionHeaders.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.TransactionHeaders.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.TransactionHeaders.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.TransactionHeaders.Controls.Add(this.DateHeader, 4, 0);
+            this.TransactionHeaders.Controls.Add(this.TransUserHeader, 3, 0);
+            this.TransactionHeaders.Controls.Add(this.TransactionHeader, 2, 0);
+            this.TransactionHeaders.Controls.Add(this.LocationHeader, 0, 0);
+            this.TransactionHeaders.Controls.Add(this.tableLayoutPanel5, 1, 0);
+            this.TransactionHeaders.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TransactionHeaders.Location = new System.Drawing.Point(0, 64);
+            this.TransactionHeaders.Margin = new System.Windows.Forms.Padding(0);
+            this.TransactionHeaders.Name = "TransactionHeaders";
+            this.TransactionHeaders.Padding = new System.Windows.Forms.Padding(0, 0, 18, 0);
+            this.TransactionHeaders.RowCount = 1;
+            this.TransactionHeaders.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.TransactionHeaders.Size = new System.Drawing.Size(792, 37);
+            this.TransactionHeaders.TabIndex = 3;
+            // 
+            // tableLayoutPanel5
+            // 
+            this.tableLayoutPanel5.ColumnCount = 2;
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel5.Controls.Add(this.PartHeader, 0, 0);
+            this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel5.Location = new System.Drawing.Point(155, 1);
+            this.tableLayoutPanel5.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanel5.Name = "tableLayoutPanel5";
+            this.tableLayoutPanel5.RowCount = 1;
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(153, 35);
+            this.tableLayoutPanel5.TabIndex = 1;
+            // 
+            // TransactionListPanel
+            // 
+            this.TransactionListPanel.AutoScroll = true;
+            this.TransactionListPanel.Controls.Add(this.TransactionList);
+            this.TransactionListPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TransactionListPanel.Location = new System.Drawing.Point(0, 106);
+            this.TransactionListPanel.Margin = new System.Windows.Forms.Padding(0);
+            this.TransactionListPanel.Name = "TransactionListPanel";
+            this.TransactionListPanel.Size = new System.Drawing.Size(792, 318);
+            this.TransactionListPanel.TabIndex = 17;
+            // 
+            // TransactionList
+            // 
+            this.TransactionList.AutoSize = true;
+            this.TransactionList.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
+            this.TransactionList.ColumnCount = 5;
+            this.TransactionList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.TransactionList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.TransactionList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.TransactionList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.TransactionList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.TransactionList.Controls.Add(this.label10, 1, 0);
+            this.TransactionList.Controls.Add(this.label11, 0, 0);
+            this.TransactionList.Dock = System.Windows.Forms.DockStyle.Top;
+            this.TransactionList.Location = new System.Drawing.Point(0, 0);
+            this.TransactionList.Name = "TransactionList";
+            this.TransactionList.RowCount = 1;
+            this.TransactionList.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.TransactionList.Size = new System.Drawing.Size(792, 22);
+            this.TransactionList.TabIndex = 18;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.BackColor = System.Drawing.SystemColors.Control;
+            this.label10.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label10.Location = new System.Drawing.Point(160, 2);
+            this.label10.Margin = new System.Windows.Forms.Padding(1);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(155, 18);
+            this.label10.TabIndex = 3;
+            this.label10.Text = "14-hdhsfjnewcv";
+            this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label11.Location = new System.Drawing.Point(2, 2);
+            this.label11.Margin = new System.Windows.Forms.Padding(1);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(155, 18);
+            this.label11.TabIndex = 1;
+            this.label11.Text = "Richard";
+            this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // TransactionOptionTable
+            // 
+            this.TransactionOptionTable.ColumnCount = 3;
+            this.TransactionOptionTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.TransactionOptionTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.TransactionOptionTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 179F));
+            this.TransactionOptionTable.Controls.Add(this.LocationGroup, 0, 0);
+            this.TransactionOptionTable.Controls.Add(this.PartGroup, 0, 0);
+            this.TransactionOptionTable.Controls.Add(this.SearchButton, 2, 0);
+            this.TransactionOptionTable.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TransactionOptionTable.Location = new System.Drawing.Point(0, 0);
+            this.TransactionOptionTable.Margin = new System.Windows.Forms.Padding(0);
+            this.TransactionOptionTable.Name = "TransactionOptionTable";
+            this.TransactionOptionTable.RowCount = 1;
+            this.TransactionOptionTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.TransactionOptionTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.TransactionOptionTable.Size = new System.Drawing.Size(792, 64);
+            this.TransactionOptionTable.TabIndex = 18;
+            // 
+            // SearchButton
+            // 
+            this.SearchButton.BackColor = System.Drawing.SystemColors.InactiveCaption;
+            this.SearchButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SearchButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.SearchButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SearchButton.Location = new System.Drawing.Point(612, 0);
+            this.SearchButton.Margin = new System.Windows.Forms.Padding(0);
+            this.SearchButton.Name = "SearchButton";
+            this.SearchButton.Size = new System.Drawing.Size(180, 64);
+            this.SearchButton.TabIndex = 21;
+            this.SearchButton.Text = "Search";
+            this.SearchButton.UseVisualStyleBackColor = false;
+            this.SearchButton.Click += new System.EventHandler(this.SearchButton_Click);
+            // 
+            // PartGroup
+            // 
+            this.PartGroup.Controls.Add(this.PartField);
+            this.PartGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.PartGroup.Location = new System.Drawing.Point(3, 3);
+            this.PartGroup.Name = "PartGroup";
+            this.PartGroup.Size = new System.Drawing.Size(238, 58);
+            this.PartGroup.TabIndex = 23;
+            this.PartGroup.TabStop = false;
+            this.PartGroup.Text = "Part";
+            // 
+            // PartField
+            // 
+            this.PartField.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.PartField.Location = new System.Drawing.Point(3, 22);
+            this.PartField.Name = "PartField";
+            this.PartField.Size = new System.Drawing.Size(232, 26);
+            this.PartField.TabIndex = 1;
+            this.PartField.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.LocationField_KeyPress);
+            // 
+            // LocationGroup
+            // 
+            this.LocationGroup.Controls.Add(this.LocationField);
+            this.LocationGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LocationGroup.Location = new System.Drawing.Point(309, 3);
+            this.LocationGroup.Name = "LocationGroup";
+            this.LocationGroup.Size = new System.Drawing.Size(253, 58);
+            this.LocationGroup.TabIndex = 24;
+            this.LocationGroup.TabStop = false;
+            this.LocationGroup.Text = "Location";
+            // 
+            // LocationField
+            // 
+            this.LocationField.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.LocationField.Location = new System.Drawing.Point(3, 22);
+            this.LocationField.Name = "LocationField";
+            this.LocationField.Size = new System.Drawing.Size(247, 26);
+            this.LocationField.TabIndex = 1;
+            this.LocationField.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.LocationField_KeyPress);
+            // 
+            // LocationHeader
+            // 
+            this.LocationHeader.BackColor = System.Drawing.Color.Transparent;
+            this.LocationHeader.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.LocationHeader.FlatAppearance.BorderSize = 0;
+            this.LocationHeader.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.LocationHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LocationHeader.Location = new System.Drawing.Point(1, 1);
+            this.LocationHeader.Margin = new System.Windows.Forms.Padding(0);
+            this.LocationHeader.Name = "LocationHeader";
+            this.LocationHeader.Size = new System.Drawing.Size(153, 35);
+            this.LocationHeader.TabIndex = 22;
+            this.LocationHeader.Tag = "bin_name";
+            this.LocationHeader.Text = "Location";
+            this.LocationHeader.UseVisualStyleBackColor = false;
+            this.LocationHeader.Click += new System.EventHandler(this.LocationHeader_Click);
+            // 
+            // PartHeader
+            // 
+            this.PartHeader.BackColor = System.Drawing.Color.Transparent;
+            this.PartHeader.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.PartHeader.FlatAppearance.BorderSize = 0;
+            this.PartHeader.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.PartHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.PartHeader.Location = new System.Drawing.Point(0, 0);
+            this.PartHeader.Margin = new System.Windows.Forms.Padding(0);
+            this.PartHeader.Name = "PartHeader";
+            this.PartHeader.Size = new System.Drawing.Size(153, 35);
+            this.PartHeader.TabIndex = 23;
+            this.PartHeader.Tag = "bin_part";
+            this.PartHeader.Text = "Part";
+            this.PartHeader.UseVisualStyleBackColor = false;
+            this.PartHeader.Click += new System.EventHandler(this.LocationHeader_Click);
+            // 
+            // TransactionHeader
+            // 
+            this.TransactionHeader.BackColor = System.Drawing.Color.Transparent;
+            this.TransactionHeader.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TransactionHeader.FlatAppearance.BorderSize = 0;
+            this.TransactionHeader.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.TransactionHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TransactionHeader.Location = new System.Drawing.Point(309, 1);
+            this.TransactionHeader.Margin = new System.Windows.Forms.Padding(0);
+            this.TransactionHeader.Name = "TransactionHeader";
+            this.TransactionHeader.Size = new System.Drawing.Size(153, 35);
+            this.TransactionHeader.TabIndex = 23;
+            this.TransactionHeader.Text = "Transaction";
+            this.TransactionHeader.UseVisualStyleBackColor = false;
+            // 
+            // TransUserHeader
+            // 
+            this.TransUserHeader.BackColor = System.Drawing.Color.Transparent;
+            this.TransUserHeader.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TransUserHeader.FlatAppearance.BorderSize = 0;
+            this.TransUserHeader.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.TransUserHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TransUserHeader.Location = new System.Drawing.Point(463, 1);
+            this.TransUserHeader.Margin = new System.Windows.Forms.Padding(0);
+            this.TransUserHeader.Name = "TransUserHeader";
+            this.TransUserHeader.Size = new System.Drawing.Size(153, 35);
+            this.TransUserHeader.TabIndex = 24;
+            this.TransUserHeader.Tag = "bin_user";
+            this.TransUserHeader.Text = "User";
+            this.TransUserHeader.UseVisualStyleBackColor = false;
+            this.TransUserHeader.Click += new System.EventHandler(this.LocationHeader_Click);
+            // 
+            // DateHeader
+            // 
+            this.DateHeader.BackColor = System.Drawing.Color.Transparent;
+            this.DateHeader.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.DateHeader.FlatAppearance.BorderSize = 0;
+            this.DateHeader.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.DateHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.DateHeader.Location = new System.Drawing.Point(617, 1);
+            this.DateHeader.Margin = new System.Windows.Forms.Padding(0);
+            this.DateHeader.Name = "DateHeader";
+            this.DateHeader.Size = new System.Drawing.Size(156, 35);
+            this.DateHeader.TabIndex = 25;
+            this.DateHeader.Tag = "bin_date";
+            this.DateHeader.Text = "Date";
+            this.DateHeader.UseVisualStyleBackColor = false;
+            this.DateHeader.Click += new System.EventHandler(this.LocationHeader_Click);
+            // 
             // ManagerMonitor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -553,6 +879,19 @@
             this.UserListPanel.PerformLayout();
             this.UserList.ResumeLayout(false);
             this.UserList.PerformLayout();
+            this.TransactionTab.ResumeLayout(false);
+            this.TransactionTable.ResumeLayout(false);
+            this.TransactionHeaders.ResumeLayout(false);
+            this.tableLayoutPanel5.ResumeLayout(false);
+            this.TransactionListPanel.ResumeLayout(false);
+            this.TransactionListPanel.PerformLayout();
+            this.TransactionList.ResumeLayout(false);
+            this.TransactionList.PerformLayout();
+            this.TransactionOptionTable.ResumeLayout(false);
+            this.PartGroup.ResumeLayout(false);
+            this.PartGroup.PerformLayout();
+            this.LocationGroup.ResumeLayout(false);
+            this.LocationGroup.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -590,5 +929,25 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Button EnterButton;
         private System.Windows.Forms.Button NewUserButton;
+        private System.Windows.Forms.TabPage TransactionTab;
+        private System.Windows.Forms.TableLayoutPanel TransactionTable;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TableLayoutPanel TransactionHeaders;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
+        private System.Windows.Forms.Panel TransactionListPanel;
+        private System.Windows.Forms.TableLayoutPanel TransactionList;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.TableLayoutPanel TransactionOptionTable;
+        private System.Windows.Forms.Button SearchButton;
+        private System.Windows.Forms.GroupBox LocationGroup;
+        private System.Windows.Forms.TextBox LocationField;
+        private System.Windows.Forms.GroupBox PartGroup;
+        private System.Windows.Forms.TextBox PartField;
+        private System.Windows.Forms.Button DateHeader;
+        private System.Windows.Forms.Button TransUserHeader;
+        private System.Windows.Forms.Button TransactionHeader;
+        private System.Windows.Forms.Button LocationHeader;
+        private System.Windows.Forms.Button PartHeader;
     }
 }

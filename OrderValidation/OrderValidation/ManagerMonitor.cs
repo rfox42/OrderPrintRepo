@@ -20,6 +20,7 @@ namespace OrderValidation
         List<Order> lastOrders = new List<Order>();
         string printer;
         string location;
+        string orderRule;
         public bool hold = false;
 
         public ManagerMonitor(ValidationForm vFormIn, string inlocation)
@@ -27,12 +28,15 @@ namespace OrderValidation
             InitializeComponent();
 
             location = inlocation;
+            orderRule = "bin_date desc";
             printer = getPrinter(); ;
             vForm = vFormIn;
             ShippingTab.Tag = InvoiceList;
             Receiving.Tag = UserList;
             refreshInvoiceList(InvoiceList);
             refreshUserList(UserList);
+            TransactionList.Controls.Clear();
+            TransactionList.RowCount = 0;
 
 
             timer = new Timer();
@@ -375,6 +379,128 @@ namespace OrderValidation
             new AddUserForm(this, location).Show();
             this.Enabled = false;
             hold = true;
+        }
+
+        private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void SearchButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                List<Transaction> transactions = new List<Transaction>();
+
+                //establish database connection
+                string strConnection = "DSN=Ranshu";
+                OdbcConnection pSqlConn = null;
+                using (pSqlConn = new OdbcConnection(strConnection))
+                {
+                    string cmdString = "select bin_name, bin_part, bin_trans, bin_user, bin_date, user_name from wmsTrans left join wmsUsers on user_id = bin_user and user_loc = bin_loc where bin_loc = '"+location+"' ";
+
+                    if(PartField.Text != "")
+                    {
+                        cmdString += "and bin_part = '"+PartField.Text.ToUpper()+"' ";
+                    }
+
+                    if(LocationField.Text != "")
+                    {
+                        cmdString += "and bin_name = '" + LocationField.Text.ToUpper() + "' ";
+                    }
+
+                    if(LocationField.Text == "" && PartField.Text == "")
+                    {
+                        throw new Exception("Please specify part, location, or both");
+                    }
+
+                    cmdString += "order by " + orderRule;
+
+                    OdbcCommand cmd = new OdbcCommand(cmdString, pSqlConn);
+                    pSqlConn.Open();
+                    OdbcDataReader invoiceReader = cmd.ExecuteReader();
+                    if (invoiceReader.HasRows)
+                    {
+                        while (invoiceReader.Read())
+                        {
+                            Transaction trans = new Transaction();
+                            trans.bin= invoiceReader["bin_name"].ToString().TrimEnd();
+                            trans.part = invoiceReader["bin_part"].ToString().TrimEnd();
+                            trans.qty = Convert.ToInt32(invoiceReader["bin_trans"].ToString());
+                            
+                            
+                            if((trans.user = invoiceReader["user_name"].ToString().TrimEnd()) == "")
+                            {
+                                trans.user = invoiceReader["bin_user"].ToString().TrimEnd();
+                            }
+
+                            trans.date = invoiceReader["bin_date"].ToString();
+
+                            transactions.Add(trans);
+                        }
+                    }
+
+                    TransactionListPanel.Hide();
+                    addTransactions(transactions);
+                    TransactionListPanel.Show();
+
+                    invoiceReader.Close();
+                    pSqlConn.Close();
+                }
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void addTransactions(List<Transaction> transactions)
+        {
+            TransactionList.Controls.Clear();
+            TransactionList.RowCount = 0;
+
+            foreach(Transaction transaction in transactions)
+            {
+                addToTable(
+                    TransactionList,
+                    new List<string>()
+                    {
+                        transaction.bin,
+                        transaction.part,
+                        transaction.qty.ToString(),
+                        transaction.user,
+                        transaction.date
+                    },
+                    transaction);
+            }
+        }
+
+        private void LocationHeader_Click(object sender, EventArgs e)
+        {
+            string column = (sender as Button).Tag.ToString();
+
+            if(orderRule.Contains(column) && orderRule.Contains("desc"))
+            {
+                orderRule = column;
+            }
+            else if(orderRule.Contains(column))
+            {
+                orderRule = column + " desc";
+            }
+            else
+            {
+                orderRule = column;
+            }
+
+            this.SearchButton_Click(this, new EventArgs());
+        }
+
+        private void LocationField_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if(e.KeyChar == (char)Keys.Return)
+            {
+                this.SearchButton_Click(this, new EventArgs());
+            }
         }
     }
 }
