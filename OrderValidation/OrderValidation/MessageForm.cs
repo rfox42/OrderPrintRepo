@@ -24,5 +24,15 @@ namespace OrderValidation
         {
             this.Close();
         }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void MessageForm_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

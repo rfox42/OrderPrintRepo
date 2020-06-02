@@ -44,14 +44,12 @@
             this.ItemsHeaderTable = new System.Windows.Forms.TableLayoutPanel();
             this.label3 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.CustomPartHeader = new System.Windows.Forms.Label();
             this.ItemDescriptionHeader = new System.Windows.Forms.Label();
             this.PartNumHeader = new System.Windows.Forms.Label();
             this.ItemListPanel = new System.Windows.Forms.Panel();
             this.ItemList = new System.Windows.Forms.TableLayoutPanel();
             this.label9 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -123,11 +121,11 @@
             this.RightTable.Name = "RightTable";
             this.RightTable.RowCount = 6;
             this.RightTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 55F));
-            this.RightTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.RightTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.RightTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.RightTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.RightTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.RightTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.RightTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.RightTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.RightTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.RightTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.RightTable.Size = new System.Drawing.Size(237, 523);
             this.RightTable.TabIndex = 0;
             // 
@@ -136,30 +134,28 @@
             this.InvoiceTypeButton.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.InvoiceTypeButton.Dock = System.Windows.Forms.DockStyle.Fill;
             this.InvoiceTypeButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.InvoiceTypeButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.InvoiceTypeButton.Location = new System.Drawing.Point(0, 361);
+            this.InvoiceTypeButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.InvoiceTypeButton.Location = new System.Drawing.Point(0, 334);
             this.InvoiceTypeButton.Margin = new System.Windows.Forms.Padding(0);
             this.InvoiceTypeButton.Name = "InvoiceTypeButton";
             this.InvoiceTypeButton.Padding = new System.Windows.Forms.Padding(0, 5, 0, 5);
-            this.InvoiceTypeButton.Size = new System.Drawing.Size(237, 60);
+            this.InvoiceTypeButton.Size = new System.Drawing.Size(237, 93);
             this.InvoiceTypeButton.TabIndex = 6;
-            this.InvoiceTypeButton.Text = "View Previous Invoices";
+            this.InvoiceTypeButton.Text = "View Notes";
             this.InvoiceTypeButton.UseVisualStyleBackColor = false;
-            this.InvoiceTypeButton.Visible = false;
             this.InvoiceTypeButton.Click += new System.EventHandler(this.InvoiceTypeButton_Click);
             // 
             // ReprintButton
             // 
             this.ReprintButton.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.ReprintButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ReprintButton.Enabled = false;
             this.ReprintButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.ReprintButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ReprintButton.Location = new System.Drawing.Point(0, 259);
+            this.ReprintButton.Location = new System.Drawing.Point(0, 241);
             this.ReprintButton.Margin = new System.Windows.Forms.Padding(0);
             this.ReprintButton.Name = "ReprintButton";
             this.ReprintButton.Padding = new System.Windows.Forms.Padding(0, 5, 0, 5);
-            this.ReprintButton.Size = new System.Drawing.Size(237, 102);
+            this.ReprintButton.Size = new System.Drawing.Size(237, 93);
             this.ReprintButton.TabIndex = 5;
             this.ReprintButton.Text = "Reprint Invoice";
             this.ReprintButton.UseVisualStyleBackColor = false;
@@ -172,11 +168,11 @@
             this.CancelButton.Enabled = false;
             this.CancelButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.CancelButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CancelButton.Location = new System.Drawing.Point(0, 421);
+            this.CancelButton.Location = new System.Drawing.Point(0, 427);
             this.CancelButton.Margin = new System.Windows.Forms.Padding(0);
             this.CancelButton.Name = "CancelButton";
             this.CancelButton.Padding = new System.Windows.Forms.Padding(0, 5, 0, 5);
-            this.CancelButton.Size = new System.Drawing.Size(237, 102);
+            this.CancelButton.Size = new System.Drawing.Size(237, 96);
             this.CancelButton.TabIndex = 3;
             this.CancelButton.Text = "Cancel";
             this.CancelButton.UseVisualStyleBackColor = false;
@@ -186,16 +182,15 @@
             // 
             this.FinalizeButton.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.FinalizeButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.FinalizeButton.Enabled = false;
             this.FinalizeButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.FinalizeButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FinalizeButton.Location = new System.Drawing.Point(0, 157);
+            this.FinalizeButton.Location = new System.Drawing.Point(0, 148);
             this.FinalizeButton.Margin = new System.Windows.Forms.Padding(0);
             this.FinalizeButton.Name = "FinalizeButton";
             this.FinalizeButton.Padding = new System.Windows.Forms.Padding(0, 5, 0, 5);
-            this.FinalizeButton.Size = new System.Drawing.Size(237, 102);
+            this.FinalizeButton.Size = new System.Drawing.Size(237, 93);
             this.FinalizeButton.TabIndex = 2;
-            this.FinalizeButton.Text = "Finalize Shipment";
+            this.FinalizeButton.Text = "Manager Monitor";
             this.FinalizeButton.UseVisualStyleBackColor = false;
             this.FinalizeButton.Click += new System.EventHandler(this.FinalizeButton_Click);
             // 
@@ -210,7 +205,7 @@
             this.EnterField.Size = new System.Drawing.Size(217, 32);
             this.EnterField.TabIndex = 0;
             this.EnterField.Text = "";
-            this.EnterField.Click += new System.EventHandler(this.EnterField_Enter);
+            this.EnterField.Click += new System.EventHandler(this.EnterButton_Click);
             this.EnterField.Enter += new System.EventHandler(this.EnterField_Enter);
             this.EnterField.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.EnterField_KeyPress);
             // 
@@ -225,7 +220,7 @@
             this.EnterButton.Margin = new System.Windows.Forms.Padding(0);
             this.EnterButton.Name = "EnterButton";
             this.EnterButton.Padding = new System.Windows.Forms.Padding(0, 5, 0, 5);
-            this.EnterButton.Size = new System.Drawing.Size(237, 102);
+            this.EnterButton.Size = new System.Drawing.Size(237, 93);
             this.EnterButton.TabIndex = 1;
             this.EnterButton.Text = "Edit Quantity";
             this.EnterButton.UseVisualStyleBackColor = false;
@@ -285,16 +280,14 @@
             // 
             // ItemsHeaderTable
             // 
-            this.ItemsHeaderTable.ColumnCount = 5;
-            this.ItemsHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30.95238F));
-            this.ItemsHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.27273F));
-            this.ItemsHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 41.77489F));
-            this.ItemsHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.ItemsHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 86F));
-            this.ItemsHeaderTable.Controls.Add(this.label3, 4, 0);
-            this.ItemsHeaderTable.Controls.Add(this.label1, 3, 0);
-            this.ItemsHeaderTable.Controls.Add(this.CustomPartHeader, 0, 0);
-            this.ItemsHeaderTable.Controls.Add(this.ItemDescriptionHeader, 2, 0);
+            this.ItemsHeaderTable.ColumnCount = 4;
+            this.ItemsHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 35F));
+            this.ItemsHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 35F));
+            this.ItemsHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15F));
+            this.ItemsHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15F));
+            this.ItemsHeaderTable.Controls.Add(this.label3, 3, 0);
+            this.ItemsHeaderTable.Controls.Add(this.label1, 2, 0);
+            this.ItemsHeaderTable.Controls.Add(this.ItemDescriptionHeader, 1, 0);
             this.ItemsHeaderTable.Controls.Add(this.PartNumHeader, 0, 0);
             this.ItemsHeaderTable.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ItemsHeaderTable.Location = new System.Drawing.Point(0, 0);
@@ -310,10 +303,10 @@
             this.label3.AutoSize = true;
             this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(468, 1);
+            this.label3.Location = new System.Drawing.Point(472, 1);
             this.label3.Margin = new System.Windows.Forms.Padding(1);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(86, 35);
+            this.label3.Size = new System.Drawing.Size(82, 35);
             this.label3.TabIndex = 4;
             this.label3.Text = "Qty";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -323,38 +316,25 @@
             this.label1.AutoSize = true;
             this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(409, 1);
+            this.label1.Location = new System.Drawing.Point(389, 1);
             this.label1.Margin = new System.Windows.Forms.Padding(1);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(57, 35);
+            this.label1.Size = new System.Drawing.Size(81, 35);
             this.label1.TabIndex = 3;
             this.label1.Text = "ShpQty";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // CustomPartHeader
-            // 
-            this.CustomPartHeader.AutoSize = true;
-            this.CustomPartHeader.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.CustomPartHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CustomPartHeader.Location = new System.Drawing.Point(127, 1);
-            this.CustomPartHeader.Margin = new System.Windows.Forms.Padding(1);
-            this.CustomPartHeader.Name = "CustomPartHeader";
-            this.CustomPartHeader.Size = new System.Drawing.Size(109, 35);
-            this.CustomPartHeader.TabIndex = 2;
-            this.CustomPartHeader.Text = "Cust Part #";
-            this.CustomPartHeader.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // ItemDescriptionHeader
             // 
             this.ItemDescriptionHeader.AutoSize = true;
             this.ItemDescriptionHeader.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ItemDescriptionHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ItemDescriptionHeader.Location = new System.Drawing.Point(238, 1);
+            this.ItemDescriptionHeader.Location = new System.Drawing.Point(195, 1);
             this.ItemDescriptionHeader.Margin = new System.Windows.Forms.Padding(1);
             this.ItemDescriptionHeader.Name = "ItemDescriptionHeader";
-            this.ItemDescriptionHeader.Size = new System.Drawing.Size(169, 35);
+            this.ItemDescriptionHeader.Size = new System.Drawing.Size(192, 35);
             this.ItemDescriptionHeader.TabIndex = 1;
-            this.ItemDescriptionHeader.Text = "Description";
+            this.ItemDescriptionHeader.Text = "Location";
             this.ItemDescriptionHeader.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // PartNumHeader
@@ -365,7 +345,7 @@
             this.PartNumHeader.Location = new System.Drawing.Point(1, 1);
             this.PartNumHeader.Margin = new System.Windows.Forms.Padding(1);
             this.PartNumHeader.Name = "PartNumHeader";
-            this.PartNumHeader.Size = new System.Drawing.Size(124, 35);
+            this.PartNumHeader.Size = new System.Drawing.Size(192, 35);
             this.PartNumHeader.TabIndex = 0;
             this.PartNumHeader.Text = "Part #";
             this.PartNumHeader.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -384,16 +364,14 @@
             // ItemList
             // 
             this.ItemList.AutoSize = true;
-            this.ItemList.ColumnCount = 5;
-            this.ItemList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30.95238F));
-            this.ItemList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.27273F));
-            this.ItemList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 41.77489F));
-            this.ItemList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 59F));
-            this.ItemList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 86F));
-            this.ItemList.Controls.Add(this.label9, 4, 0);
-            this.ItemList.Controls.Add(this.label7, 3, 0);
-            this.ItemList.Controls.Add(this.label2, 0, 0);
-            this.ItemList.Controls.Add(this.label4, 2, 0);
+            this.ItemList.ColumnCount = 4;
+            this.ItemList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 35F));
+            this.ItemList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 35F));
+            this.ItemList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15F));
+            this.ItemList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15F));
+            this.ItemList.Controls.Add(this.label9, 3, 0);
+            this.ItemList.Controls.Add(this.label7, 2, 0);
+            this.ItemList.Controls.Add(this.label4, 1, 0);
             this.ItemList.Controls.Add(this.label5, 0, 0);
             this.ItemList.Dock = System.Windows.Forms.DockStyle.Top;
             this.ItemList.Location = new System.Drawing.Point(0, 0);
@@ -408,10 +386,10 @@
             this.label9.AutoSize = true;
             this.label9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label9.Location = new System.Drawing.Point(468, 1);
+            this.label9.Location = new System.Drawing.Point(472, 1);
             this.label9.Margin = new System.Windows.Forms.Padding(1);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(86, 36);
+            this.label9.Size = new System.Drawing.Size(82, 36);
             this.label9.TabIndex = 6;
             this.label9.Text = "Qty";
             this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -421,26 +399,13 @@
             this.label7.AutoSize = true;
             this.label7.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(409, 1);
+            this.label7.Location = new System.Drawing.Point(389, 1);
             this.label7.Margin = new System.Windows.Forms.Padding(1);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(57, 36);
+            this.label7.Size = new System.Drawing.Size(81, 36);
             this.label7.TabIndex = 5;
             this.label7.Text = "ShpQty";
             this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(127, 1);
-            this.label2.Margin = new System.Windows.Forms.Padding(1);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(109, 36);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "60-01534";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label4
             // 
@@ -448,10 +413,10 @@
             this.label4.BackColor = System.Drawing.SystemColors.Control;
             this.label4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(238, 1);
+            this.label4.Location = new System.Drawing.Point(195, 1);
             this.label4.Margin = new System.Windows.Forms.Padding(1);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(169, 36);
+            this.label4.Size = new System.Drawing.Size(192, 36);
             this.label4.TabIndex = 3;
             this.label4.Text = "SD 7H15 5.9 DIESEL 4682 8 GRV";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -464,7 +429,7 @@
             this.label5.Location = new System.Drawing.Point(1, 1);
             this.label5.Margin = new System.Windows.Forms.Padding(1);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(124, 36);
+            this.label5.Size = new System.Drawing.Size(192, 36);
             this.label5.TabIndex = 1;
             this.label5.Text = "14-SD4682NEW";
             this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -795,6 +760,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ValidationForm";
             this.Text = "Validation Form";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ValidationForm_FormClosed);
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ValidationForm_KeyPress);
             this.InfoPanel.ResumeLayout(false);
             this.RightTable.ResumeLayout(false);
@@ -850,14 +816,12 @@
         private System.Windows.Forms.TableLayoutPanel ItemsHeaderTable;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label CustomPartHeader;
         private System.Windows.Forms.Label ItemDescriptionHeader;
         private System.Windows.Forms.Label PartNumHeader;
         private System.Windows.Forms.Panel ItemListPanel;
         private System.Windows.Forms.TableLayoutPanel ItemList;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button CancelButton;

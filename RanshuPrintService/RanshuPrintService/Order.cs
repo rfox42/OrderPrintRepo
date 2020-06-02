@@ -7,12 +7,9 @@ using System.Runtime.InteropServices;
 
 namespace RanshuPrintService
 {
-    /* 
-    * @CLASS: class Order
-    * @PURPOSE: holds data for each invoice
-    * 
-    * @NOTES: none
-    */
+    /// <summary>
+    /// holds data for each invoice
+    /// </summary>
     public class Order
     {
         /// <summary>
@@ -78,11 +75,54 @@ namespace RanshuPrintService
         public string enteredBy;
 
         /// <summary>
+        /// order subtotal
+        /// </summary>
+        public double subTotal;
+
+        /// <summary>
+        /// freight cost of order
+        /// </summary>
+        public double freight;
+
+        /// <summary>
+        /// order total
+        /// </summary>
+        public double total;
+
+        /// <summary>
+        /// order taxes
+        /// </summary>
+        public double tax;
+
+        /// <summary>
+        /// order salesperson
+        /// </summary>
+        public int salesPerson;
+
+        /// <summary>
+        /// order posted flag
+        /// </summary>
+        public bool posted;
+
+        /// <summary>
+        /// order credit flag
+        /// </summary>
+        public bool postCred;
+
+        /// <summary>
+        /// order reprint flag
+        /// </summary>
+        public bool reprint;
+
+        /// <summary>
         /// class constructor
         /// </summary>
         /// <param name="invNum"></param>
         public Order(int invNum)
         {
+            posted = false;
+            postCred = false;
+            reprint = false;
             invoiceNumber = invNum;
             items = new List<Item>();
             shipAddress = new Address();
@@ -97,12 +137,9 @@ namespace RanshuPrintService
         }
     }
 
-    /* 
-     * @CLASS: class Address
-     * @PURPOSE: holds address data
-     * 
-     * @NOTES: none
-     */
+    /// <summary>
+    /// holds address data
+    /// </summary>
     public class Address
     {
         /// <summary>
@@ -140,18 +177,36 @@ namespace RanshuPrintService
         /// </summary>
         public string zipcode;
 
+        /// <summary>
+        /// equals operator overload
+        /// </summary>
+        /// <param name="address1"></param>
+        /// <param name="address2"></param>
+        /// <returns></returns>
         public static bool operator ==(Address address1, Address address2)
         {
             return ((address1.name.Contains(address2.name) || address2.name.Contains(address1.name))
                 || address1.line1 == address2.line1);
         }
 
+        /// <summary>
+        /// not eqauls operator overload
+        /// </summary>
+        /// <param name="address1"></param>
+        /// <param name="address2"></param>
+        /// <returns></returns>
         public static bool operator !=(Address address1, Address address2)
         {
             return !((address1.name.Contains(address2.name) || address2.name.Contains(address1.name))
                 || address1.line1 == address2.line1);
         }
 
+        /// <summary>
+        /// equals operator overload
+        /// </summary>
+        /// <param name="address1"></param>
+        /// <param name="address2"></param>
+        /// <returns></returns>
         public override bool Equals(object obj)
         {
             Address address2 = obj as Address;
@@ -159,28 +214,32 @@ namespace RanshuPrintService
                 || line1 == address2.line1);
         }
 
+
         public override int GetHashCode()
         {
             return base.GetHashCode();
         }
 
+        /// <summary>
+        /// constructor
+        /// </summary>
         public Address()
         {
 
         }
 
+        /// <summary>
+        /// destructor
+        /// </summary>
         ~Address()
         {
 
         }
     }
 
-    /* 
-     * @CLASS: class Item
-     * @PURPOSE: holds part/item data
-     * 
-     * @NOTES: none
-     */
+    /// <summary>
+    /// holds item details
+    /// </summary>
     public class Item
     {
         /// <summary>
@@ -212,7 +271,7 @@ namespace RanshuPrintService
         /// holds bin location of part
         /// wmsLocations.BIN_NAME
         /// </summary>
-        public string location;
+        public Location location;
 
         /// <summary>
         /// location code of warehouse
@@ -238,24 +297,84 @@ namespace RanshuPrintService
         /// </summary>
         public int quantity;
 
+        /// <summary>
+        /// constructor
+        /// </summary>
         public Item()
         {
 
         }
 
+        /// <summary>
+        /// copy constructor
+        /// </summary>
+        /// <param name="item"></param>
+        public Item(Item item)
+        {
+            partCode = item.partCode;
+            itemType = item.itemType;
+            description = item.description;
+            message = item.message;
+            locationCode = item.locationCode;
+            vendorPart = item.vendorPart;
+            price = item.price;
+            quantity = item.quantity;
+        }
+
+        /// <summary>
+        /// destructor
+        /// </summary>
         ~Item()
         {
 
         }
     }
 
+    /// <summary>
+    /// holds inventory location details
+    /// </summary>
+    public class Location
+    {
+        /// <summary>
+        /// location name
+        /// </summary>
+        public string name;
 
-    /* 
-     * @CLASS: public static class printers
-     * @PURPOSE: sets and holds the default printer
-     * 
-     * @NOTES: none
-     */
+        /// <summary>
+        /// type OS, PF, or NP
+        /// </summary>
+        public string type;
+
+        /// <summary>
+        /// total quantity at location
+        /// </summary>
+        public int quantity;
+
+        /// <summary>
+        /// constructor
+        /// </summary>
+        /// <param name="inName"></param>
+        /// <param name="inType"></param>
+        /// <param name="inQty"></param>
+        public Location(string inName, string inType, int inQty)
+        {
+            name = inName;
+            type = inType;
+            quantity = inQty;
+        }
+
+        /// <summary>
+        /// destructor
+        /// </summary>
+        ~Location()
+        {
+
+        }
+    }
+
+    /// <summary>
+    /// holds default printer
+    /// </summary>
     public static class printers
     {
         [DllImport("winspool.drv", CharSet = CharSet.Auto, SetLastError = true)]

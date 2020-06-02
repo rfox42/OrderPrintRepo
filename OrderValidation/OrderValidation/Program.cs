@@ -16,7 +16,7 @@ namespace OrderValidation
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new ValidationForm());
+            Application.Run(new LocationMenu());
         }
     }
 }

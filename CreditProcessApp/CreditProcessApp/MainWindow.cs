@@ -12,14 +12,9 @@ using System.Windows.Forms;
 
 namespace CreditProcessApp
 {
-    /* 
-     * @CLASS:      public partial class MainWindow
-     * @PURPOSE:    display credit invoice data for user to process charges
-     * 
-     * @PARAM:      none
-     * 
-     * @NOTES:      none
-     */
+    /// <summary>
+    /// display credit invoice data for user to process charges
+    /// </summary>
     public partial class MainWindow : Form
     {
         Invoice currentInvoice;
@@ -29,27 +24,29 @@ namespace CreditProcessApp
         string held;
         string processOrderBy;
         string completeOrderBy;
+        string location;
         Account account;
         Login login;
-        Timer refreshTimer;
+        Timer refreshTimer, idleTimer;
         
 
-        /*
-         * @FUNCTION:   public MainWindow()
-         * @PURPOSE:    class constructor
-         *              initializes variables and gets form into start position
-         *              
-         * @PARAM:      none
-         * 
-         * @RETURNS:    none
-         * @NOTES:      none
-         */
-        public MainWindow(Login in_login)
+        /// <summary>
+        /// class constructor
+        /// initializes variables and gets form into start position
+        /// </summary>
+        /// <param name="in_login">
+        /// reference to login form
+        /// </param>
+        public MainWindow(Login in_login, string in_location)
         {
             //create window
             InitializeComponent();
 
+            //set location and login form reference
+            location = in_location;
             login = in_login;
+
+            //set initial order flag
             completeOrderBy = processOrderBy = "CRDT_INV_NUM";
 
             //set start values
@@ -59,18 +56,27 @@ namespace CreditProcessApp
             this.ProcessInvoiceList.CellPaint += tableLayoutPanel1_Paint;
             this.CompleteInvoiceList.CellPaint += tableLayoutPanel1_Paint;
 
-            //set and start timer
+            //set and start timers
             refreshTimer = new Timer();
             refreshTimer.Tick += new EventHandler(refreshTimer_Complete);
-            refreshTimer.Interval = 30000;
+            refreshTimer.Interval = 60000;
             refreshTimer.Enabled = true;
             refreshTimer.Start();
 
+            //initialize idletimer
+            idleTimer = new Timer();
+            idleTimer.Tick += new EventHandler(idleTimer_Tick);
+            idleTimer.Interval = 300000;
+            idleTimer.Enabled = true;
+            idleTimer.Stop();
+
+            //set held flag
             held = "";
 
+            //fill tables with invoice data
             populateTables();
 
-            if(CurrentUser.security_lvl <=2)
+            if(CurrentUser.security_lvl <=10)
             {
                 HeldViewButton.Show();
             }
@@ -78,20 +84,33 @@ namespace CreditProcessApp
             {
                 ProcessLabel.Margin = new Padding(6, 0, 0, 0);
             }
+
+            if(location != "")
+            {
+                ExitButton.Hide();
+                RemoveButton.Hide();
+            }
         }
 
-        /*
-         * @FUNCTION:   private void populateTables()
-         * @PURPOSE:    queries database for unprocessed and processed invoices
-         *              sends lists of invoices to be displayed
-         *              
-         * @PARAM:      none
-         * 
-         * @RETURNS:    none
-         * @NOTES:      none
-         */
+        /// <summary>
+        /// 5 minute idle timer to refresh invoices
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void idleTimer_Tick(object sender, EventArgs e)
+        {
+            idleTimer.Stop();
+            releaseInvoice();
+            this.refreshTimer_Complete(this, new EventArgs());
+        }
+
+        /// <summary>
+        /// queries database for unprocessed and processed invoices
+        /// sends lists of invoices to be displayed
+        /// </summary>
         private void populateTables()
         {
+            HeldViewButton.BackColor = SystemColors.GradientInactiveCaption;
             RemoveButton.Enabled =
             ReprocessButton.Enabled = 
             ProcessButton.Enabled = 
@@ -119,6 +138,11 @@ namespace CreditProcessApp
                     creditCommand += " AND " + selectedDelivery[deliverySelection % 3];
                 }
 
+                if (location != "")
+                {
+                    creditCommand += " AND BKAR_INV_LOC = '"+location+"' ";
+                }
+
                 creditCommand += " ORDER BY " + processOrderBy;
                 OdbcCommand cmd = new OdbcCommand(creditCommand, pSqlConn);
                 pSqlConn.Open();
@@ -144,18 +168,35 @@ namespace CreditProcessApp
                             invoice.retail = 'N';
 
                         //add invoice to list
-                        incomplete.Add(invoice);
+                        if(invoice.retail == 'R' || location == "")
+                            incomplete.Add(invoice);
                     }
                 }
 
                 creditReader.Close();
 
+                if(held != "!")
+                {
+                    creditCommand = "SELECT COUNT(*) FROM CRDTINV WHERE CRDT_INV_PROCESSED = 0 and CRDT_INV_USER != 'null'";
+                    cmd = new OdbcCommand(creditCommand, pSqlConn);
+                    if (Convert.ToInt32(cmd.ExecuteScalar().ToString()) > 0)
+                        HeldViewButton.BackColor = Color.Salmon;
+                }
+
                 //get processed invoices for selected date (default is currentdate)
                 creditCommand = "SELECT CRDT_INV_NUM, CRDT_INV_CUSCOD, CRDT_INV_DATE, CRDT_INV_TOTAL, CRDT_INV_CHARGETIME, CRDT_INV_USER, CRDT_INV_NOTES, CRDT_INV_SHPVIA, CRDT_INV_SLSP " +
                     "FROM CRDTINV WHERE CRDT_INV_PROCESSED = 1 " +
-                    "AND CRDT_INV_DECLINED = " + declined + " " +
-                    "AND (CRDT_INV_CHARGETIME >= '" + selectedDate.ToString("yyyy-MM-dd") +"' " +
-                    "AND CRDT_INV_CHARGETIME < '"+ selectedDate.AddDays(1).ToString("yyyy-MM-dd") +"') " +
+                    "AND CRDT_INV_DECLINED = " + declined + " ";
+                if(declined == 1)
+                {
+                    creditCommand += "AND (CRDT_INV_CHARGETIME >= '" + selectedDate.AddDays(-31).ToString("yyyy-MM-dd") + "' ";
+                }
+                else
+                {
+                    creditCommand += "AND (CRDT_INV_CHARGETIME >= '" + selectedDate.ToString("yyyy-MM-dd") + "' ";
+                }
+
+                    creditCommand += "AND CRDT_INV_CHARGETIME < '"+ selectedDate.AddDays(1).ToString("yyyy-MM-dd") +"') " +
                     "ORDER BY " + completeOrderBy;
                 cmd = new OdbcCommand(creditCommand, pSqlConn);
                 creditReader = cmd.ExecuteReader();
@@ -181,7 +222,8 @@ namespace CreditProcessApp
                             invoice.retail = 'N';
 
                         //add invoice to list
-                        complete.Add(invoice);
+                        if(invoice.retail == 'R' || location == "")
+                            complete.Add(invoice);
                     }
                 }
 
@@ -209,30 +251,30 @@ namespace CreditProcessApp
                 CompleteInvoicePanel.Show();
             }
 
+            idleTimer.Stop();
             refreshTimer.Start();
         }
 
-        /*
-         * @FUNCTION:   private void refreshTable()
-         * @PURPOSE:    emptiesgiven table and refills with given invoice list
-         *              
-         * @PARAM:      TableLayoutPanel table
-         *              List<Invoice> invoices
-         * 
-         * @RETURNS:    none
-         * @NOTES:      none
-         */
+        /// <summary>
+        /// empties given table and refills with given invoice list
+        /// </summary>
+        /// <param name="table">
+        /// table to be edited
+        /// </param>
+        /// <param name="invoices">
+        /// invoices to poluate table
+        /// </param>
         private void refreshTable(TableLayoutPanel table, List<Invoice> invoices)
         {
 
             //clear and hide table during refresh
             table.Controls.Clear();
             table.RowCount = 0;
+            Color textColor;
 
-            switch(table.Name)
+            switch (table.Name)
             {
                 case "ProcessInvoiceList":
-                    Color textColor;
                     //for each invoice in the list
                     for (int i = 0; i < invoices.Count; i++)
                     {
@@ -261,6 +303,10 @@ namespace CreditProcessApp
                     //for each invoice in the list
                     for (int i = 0; i < invoices.Count; i++)
                     {
+                        if (invoices[i].total <= 0)
+                            textColor = Color.Red;
+                        else
+                            textColor = SystemColors.ControlText;
 
                         //add invoice to table
                         addToTable(table,
@@ -270,9 +316,10 @@ namespace CreditProcessApp
                             invoices[i].account,
                             invoices[i].salesPerson.ToString(),
                             invoices[i].retail.ToString(),
-                            Convert.ToDateTime(invoices[i].chargeTime).ToString("MM/dd/yyyy")
+                            Convert.ToDateTime(invoices[i].chargeTime).ToString("MM/dd/yyyy HH:mm")
                             },
-                            invoices[i]);
+                            invoices[i],
+                            textColor);
                     }
                     break;
 
@@ -300,18 +347,19 @@ namespace CreditProcessApp
         }
 
 
-        /*
-         * @FUNCTION:   private void addToTable()
-         * @PURPOSE:    creates new row
-         *              populates new row with invoice data 
-         *              establishes table relationships
-         *              
-         * @PARAM:      TableLayoutPanel table
-         *              Invoice invoice
-         * 
-         * @RETURNS:    none
-         * @NOTES:      none
-         */
+        /// <summary>
+        /// creates new row
+        /// populates new row with invoice data 
+        /// establishes table relationships
+        /// </summary>
+        /// <param name="table">
+        /// reference to table
+        /// </param>
+        /// <param name="data">
+        /// list of strings to add 
+        /// </param>
+        /// <param name="invoice"></param>
+        /// <param name="color"></param>
         private void addToTable(TableLayoutPanel table, List<string> data, Invoice invoice, Color? color = null)
         {
             //increment rowcount of given table and add new row
@@ -399,32 +447,22 @@ namespace CreditProcessApp
             column++;*/
         }
 
-        /*
-         * @FUNCTION:   private void tableLayoutPanel1_Paint()
-         * @PURPOSE:    adds lines between table entries
-         *              
-         * @PARAM:      object sender
-         *              TableLayoutCellPaintEventArgs e
-         * 
-         * @RETURNS:    none
-         * @NOTES:      none
-         */
+        /// <summary>
+        /// adds lines between table entries
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void tableLayoutPanel1_Paint(object sender, TableLayoutCellPaintEventArgs e)
         {
             //add line between table entries
             e.Graphics.DrawLine(Pens.Black, new Point(e.CellBounds.Left, e.CellBounds.Bottom), new Point(e.CellBounds.Right, e.CellBounds.Bottom));
         }
 
-        /*
-         * @FUNCTION:   private void refreshTimer_Complete()
-         * @PURPOSE:    refreshes the tables if user has been idle for 30 seconds
-         *              
-         * @PARAM:      object sender
-         *              EventArgs e
-         * 
-         * @RETURNS:    none
-         * @NOTES:      none
-         */
+        /// <summary>
+        /// refreshes the tables every thrity seconds if no invoice is selected
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void refreshTimer_Complete(object sender, EventArgs e)
         {
             refreshTimer.Stop();
@@ -434,23 +472,20 @@ namespace CreditProcessApp
             }
             else
             {
+                idleTimer.Start();
                 refreshTimer.Start();
             }
         }
 
-        /*
-         * @FUNCTION:   private void tempLabel_Click()
-         * @PURPOSE:    shows selected invoice's data
-         *              shades selected invoice in table
-         *              
-         * @PARAM:      object sender
-         *              EventArgs e
-         * 
-         * @RETURNS:    none
-         * @NOTES:      none
-         */
+        /// <summary>
+        /// shows selected invoice's data
+        /// shades selected invoice in table
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void tempLabel_Click(object sender, EventArgs e)
         {
+            idleTimer.Stop();
             RemoveButton.Enabled =
                 ExitButton.Enabled =
                 ProcessButton.Enabled =
@@ -573,15 +608,10 @@ namespace CreditProcessApp
             Clipboard.SetText(currentInvoice.invoiceNumber.ToString());
         }
 
-        /*
-         * @FUNCTION:   private void showData()
-         * @PURPOSE:    display given invoice data in data table
-         *              
-         * @PARAM:      Invoice invoice
-         * 
-         * @RETURNS:    none
-         * @NOTES:      none
-         */
+        /// <summary>
+        /// shows invoice information to user
+        /// </summary>
+        /// <param name="invoice"></param>
         private void showData(Invoice invoice)
         {
             //display given invoice data in data table
@@ -594,15 +624,9 @@ namespace CreditProcessApp
             NotesText.Text = invoice.notes;
         }
 
-        /*
-         * @FUNCTION:   private void clearData()
-         * @PURPOSE:    clears data fields
-         *              
-         * @PARAM:      none
-         * 
-         * @RETURNS:    none
-         * @NOTES:      none
-         */
+        /// <summary>
+        /// clears data fields
+        /// </summary>
         private void clearData()
         {
 
@@ -616,16 +640,10 @@ namespace CreditProcessApp
             NotesText.Text = "";
         }
 
-        /*
-         * @FUNCTION:   private void releaseInvoice()
-         * @PURPOSE:    releases control of current invoice in db
-         *              sets current invoice to null
-         *              
-         * @PARAM:      none
-         * 
-         * @RETURNS:    none
-         * @NOTES:      none
-         */
+        /// <summary>
+        /// releases control of current invoice in db
+        /// sets current invoice to null
+        /// </summary>
         private void releaseInvoice()
         {
             //if invoice is selected
@@ -649,54 +667,70 @@ namespace CreditProcessApp
             }
         }
 
-        /*
-         * @FUNCTION:   private void ProcessButton_Click()
-         * @PURPOSE:    updates database to mark invoice as processed
-         *              sets print flag to print
-         *              
-         * @PARAM:      object sender
-         *              EventArgs e
-         * 
-         * @RETURNS:    none
-         * @NOTES:      none
-         */
+        /// <summary>
+        /// updates database to mark invoice as processed
+        /// sets print flag to print
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ProcessButton_Click(object sender, EventArgs e)
         {
             processInvoice(0);
         }
 
-        /*
-         * @FUNCTION:   private void ExitButton_Click()
-         * @PURPOSE:    updates the CRDT table
-         *              leaves print flag false
-         *              
-         * @PARAM:      object sender
-         *              EventArgs e
-         * 
-         * @RETURNS:    none
-         * @NOTES:      none
-         */
+        /// <summary>
+        /// updates the CRDT table
+        /// leaves print flag false
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ExitButton_Click(object sender, EventArgs e)
         {
             //begin form close
             processInvoice(1);
         }
 
-        /*
-         * @FUNCTION:   private void processInvoice()
-         * @PURPOSE:    updates the CRDTINV and BKARHINV tables
-         *              
-         * @PARAM:      int printFlag
-         * 
-         * @RETURNS:    none
-         * @NOTES:      none
-         */
+        /// <summary>
+        /// updates the CRDTINV and BKARHINV tables
+        /// </summary>
+        /// <param name="printFlag">
+        /// 
+        /// </param>
         private void processInvoice(int printFlag)
         {
-
             //if current invoice is valid
             if (currentInvoice != null)
             {
+                if(currentInvoice.notes != NotesText.Text)
+                {
+                    DialogResult dialog = MessageBox.Show("Overwrite database notes with changes?", "Query", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+
+                    if(dialog == DialogResult.Yes)
+                    {
+                        string conn = "DSN=Ranshu";
+                        OdbcConnection sqlConn = null;
+                        using (sqlConn = new OdbcConnection(conn))
+                        {
+                            //update invoice in database as processed, at current time, and by current user
+                            OdbcCommand cmd = new OdbcCommand("{call editCRDT(?, ?)}", sqlConn);
+                            cmd.CommandType = CommandType.StoredProcedure;
+                            cmd.Parameters.AddWithValue(":invNum", currentInvoice.invoiceNumber);
+                            cmd.Parameters.AddWithValue(":notes", NotesText.Text);
+                            sqlConn.Open();
+                            cmd.ExecuteNonQuery();
+                            sqlConn.Close();
+                        }
+                    }
+                    else if(dialog == DialogResult.No)
+                    {
+                        NotesText.Text = currentInvoice.notes;
+                    }
+                    else if(dialog == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+                }
+
                 //establish database connection
                 string strConnection = "DSN=Ranshu";
                 OdbcConnection pSqlConn = null;
@@ -723,6 +757,12 @@ namespace CreditProcessApp
             populateTables();
         }
 
+        /// <summary>
+        /// fills account table with payment details
+        /// </summary>
+        /// <param name="payment">
+        /// current selected payment
+        /// </param>
         private void populatePaymentTable(Payment payment)
         {
             AccountNameText.Text = currentInvoice.account;
@@ -731,16 +771,11 @@ namespace CreditProcessApp
             PaymentNotesText.Text = payment.cardNotes;
         }
 
-        /*
-         * @FUNCTION:   private void CalendarButton_Click()
-         * @PURPOSE:    toggles calendar
-         *              
-         * @PARAM:      object sender
-         *              EventArgs e
-         * 
-         * @RETURNS:    none
-         * @NOTES:      none
-         */
+        /// <summary>
+        /// toggles calendar
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CalendarButton_Click(object sender, EventArgs e)
         {
             //if calender active
@@ -761,17 +796,12 @@ namespace CreditProcessApp
             }
         }
 
-        /*
-         * @FUNCTION:   private void Calendar_DateSelected()
-         * @PURPOSE:    changes selected date
-         *              repopulates data tables
-         *              
-         * @PARAM:      object sender
-         *              DateRangeEventArgs e
-         * 
-         * @RETURNS:    none
-         * @NOTES:      none
-         */
+        /// <summary>
+        /// changes selected date
+        /// repopulates data tables
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Calendar_DateSelected(object sender, DateRangeEventArgs e)
         {
             //refreshes data with new selected date
@@ -785,16 +815,11 @@ namespace CreditProcessApp
             CompleteInvoicePanel.VerticalScroll.Enabled = true;
         }
 
-        /*
-         * @FUNCTION:   private void MainWindow_FormClosing()
-         * @PURPOSE:    give user a chance to opt out of closing program
-         *              
-         * @PARAM:      object sender
-         *              DateRangeEventArgs e
-         * 
-         * @RETURNS:    none
-         * @NOTES:      none
-         */
+        /// <summary>
+        /// call just before form closure
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MainWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
             //query user
@@ -804,6 +829,7 @@ namespace CreditProcessApp
             e.Cancel = (dialogResult == DialogResult.No);
             if (dialogResult == DialogResult.Yes && currentInvoice != null)
             {
+                //clear selected invoice
                 string strConnection = "DSN=Ranshu";
                 OdbcConnection pSQLConn = null;
                 using(pSQLConn = new OdbcConnection(strConnection))
@@ -817,23 +843,21 @@ namespace CreditProcessApp
             }
         }
 
-
-        /*
-         * @FUNCTION:   private void MainWindow_FormClosed()
-         * @PURPOSE:    as the main window closes it closes the login page as well
-         *              
-         * @PARAM:      object sender
-         *              EventArgs e
-         * 
-         * @RETURNS:    none
-         * @NOTES:      none
-         */
+        /// <summary>
+        /// close login form at main form closure
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MainWindow_FormClosed(object sender, FormClosedEventArgs e)
         {
             login.Close();
         }
 
-
+        /// <summary>
+        /// depreciated
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DeliveryMethodBox_SelectedIndexChanged_1(object sender, EventArgs e)
         {
             populateTables();
@@ -849,19 +873,32 @@ namespace CreditProcessApp
 
         }
 
+        /// <summary>
+        /// toggle viewing of held invoices
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void HeldViewButton_Click(object sender, EventArgs e)
         {
+            //toggles held invoices
             if(held == "")
             {
                 held = "!";
+                HeldViewButton.Text = "View\nOpen\nOrders";
             }
             else
             {
                 held = "";
+                HeldViewButton.Text = "View\nHeld\nOrders";
             }
             populateTables();
         }
 
+        /// <summary>
+        /// toggle other orders view
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OtherOrdersButton_Click(object sender, EventArgs e)
         {
             if(currentInvoice != null)
@@ -876,12 +913,10 @@ namespace CreditProcessApp
                 using (pSqlConn = new OdbcConnection(strConnection))
                 {
                     //get unprocessed invoices from database
-                    string creditCommand = "SELECT invoice_num, notes, BKAR_INV_NUM, BKAR_INV_CUSCOD, BKAR_INV_INVDTE, BKAR_INV_TOTAL, BKAR_INV_SHPVIA, BKAR_INV_SLSP, BKAR_INV_LOC " +
-                        "FROM wmsOrders w inner join BKARHINV b ON w.invoice_num = b.BKAR_INV_NUM " +
-                        "WHERE w.validated is null and b.BKAR_INV_CUSCOD = '" + currentInvoice.account + "' and w.invoice_num != " + currentInvoice.invoiceNumber +
-                        "ORDER BY " + (sender as Button).Tag.ToString();
-
-                    OdbcCommand cmd = new OdbcCommand(creditCommand, pSqlConn);
+                    OdbcCommand cmd = new OdbcCommand("{call getOtherOrders (?, ?)}", pSqlConn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue(":account", currentInvoice.account);
+                    cmd.Parameters.AddWithValue(":invNum", currentInvoice.invoiceNumber);
                     pSqlConn.Open();
                     OdbcDataReader creditReader = cmd.ExecuteReader();
                     if (creditReader.HasRows)
@@ -909,8 +944,10 @@ namespace CreditProcessApp
                     pSqlConn.Close();
                 }
 
+                //hide panel
                 OtherInvoicesPanel.Hide();
 
+                //refresh list
                 try
                 {
                     refreshTable(OtherInvoicesList, incomplete);
@@ -922,8 +959,14 @@ namespace CreditProcessApp
             }
         }
 
+        /// <summary>
+        /// show account data for selected invoice
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void AccountDataButton_Click(object sender, EventArgs e)
         {
+            //check for active invoice
             if(currentInvoice != null)
             {
                 //establish database connection
@@ -932,10 +975,11 @@ namespace CreditProcessApp
                 using (pSqlConn = new OdbcConnection(strConnection))
                 {
                     //get unprocessed invoices from database
-                    string creditCommand = "SELECT BKAR_CCRD_NUM, BKAR_CCRD_EXP, BKAR_CCRD_NAME FROM BKARCCRD WHERE BKAR_CCRD_CODE = '" + currentInvoice.account + "'";
-
-                    OdbcCommand cmd = new OdbcCommand(creditCommand, pSqlConn);
+                    OdbcCommand cmd = new OdbcCommand("{call getCCRD (?)}", pSqlConn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue(":account", currentInvoice.account);
                     pSqlConn.Open();
+
                     OdbcDataReader creditReader = cmd.ExecuteReader();
                     if (creditReader.HasRows)
                     {
@@ -1128,7 +1172,7 @@ namespace CreditProcessApp
             {
                 declined = 0;
                 populateTables();
-                SwitchCompletedButton.Text = "View Declined";
+                SwitchCompletedButton.Text = "View Holds";
             }
             else
             {

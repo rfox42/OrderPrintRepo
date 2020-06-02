@@ -11,14 +11,10 @@ using System.Drawing.Printing;
 
 namespace RanshuPrintService
 {
-
-    /* 
-     * @CLASS:      static class Program
-     * @PURPOSE:    starts and ends the windows service
-     *              handles startup errors and critical errors
-     * 
-     * @NOTES: none
-     */
+    /// <summary>
+    /// starts and ends the windows service
+    /// handles startup errors and critical errors
+    /// </summary>
     static class Program
     {
 
@@ -60,26 +56,21 @@ namespace RanshuPrintService
             }
         }
 
-        /*
-         * @FUNCTION:   public static void writeToFile()
-         * @PURPOSE:    writes to log file
-         *              
-         * @PARAM:      string message
-         * 
-         * @RETURNS:    none
-         * @NOTES:      none
-         */
+        /// <summary>
+        /// writes to log file
+        /// </summary>
+        /// <param name="message"></param>
         public static void writeToFile(string message)
         {
             //open/create "Logs"
-            string path = AppDomain.CurrentDomain.BaseDirectory + "\\Logs";
+            string path = AppDomain.CurrentDomain.BaseDirectory + "\\Logs\\"+DateTime.Now.Year;
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
             }
 
             //open/create daily log file
-            string filePath = AppDomain.CurrentDomain.BaseDirectory + "\\Logs\\Service_" + DateTime.Now.Date.ToShortDateString().Replace('/', '_') + ".txt";
+            string filePath = AppDomain.CurrentDomain.BaseDirectory + "\\Logs\\" + DateTime.Now.Year + "\\RanshuPrintService_" + DateTime.Now.Date.ToShortDateString().Replace('/', '_') + ".txt";
             if (!File.Exists(filePath))
             {
                 using (StreamWriter sw = File.CreateText(filePath))

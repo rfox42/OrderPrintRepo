@@ -1,6 +1,6 @@
 ﻿namespace MeridianFtpService
 {
-    partial class Service1
+    partial class MeridianFtpService
     {
         /// <summary> 
         /// Required designer variable.

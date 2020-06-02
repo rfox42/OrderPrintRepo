@@ -25,11 +25,19 @@ namespace CreditProcessApp
     public partial class Login : Form
     {
         MainWindow main;
+        SystemSelection sysMenu;
+        string location;
 
-        public Login()
+        public Login(SystemSelection inSysMenu, string inLocation)
         {
             InitializeComponent();
 
+            //set user location and system menu reference
+            //blank for accounting use
+            location = inLocation;
+            sysMenu = inSysMenu;
+
+            //set cursor to username
             this.ActiveControl = UsernameTextBox;
         }
 
@@ -47,8 +55,8 @@ namespace CreditProcessApp
          */
         private void SignInButton_Click(object sender, EventArgs e)
         {
-            try 
-            { 
+            //try 
+            //{ 
                 //establish database connection
                 string strConnection = "DSN=Ranshu";
                 OdbcConnection pSqlConn = null;
@@ -78,16 +86,16 @@ namespace CreditProcessApp
                     }
 
                     //open main window with current credentials
-                    main = new MainWindow(this);
+                    main = new MainWindow(this, location);
                     main.Show();
                     this.Hide();
                 }
-            }
-            catch(Exception ex)
-            {
+            //}
+            //catch(Exception ex)
+            //{
                 //show error message
-                ErrorLabel.Text = "*" + ex.Message;
-            }
+                //ErrorLabel.Text = "*" + ex.Message;
+            //}
         }
 
         /*
@@ -127,6 +135,11 @@ namespace CreditProcessApp
             {
                 SignInButton_Click(sender, e);
             }
+        }
+
+        private void Login_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            sysMenu.Close();
         }
     }
 

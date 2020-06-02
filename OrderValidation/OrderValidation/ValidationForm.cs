@@ -19,13 +19,17 @@ namespace OrderValidation
         int selectedRow;
         Order currentOrder;
         Item currentItem;
+        LocationMenu locMenu;
         string invNot;
         string dateQualifier;
+        string location;
 
-        public ValidationForm()
+        public ValidationForm(LocationMenu inMenu, string inLocation)
         {
             InitializeComponent();
 
+            locMenu = inMenu;
+            location = inLocation;
             ItemsPanel.Hide();
         }
 
@@ -83,9 +87,6 @@ namespace OrderValidation
                     addToTable(InvoiceList, new List<string>() { invoices[i].invoiceNumber.ToString(), invoices[i].date }, invoices[i]);
                 }
             }
-
-            FinalizeButton.Enabled = false;
-            ReprintButton.Enabled = false;
         }
 
         private void addToTable(TableLayoutPanel table, List<string> columns, Object tag, Color? color = null)
@@ -111,34 +112,105 @@ namespace OrderValidation
             OdbcConnection pSqlConn = null;
             using (pSqlConn = new OdbcConnection(strConnection))
             {
-                //get unprocessed invoices from database
-                string cmdString = "SELECT BKAR_INVL_PCODE, BKAR_INVL_ITYPE, BKAR_INVL_PQTY, BKAR_INVL_PDESC, BKIC_VND_PART " +
-                            "FROM BKARHINV INNER JOIN BKARHIVL ON BKAR_INV_NUM = BKAR_INVL_INVNM " +
-                            "LEFT JOIN BKICCUST ON (BKAR_INVL_PCODE = BKIC_VND_PCODE AND BKAR_INV_CUSCOD = BKIC_VND_VENDOR) " +
-                            "WHERE BKAR_INV_NUM = " + invoiceNumber + " AND  BKAR_INVL_ITYPE != 'X' AND  BKAR_INVL_ITYPE != 'N'";
-
-                OdbcCommand cmd = new OdbcCommand(cmdString, pSqlConn);
                 pSqlConn.Open();
-                OdbcDataReader invoiceReader = cmd.ExecuteReader();
-                if (invoiceReader.HasRows)
-                {
-                    items = new List<Item>();
-                    while (invoiceReader.Read())
-                    {
-                        Item item = new Item();
-                        item.partCode = invoiceReader["BKAR_INVL_PCODE"].ToString().TrimEnd();
-                        item.description = invoiceReader["BKAR_INVL_PDESC"].ToString().TrimEnd(); ;
-                        item.vendorPart = invoiceReader["BKIC_VND_PART"].ToString().TrimEnd();
-                        item.shipQuantity = Convert.ToInt32(invoiceReader["BKAR_INVL_PQTY"].ToString());
-                        item.quantity = 0;
 
-                        items.Add(item);
+                //get unprocessed invoices from database
+                using (OdbcCommand cmd = new OdbcCommand("{call getPickData (?, ?)}", pSqlConn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue(":invNum", invoiceNumber);
+                    cmd.Parameters.AddWithValue(":inLoc", location);
+                    OdbcDataReader invoiceReader = cmd.ExecuteReader();
+                    if (invoiceReader.HasRows)
+                    {
+                        items = new List<Item>();
+                        while (invoiceReader.Read())
+                        {
+                            Item item = new Item();
+                            item.partCode = invoiceReader["part_code"].ToString().TrimEnd();
+                            item.shipQuantity = Convert.ToInt32(invoiceReader["qty"].ToString());
+                            item.quantity = Convert.ToInt32(invoiceReader["qty_pulled"].ToString());
+
+
+                            using (OdbcCommand locationCmd = new OdbcCommand("{call getPartLocation (?, ?, ?)}", pSqlConn))
+                            {
+                                locationCmd.CommandType = CommandType.StoredProcedure;
+                                locationCmd.Parameters.AddWithValue(":inPart", item.partCode);
+                                locationCmd.Parameters.AddWithValue(":inLoc", location);
+                                locationCmd.Parameters.AddWithValue(":qty", item.shipQuantity);
+                                OdbcDataReader locationReader = locationCmd.ExecuteReader();
+                                if (locationReader.HasRows)
+                                {
+                                    locationReader.Read();
+                                    item.location = locationReader["INV_BIN"].ToString().TrimEnd();
+                                    item.locationCode = locationReader["INV_TYPE"].ToString().TrimEnd();
+                                    if (item.locationCode == "OS")
+                                        item.location += "*";
+                                }
+
+                                locationReader.Close();
+                            }
+
+                            items.Add(item);
+                        }
+                    }
+
+                    invoiceReader.Close();
+                }
+
+
+                if (items == null)
+                {
+                    //get unprocessed invoices from database
+                    using (OdbcCommand cmd = new OdbcCommand("{call getAllParts (?)}", pSqlConn))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue(":invNum", invoiceNumber);
+
+                        OdbcDataReader invoiceReader = cmd.ExecuteReader();
+                        if (invoiceReader.HasRows)
+                        {
+                            new MessageForm("No parts in queue for invoice: " + invoiceNumber + ". Displaying all parts for invoice possibly including backorder. Please scan invoice to populate queue and receive additional information.").Show();
+
+                            items = new List<Item>();
+                            while (invoiceReader.Read())
+                            {
+                                Item item = new Item();
+                                item.partCode = invoiceReader["part"].ToString().TrimEnd();
+                                item.shipQuantity = Convert.ToInt32(invoiceReader["qty"].ToString());
+                                item.quantity = 0;
+
+
+                                using (OdbcCommand locationCmd = new OdbcCommand("{call getPartLocation (?, ?, ?)}", pSqlConn))
+                                {
+                                    locationCmd.CommandType = CommandType.StoredProcedure;
+                                    locationCmd.Parameters.AddWithValue(":inPart", item.partCode);
+                                    locationCmd.Parameters.AddWithValue(":inLoc", location);
+                                    locationCmd.Parameters.AddWithValue(":qty", item.shipQuantity);
+                                    OdbcDataReader locationReader = locationCmd.ExecuteReader();
+                                    if (locationReader.HasRows)
+                                    {
+                                        locationReader.Read();
+                                        item.location = locationReader["INV_BIN"].ToString().TrimEnd();
+                                        item.locationCode = locationReader["INV_TYPE"].ToString().TrimEnd();
+                                        if (item.locationCode == "OS")
+                                            item.location += "*";
+                                    }
+
+                                    locationReader.Close();
+                                }
+
+                                items.Add(item);
+                            }
+                        }
+
+                        invoiceReader.Close();
                     }
                 }
 
-                invoiceReader.Close();
                 pSqlConn.Close();
             }
+
 
             return items;
         }
@@ -152,18 +224,59 @@ namespace OrderValidation
             OdbcConnection pSqlConn = null;
             using (pSqlConn = new OdbcConnection(strConnection))
             {
-                //get unprocessed invoices from database
-                string cmdString = "SELECT validated " +
-                                    "from wmsOrders w inner join BKARHINV b on w.invoice_num = b.BKAR_INV_NUM " +
-                                    "where b.BKAR_INV_NUM = "+ invoiceNum + "AND w.validated is not null";
-
-                OdbcCommand cmd = new OdbcCommand(cmdString, pSqlConn);
                 pSqlConn.Open();
-                order.validated = String.Format("{0:MM/dd/yyyy HH:mm}", cmd.ExecuteScalar());
+                string cmdString = "select h.bkar_inv_num, l.bkar_inv_sonum from bkarhinv h full outer join bkarinv l on h.bkar_inv_num = "+invoiceNum+" or h.bkar_inv_sonum = "+invoiceNum;
+
+                using(OdbcCommand cmd = new OdbcCommand(cmdString, pSqlConn))
+                {
+                    OdbcDataReader reader = cmd.ExecuteReader();
+                    
+                    if(!reader.HasRows)
+                    {
+                        return order;
+                    }
+                }
+
+                //get unprocessed invoices from database
+                cmdString = "SELECT invoice_num, validated " +
+                                    "from wmsOrders w " +
+                                    "where w.invoice_num = "+ invoiceNum;
+
+                using (OdbcCommand cmd = new OdbcCommand(cmdString, pSqlConn))
+                {
+                    OdbcDataReader invoiceReader = cmd.ExecuteReader();
+                    if (invoiceReader.HasRows)
+                    {
+                        invoiceReader.Read();
+                        order.validated = String.Format("{0:MM/dd/yyyy HH:mm}", invoiceReader["validated"].ToString());
+                    }
+                    else
+                    {
+                        DialogResult dialog = MessageBox.Show("Invoice: " + invoiceNum + " has not been printed. Print this invoice?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                        if (dialog == DialogResult.Yes)
+                        {
+                            string sqlStr = "update BKARHINV set BKAR_INV_MAX = 0 " +
+                                "where bkar_inv_num = " + invoiceNum + "; " +
+                                "update BKARINV set BKAR_INV_MAX = 0 " +
+                                "where bkar_inv_sonum = " + invoiceNum;
+                            using (OdbcCommand xCmd = new OdbcCommand(sqlStr, pSqlConn))
+                            {
+                                xCmd.ExecuteNonQuery();
+                            }
+
+                            new MessageForm("Please give the print service a moment to process the invoice (approximately 10-15 seconds).").Show();
+                        }
+
+                        pSqlConn.Close();
+                        return null;
+                    }
+                }
                 pSqlConn.Close();
             }
 
             order.items = getItems(invoiceNum);
+
+
 
             return order;
         }
@@ -193,8 +306,7 @@ namespace OrderValidation
                         new List<string>()
                         {
                                 currentOrder.items[i].partCode,
-                                currentOrder.items[i].vendorPart,
-                                currentOrder.items[i].description,
+                                currentOrder.items[i].location,
                                 currentOrder.items[i].shipQuantity.ToString(),
                                 currentOrder.items[i].quantity.ToString()
                         },
@@ -203,17 +315,13 @@ namespace OrderValidation
                 }
             }
 
-            FinalizeButton.Enabled = orderComplete;
-
-            if (currentOrder.validated != "" && currentOrder.validated != null) 
-                FinalizeButton.Enabled = false;
-
             //InvoicePanel.Hide();
             ItemsPanel.Show();
             EnterButton.Text = "Edit Quantity";
             EnterField.Text = "";
             EnterButton.Enabled = false;
-            CancelButton.Enabled = true;
+            InvoiceTypeButton.Enabled =
+                CancelButton.Enabled = true;
             currentItem = null;
             TotalText.Text = total.ToString();
             this.ActiveControl = EnterField;
@@ -337,6 +445,11 @@ namespace OrderValidation
                     else
                     {
                         currentOrder = getOrderFromNum(Convert.ToInt32(EnterField.Text));
+                        if(currentOrder == null)
+                        {
+                            EnterField.Text = "";
+                            return;
+                        }
                         if (currentOrder.items == null)
                         {
                             throw new Exception("Invoice number " + EnterField.Text + " is invalid.");
@@ -358,24 +471,32 @@ namespace OrderValidation
 
         private void FinalizeButton_Click(object sender, EventArgs e)
         {
-            //establish database connection
-            string strConnection = "DSN=Ranshu";
-            OdbcConnection pSqlConn = null;
-            using (pSqlConn = new OdbcConnection(strConnection))
+            new ManagerMonitor(this, location).Show();
+            Hide();
+            /*
+            string location = Interaction.InputBox("Location: ", "Reset Printer Status", currentItem.quantity.ToString());
+
+            try
             {
-                //get unprocessed invoices from database
-                string cmdString = "UPDATE wmsOrders " +
-                    "SET validated = '" + DateTime.Now.ToString("yyyy-MM-dd HH:mm") + "' " +
-                    "WHERE invoice_num = " + currentOrder.invoiceNumber;
+                //establish database connection
+                string strConnection = "DSN=Ranshu";
+                OdbcConnection pSqlConn = null;
+                using (pSqlConn = new OdbcConnection(strConnection))
+                {
+                    //get unprocessed invoices from database
+                    string cmdString = "delete from wmsTrouble where trouble printer in (select printer_name from wmsPrinters where printer_location = '" + location + "')";
 
-                OdbcCommand cmd = new OdbcCommand(cmdString, pSqlConn);
-                pSqlConn.Open();
-                cmd.ExecuteNonQuery();
-                pSqlConn.Close();
+                    OdbcCommand cmd = new OdbcCommand(cmdString, pSqlConn);
+                    pSqlConn.Open();
+                    cmd.ExecuteNonQuery();
+                    pSqlConn.Close();
+                }
             }
-
-            InvokeOnClick(CancelButton, new EventArgs());
-            FinalizeButton.Enabled = false;
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            */
         }
 
         private void EnterButton_Click(object sender, EventArgs e)
@@ -409,7 +530,6 @@ namespace OrderValidation
         {
             //populateInvoices();
             EnterButton.Enabled = false;
-            ReprintButton.Enabled = false;
             currentItem = null;
             currentOrder = null;
             ItemsPanel.Hide();
@@ -434,28 +554,64 @@ namespace OrderValidation
 
         private void ReprintButton_Click(object sender, EventArgs e)
         {
-            if(currentOrder != null)
-            {
-                //establish database connection
-                string strConnection = "DSN=Ranshu";
-                OdbcConnection pSqlConn = null;
-                using (pSqlConn = new OdbcConnection(strConnection))
-                {
-                    //get unprocessed invoices from database
-                    string cmdString = "UPDATE BKARHINV " +
-                        "SET BKAR_INV_MAX = 0 " +
-                        "WHERE BKAR_INV_NUM = " + currentOrder.invoiceNumber;
+            bool clear = false;
 
-                    OdbcCommand cmd = new OdbcCommand(cmdString, pSqlConn);
-                    pSqlConn.Open();
-                    cmd.ExecuteNonQuery();
-                    pSqlConn.Close();
+            try
+            {
+                if (currentOrder == null)
+                {
+                    currentOrder = getOrderFromNum(Convert.ToInt32(EnterField.Text));
+                    clear = true;
                 }
+
+                if (currentOrder != null)
+                {
+                    //establish database connection
+                    string strConnection = "DSN=Ranshu";
+                    OdbcConnection pSqlConn = null;
+                    using (pSqlConn = new OdbcConnection(strConnection))
+                    {
+                        //get unprocessed invoices from database
+                        string cmdString = "UPDATE BKARHINV " +
+                            "SET BKAR_INV_MAX = 0 " +
+                            "WHERE BKAR_INV_NUM = " + currentOrder.invoiceNumber;
+
+                        OdbcCommand cmd = new OdbcCommand(cmdString, pSqlConn);
+                        pSqlConn.Open();
+                        cmd.ExecuteNonQuery();
+                        pSqlConn.Close();
+                    }
+
+
+                    using (pSqlConn = new OdbcConnection(strConnection))
+                    {
+                        //get unprocessed invoices from database
+                        string cmdString = "UPDATE BKARINV " +
+                            "SET BKAR_INV_MAX = 0 " +
+                            "WHERE BKAR_INV_SONUM = " + currentOrder.invoiceNumber;
+
+                        OdbcCommand cmd = new OdbcCommand(cmdString, pSqlConn);
+                        pSqlConn.Open();
+                        cmd.ExecuteNonQuery();
+                        pSqlConn.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+            if(clear)
+            {
+                currentOrder = null;
             }
         }
 
         private void InvoiceTypeButton_Click(object sender, EventArgs e)
         {
+            bool clear = false;
+            /*
             if(invNot == "")
             {
                 invNot = "not";
@@ -471,6 +627,52 @@ namespace OrderValidation
                 dateQualifier = "";
                 CalendarButton.Hide();
                 populateInvoices();
+            }*/
+            try
+            {
+                if (currentOrder == null)
+                {
+                    currentOrder = getOrderFromNum(Convert.ToInt32(EnterField.Text));
+                    clear = true;
+                }
+
+                if (currentOrder != null)
+                {
+                    string strConnection = "DSN=Ranshu";
+                    OdbcConnection pSqlConn = null;
+                    using (pSqlConn = new OdbcConnection(strConnection))
+                    {
+                        //get unprocessed invoices from database
+                        string cmdString = "select printed, printer, notes from wmsOrders where invoice_num = " + currentOrder.invoiceNumber;
+
+                        OdbcCommand cmd = new OdbcCommand(cmdString, pSqlConn);
+                        pSqlConn.Open();
+                        OdbcDataReader invoiceReader = cmd.ExecuteReader();
+                        if (invoiceReader.HasRows)
+                        {
+                            while (invoiceReader.Read())
+                            {
+                                currentOrder.printed = invoiceReader["printed"].ToString();
+                                currentOrder.printer = invoiceReader["printer"].ToString().TrimEnd();
+                                currentOrder.notes = invoiceReader["notes"].ToString().TrimEnd();
+                            }
+                        }
+
+                        invoiceReader.Close();
+                        pSqlConn.Close();
+                    }
+
+                    new MessageForm("Printed: " + currentOrder.printed + System.Environment.NewLine + "Printer: " + currentOrder.printer + System.Environment.NewLine + "\nValidated: " + currentOrder.validated + System.Environment.NewLine + "\nNotes: " + System.Environment.NewLine + currentOrder.notes).Show();
+                }
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+            if(clear)
+            {
+                currentOrder = null;
             }
         }
 
@@ -484,6 +686,11 @@ namespace OrderValidation
         private void CalendarButton_Click(object sender, EventArgs e)
         {
             CalendarPanel.Visible = !CalendarPanel.Visible;
+        }
+
+        private void ValidationForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            locMenu.Close();
         }
     }
 }

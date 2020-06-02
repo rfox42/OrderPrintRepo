@@ -71,6 +71,9 @@ namespace OrderValidation
         public string enteredBy;
 
         public string validated;
+        public string printer;
+        public string printed;
+        public string notes;
 
         public Order(int invNum)
         {
