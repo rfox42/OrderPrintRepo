@@ -35,6 +35,9 @@ namespace OrderValidation
         /// </summary>
         public string date;
 
+        public int qty;
+        public string packed, pulled;
+
         /// <summary>
         /// holds customer code/company name
         /// BKAR_INV_CUSCOD

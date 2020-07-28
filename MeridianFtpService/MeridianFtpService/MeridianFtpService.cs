@@ -363,14 +363,14 @@ namespace MeridianFtpService
                         // Download file from FTP server to local folder
                         string path = ftpSite + directories[i].ToString();
                         string trnsfrpth = destFolder + directories[i].ToString();
-                        /*try
-                        {*/
+                        try
+                        {
                             ftpClient.DownloadFile(path, trnsfrpth);
-                        /*}
+                        }
                         catch (WebException ex)
                         {
                             throw new Exception(ex.Message);
-                        }*/
+                        }
                         path = null;
                         trnsfrpth = null;
 
@@ -384,6 +384,7 @@ namespace MeridianFtpService
                         try
                         {
                             FtpWebResponse response = (FtpWebResponse)fileRequest.GetResponse();
+                            flagExists = 1;
                         }
                         catch (WebException)
                         {
@@ -511,10 +512,11 @@ namespace MeridianFtpService
                     try
                     {
                         FtpWebResponse response = (FtpWebResponse)fileRequest.GetResponse();
+                        flagExists = 1;
                     }
                     catch (WebException)
                     {
-                        flagExists = 1;
+                        flagExists = 0;
                     }
 
                     fileRequest.Abort();
@@ -572,7 +574,7 @@ namespace MeridianFtpService
                         newFileName = strDateTimeStamp + "_" + label;
 
                         // FILE ALREADY EXISTS
-                        MailMessage mail = new MailMessage("orders@ranshu.com", "jeremy@ranshu.com");
+                        MailMessage mail = new MailMessage("orders@ranshu.com", "ryan@ranshu.com");
                         SmtpClient client = new SmtpClient();
                         client.EnableSsl = true;
                         client.Port = 587;
@@ -592,14 +594,14 @@ namespace MeridianFtpService
                     // Download file from FTP server to local folder
                     string path = ftpSite + label;
                     string trnsfrpth = @"\\Ranshu\Reports\edi\MERIDIAN\SFPLabels\" + newFileName;
-                    /*try
-                    {*/
+                    try
+                    {
                         ftpClient.DownloadFile(path, trnsfrpth);
-                    /*}
+                    }
                     catch (WebException ex)
                     {
                         throw new Exception(ex.Message);
-                    }*/
+                    }
                     path = null;
                     trnsfrpth = null;
 
@@ -629,6 +631,11 @@ namespace MeridianFtpService
             ftpClient = null;
 
             directories = null;
+        }
+
+        static void checkOrphans()
+        {
+
         }
 
         static void moveFiles1800(string ftpSite, string ftpUser, string ftpPass, string destFolder)

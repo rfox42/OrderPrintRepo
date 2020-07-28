@@ -238,9 +238,9 @@ namespace OrderValidation
                 }
 
                 //get unprocessed invoices from database
-                cmdString = "SELECT invoice_num, validated " +
-                                    "from wmsOrders w " +
-                                    "where w.invoice_num = "+ invoiceNum;
+                cmdString = "SELECT invoice_num, validated, packed_by, pulled_by, user_id " +
+                                    "from wmsOrders left join wmsUsers on user_activity_notes like '%invoice_num%' and user_loc = '"+location+"'" +
+                                    "where invoice_num = "+ invoiceNum;
 
                 using (OdbcCommand cmd = new OdbcCommand(cmdString, pSqlConn))
                 {
@@ -249,6 +249,12 @@ namespace OrderValidation
                     {
                         invoiceReader.Read();
                         order.validated = String.Format("{0:MM/dd/yyyy HH:mm}", invoiceReader["validated"].ToString());
+                        if(invoiceReader["pulled_by"] != DBNull.Value)
+                            order.pulled = ((string)invoiceReader["pulled_by"]).TrimEnd();
+                        if (invoiceReader["packed_by"] != DBNull.Value)
+                            order.packed = ((string)invoiceReader["packed_by"]).TrimEnd();
+                        if (invoiceReader["user_id"] != DBNull.Value)
+                            order.notes = ((string)invoiceReader["user_id"]).TrimEnd();
                     }
                     else
                     {
@@ -256,15 +262,18 @@ namespace OrderValidation
                         if (dialog == DialogResult.Yes)
                         {
                             string sqlStr = "update BKARHINV set BKAR_INV_MAX = 0 " +
-                                "where bkar_inv_num = " + invoiceNum + "; " +
+                                "where bkar_inv_num = " + invoiceNum + " " +
+                                "and bkar_inv_invdte > '"+DateTime.Now.AddDays(-30).ToString("yyyy-MM-dd")+"'; " +
                                 "update BKARINV set BKAR_INV_MAX = 0 " +
                                 "where bkar_inv_sonum = " + invoiceNum;
                             using (OdbcCommand xCmd = new OdbcCommand(sqlStr, pSqlConn))
                             {
-                                xCmd.ExecuteNonQuery();
+                                if(xCmd.ExecuteNonQuery() > 0)
+                                    new MessageForm("Please give the print service a moment to process the invoice (approximately 10-15 seconds).").Show();
+                                else
+                                    new MessageForm("The invoice: "+invoiceNum+" is invalid. Please check the number or contact IT.").Show();
                             }
 
-                            new MessageForm("Please give the print service a moment to process the invoice (approximately 10-15 seconds).").Show();
                         }
 
                         pSqlConn.Close();
@@ -566,6 +575,19 @@ namespace OrderValidation
 
                 if (currentOrder != null)
                 {
+                    if (currentOrder.packed != null)
+                        if (MessageBox.Show("Invoice " + currentOrder.invoiceNumber + " has already been processed by " + currentOrder.packed + " are you sure you want to reprint it?", "", MessageBoxButtons.YesNo) == DialogResult.No)
+                            throw new Exception("Reprint cancelled.");
+
+                    if (currentOrder.pulled != null)
+                        if (MessageBox.Show("Invoice "+currentOrder.invoiceNumber+" is currently being processed by "+currentOrder.pulled+" are you sure you want to reprint it?", "", MessageBoxButtons.YesNo) == DialogResult.No)
+                            throw new Exception("Reprint cancelled.");
+
+                    if (currentOrder.notes != null)
+                        if (MessageBox.Show("Invoice " + currentOrder.invoiceNumber + " is currently being processed by " + currentOrder.notes + " are you sure you want to reprint it?", "", MessageBoxButtons.YesNo) == DialogResult.No)
+                            throw new Exception("Reprint cancelled.");
+
+
                     //establish database connection
                     string strConnection = "DSN=Ranshu";
                     OdbcConnection pSqlConn = null;
@@ -576,7 +598,10 @@ namespace OrderValidation
                             "SET BKAR_INV_MAX = 0 " +
                             "WHERE BKAR_INV_NUM = " + currentOrder.invoiceNumber;
 
-                        OdbcCommand cmd = new OdbcCommand(cmdString, pSqlConn);
+                        OdbcCommand cmd = new OdbcCommand("{call reprintInvoice(?, ?)}", pSqlConn);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue(":invNum", currentOrder.invoiceNumber);
+                        cmd.Parameters.AddWithValue(":loc", location);
                         pSqlConn.Open();
                         cmd.ExecuteNonQuery();
                         pSqlConn.Close();
@@ -643,7 +668,7 @@ namespace OrderValidation
                     using (pSqlConn = new OdbcConnection(strConnection))
                     {
                         //get unprocessed invoices from database
-                        string cmdString = "select printed, printer, notes from wmsOrders where invoice_num = " + currentOrder.invoiceNumber;
+                        string cmdString = "select printed, printer, packed_by, packed, pulled_by, pulled, notes from wmsOrders where invoice_num = " + currentOrder.invoiceNumber;
 
                         OdbcCommand cmd = new OdbcCommand(cmdString, pSqlConn);
                         pSqlConn.Open();
@@ -654,6 +679,18 @@ namespace OrderValidation
                             {
                                 currentOrder.printed = invoiceReader["printed"].ToString();
                                 currentOrder.printer = invoiceReader["printer"].ToString().TrimEnd();
+
+                                try
+                                {
+                                    currentOrder.packed = Convert.ToDateTime(invoiceReader["packed"]).ToString("MM/dd/yyyy hh:mm tt") + " by " + invoiceReader["packed_by"].ToString().TrimEnd();
+                                }
+                                catch { }
+
+                                try
+                                {
+                                    currentOrder.pulled = Convert.ToDateTime(invoiceReader["pulled"]).ToString("MM/dd/yyyy hh:mm tt") + " by " + invoiceReader["pulled_by"].ToString().TrimEnd();
+                                }
+                                catch { }
                                 currentOrder.notes = invoiceReader["notes"].ToString().TrimEnd();
                             }
                         }
@@ -662,12 +699,12 @@ namespace OrderValidation
                         pSqlConn.Close();
                     }
 
-                    new MessageForm("Printed: " + currentOrder.printed + System.Environment.NewLine + "Printer: " + currentOrder.printer + System.Environment.NewLine + "\nValidated: " + currentOrder.validated + System.Environment.NewLine + "\nNotes: " + System.Environment.NewLine + currentOrder.notes).Show();
+                    new MessageForm("Printed: " + currentOrder.printed + System.Environment.NewLine + "Printer: " + currentOrder.printer + System.Environment.NewLine + "Pulled: " + currentOrder.pulled + System.Environment.NewLine + "Packed: " + currentOrder.packed + System.Environment.NewLine + "\nNotes: " + System.Environment.NewLine + currentOrder.notes).Show();
                 }
             }
             catch(Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.StackTrace + ex.Message);
             }
 
             if(clear)

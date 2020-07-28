@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Data.Odbc;
 using System.Data.SqlClient;
 using System.Windows.Forms;
+using System.Net.Mail;
 
 namespace CreditProcessApp
 {
@@ -59,7 +60,7 @@ namespace CreditProcessApp
             //set and start timers
             refreshTimer = new Timer();
             refreshTimer.Tick += new EventHandler(refreshTimer_Complete);
-            refreshTimer.Interval = 60000;
+            refreshTimer.Interval = 90000;
             refreshTimer.Enabled = true;
             refreshTimer.Start();
 
@@ -87,9 +88,15 @@ namespace CreditProcessApp
 
             if(location != "")
             {
-                ExitButton.Hide();
+                ExitButton.BackColor = Color.Gold;
+                ExitButton.Text = "Card on File";
                 RemoveButton.Hide();
             }
+            else
+            {
+                button1.Show();
+            }
+
         }
 
         /// <summary>
@@ -131,7 +138,7 @@ namespace CreditProcessApp
             {
                 //get unprocessed invoices from database
                 string creditCommand = "SELECT CRDT_INV_NUM, CRDT_INV_CUSCOD, CRDT_INV_DATE, CRDT_INV_TOTAL, CRDT_INV_NOTES, CRDT_INV_SHPVIA, CRDT_INV_SLSP, BKAR_INV_LOC " +
-                    "FROM CRDTINV LEFT JOIN BKARHINV ON CRDT_INV_NUM = BKAR_INV_NUM " +
+                    "FROM CRDTINV LEFT JOIN BKARHINV ON BKAR_INV_NUM = CRDT_INV_NUM " +
                     "WHERE CRDT_INV_PROCESSED = 0 and CRDT_INV_USER "+ held +"= 'null'";
                 if(selectedDelivery[deliverySelection % 3] != "ALL")
                 {
@@ -168,7 +175,7 @@ namespace CreditProcessApp
                             invoice.retail = 'N';
 
                         //add invoice to list
-                        if(invoice.retail == 'R' || location == "")
+                        if((invoice.retail == 'R' && !invoice.notes.Contains("USE CARD ON FILE")) || location == "")
                             incomplete.Add(invoice);
                     }
                 }
@@ -222,7 +229,7 @@ namespace CreditProcessApp
                             invoice.retail = 'N';
 
                         //add invoice to list
-                        if(invoice.retail == 'R' || location == "")
+                        if((invoice.retail == 'R' && !invoice.notes.Contains("USE CARD ON FILE")) || location == "")
                             complete.Add(invoice);
                     }
                 }
@@ -646,6 +653,7 @@ namespace CreditProcessApp
         /// </summary>
         private void releaseInvoice()
         {
+
             //if invoice is selected
             if (currentInvoice != null)
             {
@@ -675,7 +683,10 @@ namespace CreditProcessApp
         /// <param name="e"></param>
         private void ProcessButton_Click(object sender, EventArgs e)
         {
-            processInvoice(0);
+            if(location == "")
+                processInvoice(0);
+            else if(MessageBox.Show("This will print the invoice and mark it as charged. Continue?", "", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                processInvoice(0);
         }
 
         /// <summary>
@@ -686,8 +697,247 @@ namespace CreditProcessApp
         /// <param name="e"></param>
         private void ExitButton_Click(object sender, EventArgs e)
         {
-            //begin form close
-            processInvoice(1);
+            if (currentInvoice != null)
+            {
+                if (location == "")
+                {
+                    if (currentInvoice.total > 0)
+                    {
+                        string email = null;
+                        switch (currentInvoice.location)
+                        {
+                            case "R":
+                                email = "shippingNV@ranshu.com";
+                                break;
+
+                            case "S1":
+                                email = "shippingNV@ranshu.com";
+                                break;
+
+                            case "S2":
+                                email = "shippingNV@ranshu.com";
+                                break;
+
+                            case "FW":
+                                email = "shippingTX@ranshu.com";
+                                break;
+
+                            case "TXC":
+                                email = "shippingTX@ranshu.com";
+                                break;
+
+                            case "FL":
+                                email = "shippingFL@ranshu.com";
+                                break;
+
+                            default:
+                                switch (currentInvoice.salesPerson)
+                                {
+                                    case 3:
+                                        email = ("leeg@ranshu.com");
+                                        break;
+
+                                    case 5:
+                                        email = ("scott@ranshu.com");
+                                        break;
+
+                                    case 9:
+                                        email = ("rachael@ranshu.com");
+                                        break;
+
+                                    case 19:
+                                        email = ("buddy@ranshu.com");
+                                        break;
+
+                                    case 35:
+                                        email = ("stan@ranshu.com");
+                                        break;
+
+                                    case 36:
+                                        email = ("cheryn@ranshu.com");
+                                        break;
+
+                                    case 38:
+                                        email = ("aaron@ranshu.com");
+                                        break;
+
+                                    case 45:
+                                        email = ("martin@ranshu.com");
+                                        break;
+
+                                    case 47:
+                                        email = ("ramon@ranshu.com");
+                                        break;
+
+                                    case 55:
+                                        email = ("ken@ranshu.com");
+                                        break;
+
+                                    case 60:
+                                        email = ("wesley@ranshu.com");
+                                        break;
+
+                                    case 63:
+                                        email = ("kyle@ranshu.com");
+                                        break;
+
+                                    case 64:
+                                        email = ("louis@ranshu.com");
+                                        break;
+
+                                    case 66:
+                                        email = ("elio@ranshu.com");
+                                        break;
+
+                                    case 67:
+                                        email = ("jarrod@ranshu.com");
+                                        break;
+
+                                    case 71:
+                                        email = ("bill@ranshu.com");
+                                        break;
+
+                                    case 72:
+                                        email = ("edith@ranshu.com");
+                                        break;
+
+                                    case 73:
+                                        email = ("tania@ranshu.com");
+                                        break;
+
+                                    case 77:
+                                        email = ("alex@ranshu.com");
+                                        break;
+                                }
+                                break;
+                        }
+
+                        ///check for email and that user is in accounting dashboard
+                        if (email != null && location == "")
+                        {
+                            List<string> cc = new List<string>() { "AR@ranshu.com", "melanie@ranshu.com", "danielle@ranshu.com" };
+
+                            string subject;
+                            if (email.Contains("shipping"))
+                            {
+                                switch (currentInvoice.salesPerson)
+                                {
+                                    case 3:
+                                        cc.Add("leeg@ranshu.com");
+                                        break;
+
+                                    case 5:
+                                        cc.Add("scott@ranshu.com");
+                                        break;
+
+                                    case 9:
+                                        cc.Add("rachael@ranshu.com");
+                                        break;
+
+                                    case 19:
+                                        cc.Add("buddy@ranshu.com");
+                                        break;
+
+                                    case 35:
+                                        cc.Add("stan@ranshu.com");
+                                        break;
+
+                                    case 36:
+                                        cc.Add("cheryn@ranshu.com");
+                                        break;
+
+                                    case 38:
+                                        cc.Add("aaron@ranshu.com");
+                                        break;
+
+                                    case 45:
+                                        cc.Add("martin@ranshu.com");
+                                        break;
+
+                                    case 47:
+                                        cc.Add("ramon@ranshu.com");
+                                        break;
+
+                                    case 55:
+                                        cc.Add("ken@ranshu.com");
+                                        break;
+
+                                    case 60:
+                                        cc.Add("wesley@ranshu.com");
+                                        break;
+
+                                    case 63:
+                                        cc.Add("kyle@ranshu.com");
+                                        break;
+
+                                    case 64:
+                                        cc.Add("louis@ranshu.com");
+                                        break;
+
+                                    case 66:
+                                        cc.Add("elio@ranshu.com");
+                                        break;
+
+                                    case 67:
+                                        cc.Add("jarrod@ranshu.com");
+                                        break;
+
+                                    case 71:
+                                        cc.Add("bill@ranshu.com");
+                                        break;
+
+                                    case 72:
+                                        cc.Add("edith@ranshu.com");
+                                        break;
+
+                                    case 73:
+                                        cc.Add("tania@ranshu.com");
+                                        break;
+
+                                    case 77:
+                                        email = ("alex@ranshu.com");
+                                        break;
+                                }
+
+
+                                subject = currentInvoice.account + " + " + currentInvoice.invoiceNumber + " DO NOT SHIP";
+                            }
+                            else
+                            {
+
+                                subject = currentInvoice.account + " + " + currentInvoice.invoiceNumber + " - " + currentInvoice.vendLoc + " VENDOR PO ON HOLD, DO NOT LET SHIP!";
+                            }
+
+                            SendEmail(email, subject, currentInvoice.account + " " + currentInvoice.invoiceNumber + " DECLINED/HELD by " + CurrentUser.user_code + ". \n" + NotesText.Text, cc);
+                        }
+                    }
+
+                    processInvoice(1);
+                }
+                else if (MessageBox.Show("This will send the invoice to accounting and then print a copy. Continue?", "", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    printInvoice();
+            }
+            else
+                MessageBox.Show("Please select an invoice before processing.");
+        }
+
+        private void printInvoice()
+        {
+                if (currentInvoice.retail == 'R' && currentInvoice.location == location)
+                {
+                    string conn = "DSN=Ranshu";
+                    OdbcConnection sqlConn = null;
+                    using (sqlConn = new OdbcConnection(conn))
+                    {
+                        //update invoice in database as processed, at current time, and by current user
+                        OdbcCommand cmd = new OdbcCommand("{call printCredit(?)}", sqlConn);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue(":invNum", currentInvoice.invoiceNumber);
+                        sqlConn.Open();
+                        cmd.ExecuteNonQuery();
+                        sqlConn.Close();
+                    }
+                }
         }
 
         /// <summary>
@@ -1166,6 +1416,19 @@ namespace CreditProcessApp
             }
         }
 
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            new SideWindow().Show();
+        }
+
+        private void MainWindow_Validated(object sender, EventArgs e)
+        {
+        }
+
+        private void BottomButtonTable_Paint(object sender, PaintEventArgs e)
+        {
+        }
+
         private void SwitchCompletedButton_Click(object sender, EventArgs e)
         {
             if(declined == 1)
@@ -1180,6 +1443,50 @@ namespace CreditProcessApp
                 populateTables();
                 SwitchCompletedButton.Text = "View Charged";
             }
+        }
+
+
+        /// <summary>
+        /// create and send error emails
+        /// </summary>
+        /// <param name="subject">
+        /// email subject
+        /// </param>
+        /// <param name="msgText">
+        /// email text
+        /// </param>
+        /// <param name="cc">
+        /// email cc list
+        /// </param>
+        static void SendEmail(string recipient, string subject, string msgText, List<string> cc = null)
+        {
+            ///set email credentials
+            SmtpClient mailClient = new SmtpClient("secure.emailsrvr.com");
+            mailClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+            mailClient.UseDefaultCredentials = false;
+            mailClient.Credentials = new System.Net.NetworkCredential("orders@ranshu.com", "%Ranshu525252");
+            mailClient.Port = 587;
+            mailClient.EnableSsl = true;
+
+            ///create message
+            MailMessage msgMail;
+            msgMail = new MailMessage(new MailAddress("orders@ranshu.com"), new MailAddress(recipient));
+            if (cc != null)
+            {
+                foreach (string address in cc)
+                {
+                    msgMail.CC.Add(new MailAddress(address));
+                }
+            }
+            msgMail.Subject = subject;
+            msgMail.Body = msgText;
+            msgMail.IsBodyHtml = true;
+
+            ///send message
+            mailClient.Send(msgMail);
+
+            ///garbage collect
+            msgMail.Dispose();
         }
     }
 }

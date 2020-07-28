@@ -85,7 +85,7 @@ namespace RanshuPrintService
                 "800DEPOT",
                 "THERADSTOR",
                 "OMEGA",
-                "MEI",
+                "MEI"
             };
 
             ///set reno codes
@@ -227,19 +227,19 @@ namespace RanshuPrintService
                     foreach (string printer in heldPrinters)
                     {
                         string strConnection = "DSN=RANSHU";
-                        pSqlConn = null;
-                        using (pSqlConn = new OdbcConnection(strConnection))
+                        OdbcConnection sqlConn = null;
+                        using (sqlConn = new OdbcConnection(strConnection))
                         {
                             ///remove printer from trouble table
                             string sqlInvoice = "delete from wmsTrouble " +
                             "where trouble_printer = '" + printer + "'";
 
-                            using (OdbcCommand cmd = new OdbcCommand(sqlInvoice, pSqlConn))
+                            using (OdbcCommand cmd = new OdbcCommand(sqlInvoice, sqlConn))
                             {
-                                pSqlConn.Open();
+                                sqlConn.Open();
                                 cmd.ExecuteNonQuery();
                                 heldPrinters.Remove(printer);
-                                pSqlConn.Close();
+                                sqlConn.Close();
                             }
                         }
                     }
@@ -247,7 +247,7 @@ namespace RanshuPrintService
                 catch(Exception ex)
                 {
                     ///report errors to IT
-                    SendEmail("Error correcting print failure.", ex.StackTrace + " " + ex.Message + heldPrinters[0]);
+                    SendEmail("ryan@ranshu.com", "Ranshu print service error: Error correcting print failure.", ex.StackTrace + " " + ex.Message + heldPrinters[0]);
                 }
             }
         }
@@ -300,7 +300,7 @@ namespace RanshuPrintService
                 writeToFile(error);
                 if (currentOrder != null)
                 {
-                    SendEmail("Failure on invoice: " + currentOrder.invoiceNumber, error);
+                    SendEmail("ryan@ranshu.com", "Ranshu print service error: Failure on invoice: " + currentOrder.invoiceNumber, error);
                     if(pSqlConn.State == ConnectionState.Open)
                         pSqlConn.Close();
                     string strConnection = "DSN=RANSHU";
@@ -319,7 +319,7 @@ namespace RanshuPrintService
                 }
                 else
                 {
-                    SendEmail("URGENT: System Failure", error);
+                    SendEmail("ryan@ranshu.com", "Ranshu print service error: URGENT: System Failure", error);
                 }
 
                 ///stop cycle
@@ -421,7 +421,7 @@ namespace RanshuPrintService
                             ///report error to IT
                             string error = new StackTrace(ex, true).ToString() + " " + ex.Message;
                             writeToFile(error);
-                            SendEmail("Error printing SFP Label", error, new List<string> { "della@ranshu.com", "jeff@ranshu.com" });
+                            SendEmail("ryan@ranshu.com", "Ranshu print service error: Error printing SFP Label", error, new List<string> { "della@ranshu.com", "jeff@ranshu.com" });
                         }
 
                     }
@@ -515,9 +515,13 @@ namespace RanshuPrintService
                         {
                             reprintcmd.CommandType = CommandType.StoredProcedure;
                             reprintcmd.Parameters.AddWithValue(":invNum", order.invoiceNumber);
-                            if(reprintcmd.ExecuteScalar() != null)
+
+                            OdbcDataReader xReader = reprintcmd.ExecuteReader();
+                            if(xReader.HasRows)
                             {
                                 order.reprint = true;
+                                if (xReader["label_printer"] != DBNull.Value && xReader["label_printer"] != null && (string)xReader["label_printer"] != "")
+                                    order.reprintLoc = ((string)xReader["label_printer"]).TrimEnd();
                             }
                             else
                             {
@@ -684,8 +688,8 @@ namespace RanshuPrintService
                                     if (item.message.Substring(0, 1) == "@")
                                     {
                                         ///add message to top notes
-                                        notes.Add(item.message.TrimStart('@'));
-                                        crdtNotes.Add(item.message.TrimStart('@'));
+                                        notes.Add(item.message.TrimStart('@').ToUpper());
+                                        crdtNotes.Add(item.message.TrimStart('@').ToUpper());
                                         item.message = "";
                                     }
                                     else if(item.message.Contains("ARS"))
@@ -701,7 +705,7 @@ namespace RanshuPrintService
                                     }
 
                                     ///if message declares invoice
-                                    if ((item.message.ToUpper() == "INVOICE") && !(crdtNotes.Contains("NO INVOICE") || notes.Contains("NO INVOICE")))
+                                    if (((item.message.ToUpper() == "INVOICE") || notes.Contains("INVOICE")) && !(crdtNotes.Contains("NO INVOICE") || notes.Contains("NO INVOICE")))
                                         ///order is invoice
                                         invoice = true;
                                     else if (item.message.ToUpper().Contains("NO INVOICE") || item.message.ToUpper().Contains("BLIND") || crdtNotes.Contains("NO INVOICE") || notes.Contains("NO INVOICE"))
@@ -832,10 +836,12 @@ namespace RanshuPrintService
                         }
 
                         ///if account has credit
-                        if(credit < 0.0f)
+                        if(credit < 0.0f && currentOrder.total > 0.0f)
                         {
                             ///note to shipping
-                            notes.Add("PLEASE APPLY CREDIT");
+                            notes.Add("PLEASE APPLY CREDITS");
+                            if(currentOrder.location == "RENO")
+                                SendEmail("ar@ranshu.com", "APPLY CREDITS " + currentOrder.invoiceNumber, "Please apply credits to invoice " + currentOrder.invoiceNumber + " on account " + currentOrder.customerCode);
                         }
                     }
 
@@ -873,14 +879,17 @@ namespace RanshuPrintService
                         int numPage = 1;
 
                         ///set starting location
-                        strInvLoc = order.location;
+                        if(order.reprintLoc != null)
+                            strInvLoc = order.reprintLoc;
+                        else
+                            strInvLoc = order.location;
 
                         ///update excel template
                         ///TOP Header Section
                         xlBarcodeTop.Value = "*" + order.invoiceNumber + "*";
 
                         xlsheet.Cells[1, 1].Value = "Date:";
-                        xlsheet.Cells[1, 2].value = order.date;
+                        xlsheet.Cells[1, 2].value = DateTime.Now.ToString("MM/dd/yyyy hh:mm tt") + " PST";
 
                         xlsheet.Cells[3, 1].Value = "Ship To:";
                         xlsheet.Cells[5, 1].value = order.shipAddress.name;
@@ -903,7 +912,10 @@ namespace RanshuPrintService
                         xlsheet.Cells[7, 9].Value = "Account:";
                         xlsheet.Cells[7, 11].value = order.customerCode;
                         xlsheet.Cells[8, 9].Value = "Delivery Method:";
+                        xlsheet.Cells[8, 11].Font.Bold = true;
                         xlsheet.Cells[8, 11].value = order.deliveryMethod;
+                        xlsheet.Cells[8, 11].Font.Bold = true;
+
                         xlsheet.Cells[9, 9].Value = "Payment Terms:";
                         xlsheet.Cells[9, 11].value = order.paymentTerms;
 
@@ -982,6 +994,24 @@ namespace RanshuPrintService
                                 {
                                     ///label nothing
                                     xlsheet.Cells[1, 6].Value = "";
+                                }
+
+                                switch(order.deliveryMethod)
+                                {
+                                    case "GSO":
+                                        xlsheet.Cells[2, 6].Interior.Color = ColorTranslator.ToOle(Color.Black);
+                                        xlsheet.Cells[2, 7].Interior.Color = ColorTranslator.ToOle(Color.Black);
+                                        break;
+
+                                    case "CALIF OVERNIGHT":
+                                        xlsheet.Cells[2, 6].Interior.Color = ColorTranslator.ToOle(Color.Black);
+                                        xlsheet.Cells[2, 7].Interior.Color = ColorTranslator.ToOle(Color.Black);
+                                        break;
+
+                                    default:
+                                        xlsheet.Cells[2, 6].Interior.Color = ColorTranslator.ToOle(Color.FromArgb(255, 255, 255));
+                                        xlsheet.Cells[2, 7].Interior.Color = ColorTranslator.ToOle(Color.FromArgb(255, 255, 255));
+                                        break;
                                 }
 
                                 ///if item count at maximum and location is the same
@@ -1103,7 +1133,10 @@ namespace RanshuPrintService
                                     xlsheet.Cells[22, 11].value = strInvLoc;
 
                                     ///ASSIGN PRINTER BASED OFF OF WAREHOUSE CODE
-                                    flagPrint = selectPrinter(strInvLoc, (order.deliveryMethod == "DELIVERY" || order.deliveryMethod == "WILL CALL"), (order.deliveryMethod == "SEE INSTRUCTION" || order.deliveryMethod == "LIFTGATE"));
+                                    if (order.reprintLoc == strInvLoc || order.reprintLoc == null)
+                                        flagPrint = selectPrinter(strInvLoc, (order.deliveryMethod == "DELIVERY" || order.deliveryMethod == "WILL CALL"), (order.deliveryMethod == "SEE INSTRUCTION" || order.deliveryMethod == "LIFTGATE"));
+                                    else
+                                        flagPrint = 0;
 
                                     xlsheet.Cells[3, 5].Value = "Bill To:";
                                     xlsheet.Cells[5, 5].value = order.billAddress.name;
@@ -1120,7 +1153,9 @@ namespace RanshuPrintService
                                     xlsheet.Cells[7, 9].Value = "Account:";
                                     xlsheet.Cells[7, 11].value = order.customerCode;
                                     xlsheet.Cells[8, 9].Value = "Delivery Method:";
+                                    xlsheet.Cells[8, 11].Font.Bold = true;
                                     xlsheet.Cells[8, 11].value = order.deliveryMethod;
+                                    xlsheet.Cells[8, 11].Font.Bold = true;
                                     xlsheet.Cells[9, 9].Value = "Payment Terms:";
                                     xlsheet.Cells[9, 11].value = order.paymentTerms;
 
@@ -1154,7 +1189,7 @@ namespace RanshuPrintService
                                 }///if item is note
                                 else if (item.itemType == "N")
                                 {
-                                    if (!(item.partCode.ToUpper().Contains("PROP65") || item.partCode.ToUpper().Contains("FREIGHT")))
+                                    if (!(item.partCode.ToUpper().Contains("PROP65")))
                                     {
                                         xlsheet.Cells[currentRow, 4].value = "  " + item.message;
 
@@ -1282,7 +1317,7 @@ namespace RanshuPrintService
                             strCurrentDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
                             sqlUpdateList = "UPDATE wmsOrders " +
                                             "SET printed = '" + strCurrentDateTime.ToString() + "', " +
-                                            "printer = '" + installedPrinter + "'" +
+                                            "printer = '" + installedPrinter + "', label_printer = null " +
                                             "WHERE invoice_num = " + order.invoiceNumber + ";" +
                                             "UPDATE BKARHINV " +
                                             "SET BKAR_INV_MAX = 1 " +
@@ -1543,7 +1578,7 @@ namespace RanshuPrintService
                                                     cc.Add("Jeremy@ranshu.com");
                                                     break;
                                             }
-                                            SendEmail("Print Failure on " + pq.Name, text, cc);
+                                            SendEmail("ryan@ranshu.com", "Ranshu print service error: Print Failure on " + pq.Name, text, cc);
                                         }
 
                                         heldPrinters.Add(pq.Name);
@@ -1593,7 +1628,7 @@ namespace RanshuPrintService
                     ///report error to IT
                     string error = new StackTrace(ex, true).ToString() + " " + ex.Message;
                     writeToFile(error);
-                    SendEmail("Error printing invoice: " + currentOrder, error);
+                    SendEmail("ryan@ranshu.com", "Ranshu print service error: Error printing invoice: " + currentOrder, error);
                     return 0;
                 }
             }
@@ -1613,7 +1648,7 @@ namespace RanshuPrintService
         /// <param name="cc">
         /// email cc list
         /// </param>
-        static void SendEmail(string subject, string msgText, List<string> cc = null)
+        static void SendEmail(string recipient, string subject, string msgText, List<string> cc = null)
         {
             ///set email credentials
             SmtpClient mailClient = new SmtpClient("secure.emailsrvr.com");
@@ -1625,7 +1660,7 @@ namespace RanshuPrintService
 
             ///create message
             MailMessage msgMail;
-            msgMail = new MailMessage(new MailAddress("orders@ranshu.com"), new MailAddress("ryan@ranshu.com"));
+            msgMail = new MailMessage(new MailAddress("orders@ranshu.com"), new MailAddress(recipient));
             if (cc != null)
             {
                 foreach (string address in cc)
@@ -1633,7 +1668,7 @@ namespace RanshuPrintService
                     msgMail.CC.Add(new MailAddress(address));
                 }
             }
-            msgMail.Subject = "Ranshu Print Service Error: " + subject;
+            msgMail.Subject = subject;
             msgMail.Body = msgText;
             msgMail.IsBodyHtml = true;
 

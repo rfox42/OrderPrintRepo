@@ -249,6 +249,7 @@
             this.Name = "Login";
             this.Text = "CreditProcessApp";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Login_FormClosing);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Login_FormClosed);
             this.LoginLayoutTable.ResumeLayout(false);
             this.ButtonTable.ResumeLayout(false);
             this.LoginTable.ResumeLayout(false);

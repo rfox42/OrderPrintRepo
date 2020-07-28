@@ -10,6 +10,7 @@ using System.Data.Odbc;
 using System.Data.SqlClient;
 using System.Numerics;
 using System.Windows.Forms;
+using System.IO;
 
 namespace OrderValidation
 {
@@ -21,6 +22,7 @@ namespace OrderValidation
         string printer;
         string location;
         string orderRule;
+        string userOrder;
         public bool hold = false;
 
         public ManagerMonitor(ValidationForm vFormIn, string inlocation)
@@ -29,6 +31,7 @@ namespace OrderValidation
 
             location = inlocation;
             orderRule = "bin_date desc";
+            userOrder = "order by user_name";
             printer = getPrinter(); ;
             vForm = vFormIn;
             ShippingTab.Tag = InvoiceList;
@@ -73,7 +76,7 @@ namespace OrderValidation
             {
                 if (InvoiceList.Visible)
                     refreshInvoiceList(InvoiceList);
-                else
+                else if(UserList.Visible)
                     refreshUserList(UserList);
             }
             timer.Start();
@@ -88,7 +91,7 @@ namespace OrderValidation
             using (pSqlConn = new OdbcConnection(strConnection))
             {
                 //get unprocessed invoices from database
-                string cmdString = "select USER_ID, USER_NAME, USER_LAST_DEVICE, USER_LAST_ACTIVITY, USER_ACTIVITY_NOTES from wmsUsers where USER_LOC = '"+location+"' and USER_ACTIVE = 1";
+                string cmdString = "select USER_ID, USER_NAME, USER_LAST_DEVICE, USER_ACTIVE, USER_LAST_ACTIVITY, USER_ACTIVITY_NOTES from wmsUsers where USER_LOC = '"+location+"' " + userOrder;
 
                 OdbcCommand cmd = new OdbcCommand(cmdString, pSqlConn);
                 pSqlConn.Open();
@@ -99,19 +102,20 @@ namespace OrderValidation
                     while (invoiceReader.Read())
                     {
                         User user = new User();
-                        user.id = invoiceReader["USER_ID"].ToString().TrimEnd();
-                        user.name = invoiceReader["USER_NAME"].ToString().TrimEnd();
+                        user.id = invoiceReader["USER_ID"].ToString().TrimEnd().ToUpper();
+                        user.name = invoiceReader["USER_NAME"].ToString().TrimEnd().ToUpper();
                         user.device = invoiceReader["USER_LAST_DEVICE"].ToString().TrimEnd();
                         user.notes = invoiceReader["USER_ACTIVITY_NOTES"].ToString().Replace(" ", "");
+                        user.active = Convert.ToBoolean(invoiceReader["USER_ACTIVE"]);
                         user.activity = invoiceReader["USER_LAST_ACTIVITY"].ToString().TrimEnd();
 
                         users.Add(user);
                     }
                 }
 
-                table.Hide();
+                UserListPanel.Hide();
                 refreshUsers(table, users);
-                table.Show();
+                UserListPanel.Show();
 
                 invoiceReader.Close();
                 pSqlConn.Close();
@@ -127,7 +131,12 @@ namespace OrderValidation
             {
                 foreach (User user in users)
                 {
-                    addToTable(userTable, new List<string>() { user.name, user.activity, user.device, user.notes }, user);
+                    Color color = Color.Transparent;
+
+                    if (user.active)
+                        color = Color.PaleGreen;
+
+                    addToTable(userTable, new List<string>() { user.name, user.id, user.activity, user.device, user.notes }, user, null, color);
                 }
             }
         }
@@ -189,9 +198,9 @@ namespace OrderValidation
 
                 lastOrders = orders;
 
-                table.Hide();
+                InvoiceListPanel.Hide();
                 refreshInvoices(table, orders);
-                table.Show();
+                InvoiceListPanel.Show();
 
                 invoiceReader.Close();
                 pSqlConn.Close();
@@ -216,6 +225,96 @@ namespace OrderValidation
                     //add invoice to table
                     addToTable(invoiceList, new List<string>() { invoices[i].invoiceNumber.ToString(), invoices[i].deliveryMethod, invoices[i].date, invoices[i].customerCode }, invoices[i], new EventHandler(tempLabel_Click), color);
                 }
+            }
+        }
+
+        void getStats()
+        {
+            List<User> users = null;
+
+            //establish database connection
+            string strConnection = "DSN=Ranshu";
+            OdbcConnection pSqlConn = null;
+            using (pSqlConn = new OdbcConnection(strConnection))
+            {
+                pSqlConn.Open();
+                //get unprocessed invoices from database
+                string cmdString = "select packed_by, user_name, count(packed_by) as num_packed, coalesce(user_avg_ppm, 0) as ppm " +
+                    "from wmsOrders inner join wmsUsers " +
+                    "on user_id = packed_by where packed >= '"+ calendar.SelectionStart.ToString("yyyy-MM-dd") + "' " +
+                    "and packed < '"+calendar.SelectionEnd.AddDays(1).ToString("yyyy-MM-dd")+"' " +
+                    "group by packed_by, user_name, ppm " +
+                    "order by user_name";
+
+                using (OdbcCommand cmd = new OdbcCommand(cmdString, pSqlConn))
+                {
+                    OdbcDataReader invoiceReader = cmd.ExecuteReader();
+                    if (invoiceReader.HasRows)
+                    {
+                        users = new List<User>();
+                        while (invoiceReader.Read())
+                        {
+                            User user = new User();
+                            user.id = invoiceReader["packed_by"].ToString().TrimEnd().ToUpper();
+                            user.name = invoiceReader["USER_NAME"].ToString().TrimEnd().ToUpper();
+                            user.ppm = Convert.ToDouble(invoiceReader["ppm"]);
+                            user.packed = Convert.ToInt32(invoiceReader["num_packed"]);
+                            user.pulled = 0;
+
+                            users.Add(user);
+                        }
+                    }
+                }
+
+                cmdString = "select pulled_by, user_name, count(pulled_by) as num_pulled, coalesce(user_avg_ppm, 0) as ppm " +
+                    "from wmsOrders inner join wmsUsers " +
+                    "on user_id = pulled_by where pulled >= '" + calendar.SelectionStart.ToString("yyyy-MM-dd") + "' " +
+                    "and pulled < '" + calendar.SelectionEnd.AddDays(1).ToString("yyyy-MM-dd") + "' " +
+                    "group by pulled_by, user_name, ppm " +
+                    "order by user_name";
+
+                using (OdbcCommand cmd = new OdbcCommand(cmdString, pSqlConn))
+                {
+                    OdbcDataReader invoiceReader = cmd.ExecuteReader();
+                    if (invoiceReader.HasRows)
+                    {
+                        while (invoiceReader.Read())
+                        {
+                            User user;
+                            if ((user = users.Find(x => x.id == invoiceReader["pulled_by"].ToString().TrimEnd())) != null)
+                            {
+                                user.pulled = Convert.ToInt32(invoiceReader["num_pulled"].ToString().TrimEnd());
+                            }
+                            else
+                            {
+                                user = new User();
+                                user.id = invoiceReader["pulled_by"].ToString().TrimEnd().ToUpper();
+                                user.name = invoiceReader["USER_NAME"].ToString().TrimEnd().ToUpper();
+                                user.ppm = Convert.ToDouble(invoiceReader["ppm"]);
+                                user.pulled = Convert.ToInt32(invoiceReader["num_pulled"]);
+                                user.packed = 0;
+
+                                users.Add(user);
+                            }
+                        }
+                    }
+                }
+
+                users = users.OrderBy(x => x.name).ToList();
+
+                StatsListPanel.Hide();
+
+                StatsList.Controls.Clear();
+                StatsList.RowCount = 0;
+
+                foreach (User user in users)
+                {
+                    addToTable(StatsList, new List<string>() { user.name, user.pulled.ToString(), user.packed.ToString(), user.ppm.ToString(), "" }, user);
+                }
+
+                StatsListPanel.Show();
+
+                pSqlConn.Close();
             }
         }
 
@@ -245,7 +344,7 @@ namespace OrderValidation
                 using (pSqlConn = new OdbcConnection(strConnection))
                 {
                     //get unprocessed invoices from database
-                    string cmdString = "select printed, printer, notes from wmsOrders where invoice_num = " + order.invoiceNumber;
+                    string cmdString = "select printed, printer, packed, packed_by, pulled, pulled_by, notes from wmsOrders where invoice_num = " + order.invoiceNumber;
 
                     OdbcCommand cmd = new OdbcCommand(cmdString, pSqlConn);
                     pSqlConn.Open();
@@ -255,6 +354,17 @@ namespace OrderValidation
                         while (invoiceReader.Read())
                         {
                             order.printer = invoiceReader["printer"].ToString().TrimEnd();
+
+                            try{
+                                order.packed = Convert.ToDateTime(invoiceReader["packed"]).ToString("MM/dd/yyyy hh:mm tt") + " by " + invoiceReader["packed_by"].ToString().TrimEnd();
+                            }
+                            catch{ }
+
+                            try{
+                                order.pulled = Convert.ToDateTime(invoiceReader["pulled"]).ToString("MM/dd/yyyy hh:mm tt") + " by " + invoiceReader["pulled_by"].ToString().TrimEnd();
+                            }
+                            catch{ }
+                                
                             order.notes = invoiceReader["notes"].ToString().TrimEnd();
                         }
                     }
@@ -263,7 +373,7 @@ namespace OrderValidation
                     pSqlConn.Close();
                 }
 
-                DialogResult dialog = MessageBox.Show("FORCE VALIDATE?\nInvoice: "+order.invoiceNumber+"\nPrinted: " + order.date + "\nPrinter: " + order.printer + "\nValidated: " + order.validated + "\nNotes: \n " + order.notes, "FORCE VALIDATE?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                DialogResult dialog = MessageBox.Show("FORCE VALIDATE?\nInvoice: "+order.invoiceNumber+"\nPrinted: " + order.date + "\nPrinter: " + order.printer + "\nPulled: " + order.pulled + "\nPacked: " + order.packed + System.Environment.NewLine + "\nNotes: \n " + order.notes, "FORCE VALIDATE?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 
                 if(dialog == DialogResult.Yes)
                 {
@@ -313,7 +423,10 @@ namespace OrderValidation
 
         private void TabControl_Selected(object sender, TabControlEventArgs e)
         {
-            //(e.TabPage.Tag as TableLayoutPanel).Visible = true;
+            if(e.TabPageIndex == 3)
+            {
+                getStats();
+            }
         }
 
         private void UserList_VisibleChanged(object sender, EventArgs e)
@@ -360,6 +473,64 @@ namespace OrderValidation
 
         private void EnterButton_Click(object sender, EventArgs e)
         {
+            /*
+            string[] data = File.ReadAllLines(@"\\RANSHUDC2\users_data\_Information Technology\Dev Csharp\Ranshu Projects\RFox\BinQty20200623.txt");
+            List<Order> listData = new List<Order>();
+
+            foreach(string line in data)
+            {
+                listData.Add(new Order(Convert.ToInt32(line.Split(',')[0])) { qty = Convert.ToInt32(line.Split(',')[1]) });
+            }
+
+            foreach (Order order in listData)
+            {
+                int transaction = 0;
+
+                string strConnection = "DSN=Ranshu";
+                OdbcConnection pSqlConn = null;
+                using (pSqlConn = new OdbcConnection(strConnection))
+                {
+                    //get unprocessed invoices from database
+                    string cmdString = "select sum(bin_trans) as qty from wmsTrans where bin_id = " + order.invoiceNumber;
+
+                    using (OdbcCommand cmd = new OdbcCommand(cmdString, pSqlConn))
+                    {
+                        pSqlConn.Open();
+                        OdbcDataReader reader = cmd.ExecuteReader();
+
+                        if (reader.HasRows)
+                        {
+                            reader.Read();
+                            transaction = order.qty - Convert.ToInt32(reader["qty"].ToString().TrimEnd());
+                        }
+
+
+                        pSqlConn.Close();
+                    }
+
+;
+
+                    using (OdbcCommand cmd = new OdbcCommand("{call newTransaction(?, ?, ?, ?)}", pSqlConn))
+                    {
+                        pSqlConn.Open();
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue(":invID", order.invoiceNumber);
+                        cmd.Parameters.AddWithValue(":trans", transaction);
+                        cmd.Parameters.AddWithValue(":userCode", "RVF");
+                        if(transaction > 0)
+                            cmd.Parameters.AddWithValue(":restock", 0);
+                        else
+                            cmd.Parameters.AddWithValue(":restock", 1);
+
+                        cmd.ExecuteNonQuery();
+
+                        pSqlConn.Close();
+                    }
+                }
+            }*/
+
+
+            
             if(printer.Contains("LTL"))
             {
                 printer = getPrinter();
@@ -397,7 +568,7 @@ namespace OrderValidation
                 OdbcConnection pSqlConn = null;
                 using (pSqlConn = new OdbcConnection(strConnection))
                 {
-                    string cmdString = "select bin_name, bin_part, bin_trans, bin_user, bin_date, user_name from wmsTrans left join wmsUsers on user_id = bin_user and user_loc = bin_loc where bin_loc = '"+location+"' ";
+                    string cmdString = "select top 200 bin_name, bin_part, bin_trans, bin_user, bin_date, user_name from wmsTrans left join wmsUsers on user_id = bin_user and user_loc = bin_loc where bin_loc = '"+location+"' ";
 
                     if(PartField.Text != "")
                     {
@@ -409,9 +580,14 @@ namespace OrderValidation
                         cmdString += "and bin_name = '" + LocationField.Text.ToUpper() + "' ";
                     }
 
-                    if(LocationField.Text == "" && PartField.Text == "")
+                    if(UserText.Text != "")
                     {
-                        throw new Exception("Please specify part, location, or both");
+                        cmdString += "and bin_user = '" + UserText.Text + "' ";
+                    }
+
+                    if(LocationField.Text == "" && PartField.Text == "" && UserText.Text == "")
+                    {
+                        throw new Exception("Please specify part, location, and/or user");
                     }
 
                     cmdString += "order by " + orderRule;
@@ -501,6 +677,43 @@ namespace OrderValidation
             {
                 this.SearchButton_Click(this, new EventArgs());
             }
+        }
+
+        private void CalendarButton_Click(object sender, EventArgs e)
+        {
+            if(calendarPanel.Visible)
+            {
+                calendarPanel.Hide();
+            }
+            else
+            {
+                calendarPanel.Show();
+            }
+        }
+
+        private void calendar_DateSelected(object sender, DateRangeEventArgs e)
+        {
+            getStats();
+            calendarPanel.Hide();
+        }
+
+        private void TabControl_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void UserNameHeader_Click(object sender, EventArgs e)
+        {
+            if(userOrder == "order by " + (sender as Button).Tag.ToString())
+            {
+                userOrder = "order by " + (sender as Button).Tag.ToString() + " desc";
+            }
+            else
+            {
+                userOrder = "order by " + (sender as Button).Tag.ToString();
+            }
+
+            refreshUserList(UserList);
         }
     }
 }

@@ -46,7 +46,7 @@ namespace AmazonLabelPrinter
                 using (pSqlConn = new OdbcConnection(strConnection))
                 {
                     //get unprocessed invoices from database
-                    string cmdString = "select BKAR_INV_CUSORD from BKARHINV where BKAR_INV_SHPVIA like '%SFP%' and BKAR_INV_NUM = " + invoice;
+                    string cmdString = "select BKAR_INV_CUSORD, BKAR_INV_MAX from BKARHINV where BKAR_INV_SHPVIA like '%SFP%' and BKAR_INV_NUM = " + invoice;
 
                     OdbcCommand cmd = new OdbcCommand(cmdString, pSqlConn);
                     pSqlConn.Open();
@@ -55,6 +55,8 @@ namespace AmazonLabelPrinter
                     {
                         reader.Read();
                         fileName = reader["BKAR_INV_CUSORD"].ToString().TrimEnd();
+                        if (Convert.ToInt32(reader["BKAR_INV_MAX"]) == 2)
+                            throw new Exception("DO NOT SHIP!\nThis order has been cancelled! Please return package to shipping manager.");
                     }
                     pSqlConn.Close();
                 }
@@ -75,6 +77,7 @@ namespace AmazonLabelPrinter
                         {
                             getTracking(path, fileName, invoice);
                             Directory.Move(path, archPath);
+                            Program.writeToFile(fileName.TrimEnd() + ".zpl printed for invoice " + invoice + " with tracking: " + getTrackNum(archPath));
                         }
                         else
                         {
@@ -82,13 +85,23 @@ namespace AmazonLabelPrinter
                             SendEmail("Duplicate Label Detected", "A duplicate label has been detected for " + fileName + ". Please check labels for discrepancies.");
                         }
                     }
+                    else
+                        throw new Exception("SFP Label failed to print. Please contact IT.");
                 }
                 else if (File.Exists(archPath))
                 {
                     DialogResult dialog = MessageBox.Show("The label for this invoice has already been printed. Print again?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
                     if (dialog == DialogResult.Yes)
-                        RawPrinterHelper.SendFileToPrinter("AMZN3844z", archPath);
+                    {
+                        if (RawPrinterHelper.SendFileToPrinter("AMZN3844z", archPath))
+                            Program.writeToFile(fileName.TrimEnd() + ".zpl printed for invoice " + invoice + ".");
+                        else
+                        {
+                            throw new Exception("SFP Label failed to print. Please contact IT.");
+                        }
+                    }
+
                 }
             }
             catch(Exception ex)
@@ -123,15 +136,19 @@ namespace AmazonLabelPrinter
             fdlg.RestoreDirectory = true;
             if (fdlg.ShowDialog() == DialogResult.OK)
             {
-                RawPrinterHelper.SendFileToPrinter("AMZN3844z", fdlg.FileName);
-                if (!File.Exists(@"\\10.1.1.7\Reports\edi\MERIDIAN\SFPLabels\Archive\" + DateTime.Now.Year + "\\" + fdlg.SafeFileName))
+                if (RawPrinterHelper.SendFileToPrinter("AMZN3844z", fdlg.FileName))
                 {
-                    MessageBox.Show("Tracking details are not populated with manual selection. Please submit tracking number to checklist. TRACKING NUMBER: " + getTrackNum(fdlg.FileName));
-                    Directory.Move(fdlg.FileName, fdlg.InitialDirectory + @"Archive\" + DateTime.Now.Year + "\\" + fdlg.SafeFileName);
-                }
-                else
-                {
-                    MessageBox.Show("Tracking details are not populated with manual selection. Please submit tracking number to checklist. TRACKING NUMBER: " + getTrackNum(fdlg.FileName));
+                    Program.writeToFile(fdlg.SafeFileName + " printed.");
+
+                    if (!File.Exists(@"\\10.1.1.7\Reports\edi\MERIDIAN\SFPLabels\Archive\" + DateTime.Now.Year + "\\" + fdlg.SafeFileName))
+                    {
+                        MessageBox.Show("Tracking details are not populated with manual selection. Please submit tracking number to checklist. TRACKING NUMBER: " + getTrackNum(fdlg.FileName));
+                        Directory.Move(fdlg.FileName, fdlg.InitialDirectory + @"Archive\" + DateTime.Now.Year + "\\" + fdlg.SafeFileName);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Tracking details are not populated with manual selection. Please submit tracking number to checklist. TRACKING NUMBER: " + getTrackNum(fdlg.FileName));
+                    }
                 }
 
             }

@@ -25,7 +25,7 @@
     <MapFileExtensions>true</MapFileExtensions>
     <UpdateUrl>\\RANSHUDC2\users_data\_Information Technology\Dev Csharp\Ranshu Projects\RFox\App builds\CreditProcessApp\</UpdateUrl>
     <MinimumRequiredVersion>1.0.0.15</MinimumRequiredVersion>
-    <ApplicationRevision>10</ApplicationRevision>
+    <ApplicationRevision>29</ApplicationRevision>
     <ApplicationVersion>1.0.1.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -85,6 +85,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SideWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SideWindow.Designer.cs">
+      <DependentUpon>SideWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="SystemSelection.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -123,6 +129,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="SideWindow.resx">
+      <DependentUpon>SideWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SystemSelection.resx">
       <DependentUpon>SystemSelection.cs</DependentUpon>
     </EmbeddedResource>

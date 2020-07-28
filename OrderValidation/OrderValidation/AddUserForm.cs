@@ -62,7 +62,7 @@ namespace OrderValidation
             try
             {
                 id = ID_BOX.Text.ToUpper();
-                name = NameText.Text;
+                name = NameText.Text.ToUpper();
 
                 if (id == "")
                     throw new Exception("Please enter valid ID");

@@ -55,13 +55,25 @@ namespace CreditProcessApp
          */
         private void SignInButton_Click(object sender, EventArgs e)
         {
-            //try 
-            //{ 
+            try 
+            { 
                 //establish database connection
                 string strConnection = "DSN=Ranshu";
                 OdbcConnection pSqlConn = null;
                 using (pSqlConn = new OdbcConnection(strConnection))
                 {
+                    /*using(OdbcCommand cmd = new OdbcCommand("{call sysTest(?, ?)}", pSqlConn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue(":invNum", 30);
+                    cmd.Parameters.AddWithValue(":notes", "xTest");
+
+                    pSqlConn.Open();
+                    cmd.ExecuteNonQuery();
+                    pSqlConn.Close();
+                }
+                    */
+
                     //get user code and security lvl from database with given username and password
                     string creditCommand = "SELECT BKSY_USER_CODE, BKSY_USER_SCTY FROM BKSYUSER WHERE BKSY_USER_CODE = '" + UsernameTextBox.Text.ToUpper() + "' AND BKSY_USER_PSWD = '" + PasswordTextBox.Text.ToUpper() + "'";
                     OdbcCommand cmd = new OdbcCommand(creditCommand, pSqlConn);
@@ -77,6 +89,7 @@ namespace CreditProcessApp
                         //report failure to user
                         throw new Exception("Invalid username or password");
                     }
+                    
 
                     //if security level isn't high enough
                     if(CurrentUser.security_lvl > 3)
@@ -90,12 +103,12 @@ namespace CreditProcessApp
                     main.Show();
                     this.Hide();
                 }
-            //}
-            //catch(Exception ex)
-            //{
+            }
+            catch(Exception ex)
+            {
                 //show error message
-                //ErrorLabel.Text = "*" + ex.Message;
-            //}
+                ErrorLabel.Text = "*" + ex.Message;
+            }
         }
 
         /*

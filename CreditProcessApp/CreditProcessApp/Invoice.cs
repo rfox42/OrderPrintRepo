@@ -57,6 +57,10 @@ namespace CreditProcessApp
 
         public string location;
 
+        public string vendLoc;
+
+        public double remainder;
+
 
 
         /*
@@ -108,6 +112,14 @@ namespace CreditProcessApp
 
                 case "FL":
                     location = loc;
+                    break;
+
+                case "DORO":
+                    location = "FL";
+                    break;
+
+                default:
+                    vendLoc = loc;
                     break;
             }
         }

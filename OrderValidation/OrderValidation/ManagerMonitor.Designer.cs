@@ -52,10 +52,7 @@
             this.UsersLine = new System.Windows.Forms.Label();
             this.UserHeaderTable = new System.Windows.Forms.TableLayoutPanel();
             this.NotesLabel = new System.Windows.Forms.Label();
-            this.DeviceLabel = new System.Windows.Forms.Label();
-            this.UserLabel = new System.Windows.Forms.Label();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
-            this.ActivityLabel = new System.Windows.Forms.Label();
             this.UserListPanel = new System.Windows.Forms.Panel();
             this.UserList = new System.Windows.Forms.TableLayoutPanel();
             this.label7 = new System.Windows.Forms.Label();
@@ -64,22 +61,45 @@
             this.TransactionTable = new System.Windows.Forms.TableLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
             this.TransactionHeaders = new System.Windows.Forms.TableLayoutPanel();
+            this.DateHeader = new System.Windows.Forms.Button();
+            this.TransUserHeader = new System.Windows.Forms.Button();
+            this.TransactionHeader = new System.Windows.Forms.Button();
+            this.LocationHeader = new System.Windows.Forms.Button();
             this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
+            this.PartHeader = new System.Windows.Forms.Button();
             this.TransactionListPanel = new System.Windows.Forms.Panel();
             this.TransactionList = new System.Windows.Forms.TableLayoutPanel();
             this.label10 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.TransactionOptionTable = new System.Windows.Forms.TableLayoutPanel();
-            this.SearchButton = new System.Windows.Forms.Button();
-            this.PartGroup = new System.Windows.Forms.GroupBox();
-            this.PartField = new System.Windows.Forms.TextBox();
             this.LocationGroup = new System.Windows.Forms.GroupBox();
             this.LocationField = new System.Windows.Forms.TextBox();
-            this.LocationHeader = new System.Windows.Forms.Button();
-            this.PartHeader = new System.Windows.Forms.Button();
-            this.TransactionHeader = new System.Windows.Forms.Button();
-            this.TransUserHeader = new System.Windows.Forms.Button();
-            this.DateHeader = new System.Windows.Forms.Button();
+            this.PartGroup = new System.Windows.Forms.GroupBox();
+            this.PartField = new System.Windows.Forms.TextBox();
+            this.SearchButton = new System.Windows.Forms.Button();
+            this.StatsTab = new System.Windows.Forms.TabPage();
+            this.calendarPanel = new System.Windows.Forms.Panel();
+            this.calendar = new System.Windows.Forms.MonthCalendar();
+            this.StatisticsTable = new System.Windows.Forms.TableLayoutPanel();
+            this.label2 = new System.Windows.Forms.Label();
+            this.StatsHeaderTable = new System.Windows.Forms.TableLayoutPanel();
+            this.label15 = new System.Windows.Forms.Label();
+            this.CalendarButton = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
+            this.label12 = new System.Windows.Forms.Label();
+            this.StatsListPanel = new System.Windows.Forms.Panel();
+            this.StatsList = new System.Windows.Forms.TableLayoutPanel();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
+            this.UserGroupBox = new System.Windows.Forms.GroupBox();
+            this.UserText = new System.Windows.Forms.TextBox();
+            this.IDHeaderButton = new System.Windows.Forms.Button();
+            this.UserNameHeader = new System.Windows.Forms.Button();
+            this.UserActivityHeader = new System.Windows.Forms.Button();
+            this.UserDeviceHeader = new System.Windows.Forms.Button();
             this.ShippingTab.SuspendLayout();
             this.InvoicePanel.SuspendLayout();
             this.InvoiceTable.SuspendLayout();
@@ -102,8 +122,16 @@
             this.TransactionListPanel.SuspendLayout();
             this.TransactionList.SuspendLayout();
             this.TransactionOptionTable.SuspendLayout();
-            this.PartGroup.SuspendLayout();
             this.LocationGroup.SuspendLayout();
+            this.PartGroup.SuspendLayout();
+            this.StatsTab.SuspendLayout();
+            this.calendarPanel.SuspendLayout();
+            this.StatisticsTable.SuspendLayout();
+            this.StatsHeaderTable.SuspendLayout();
+            this.tableLayoutPanel6.SuspendLayout();
+            this.StatsListPanel.SuspendLayout();
+            this.StatsList.SuspendLayout();
+            this.UserGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // ShippingTab
@@ -324,12 +352,14 @@
             this.TabControl.Controls.Add(this.ShippingTab);
             this.TabControl.Controls.Add(this.Receiving);
             this.TabControl.Controls.Add(this.TransactionTab);
+            this.TabControl.Controls.Add(this.StatsTab);
             this.TabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.TabControl.Location = new System.Drawing.Point(0, 0);
             this.TabControl.Name = "TabControl";
             this.TabControl.SelectedIndex = 0;
             this.TabControl.Size = new System.Drawing.Size(800, 450);
             this.TabControl.TabIndex = 0;
+            this.TabControl.SelectedIndexChanged += new System.EventHandler(this.TabControl_SelectedIndexChanged);
             this.TabControl.Selecting += new System.Windows.Forms.TabControlCancelEventHandler(this.TabControl_Selecting);
             this.TabControl.Selected += new System.Windows.Forms.TabControlEventHandler(this.TabControl_Selected);
             this.TabControl.Deselected += new System.Windows.Forms.TabControlEventHandler(this.TabControl_Deselected);
@@ -403,15 +433,17 @@
             // UserHeaderTable
             // 
             this.UserHeaderTable.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
-            this.UserHeaderTable.ColumnCount = 4;
-            this.UserHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15.91203F));
-            this.UserHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.89392F));
-            this.UserHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.489F));
-            this.UserHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 35.83441F));
-            this.UserHeaderTable.Controls.Add(this.NotesLabel, 3, 0);
-            this.UserHeaderTable.Controls.Add(this.DeviceLabel, 2, 0);
-            this.UserHeaderTable.Controls.Add(this.UserLabel, 0, 0);
-            this.UserHeaderTable.Controls.Add(this.tableLayoutPanel4, 1, 0);
+            this.UserHeaderTable.ColumnCount = 5;
+            this.UserHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.44849F));
+            this.UserHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 9.080231F));
+            this.UserHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30.77646F));
+            this.UserHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 13.15635F));
+            this.UserHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 32.53847F));
+            this.UserHeaderTable.Controls.Add(this.UserDeviceHeader, 3, 0);
+            this.UserHeaderTable.Controls.Add(this.UserNameHeader, 0, 0);
+            this.UserHeaderTable.Controls.Add(this.IDHeaderButton, 1, 0);
+            this.UserHeaderTable.Controls.Add(this.NotesLabel, 4, 0);
+            this.UserHeaderTable.Controls.Add(this.tableLayoutPanel4, 2, 0);
             this.UserHeaderTable.Dock = System.Windows.Forms.DockStyle.Fill;
             this.UserHeaderTable.Location = new System.Drawing.Point(0, 40);
             this.UserHeaderTable.Margin = new System.Windows.Forms.Padding(0);
@@ -419,6 +451,7 @@
             this.UserHeaderTable.Padding = new System.Windows.Forms.Padding(0, 0, 18, 0);
             this.UserHeaderTable.RowCount = 1;
             this.UserHeaderTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.UserHeaderTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.UserHeaderTable.Size = new System.Drawing.Size(792, 37);
             this.UserHeaderTable.TabIndex = 3;
             // 
@@ -427,67 +460,28 @@
             this.NotesLabel.AutoSize = true;
             this.NotesLabel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.NotesLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.NotesLabel.Location = new System.Drawing.Point(498, 2);
+            this.NotesLabel.Location = new System.Drawing.Point(522, 2);
             this.NotesLabel.Margin = new System.Windows.Forms.Padding(1);
             this.NotesLabel.Name = "NotesLabel";
-            this.NotesLabel.Size = new System.Drawing.Size(274, 33);
+            this.NotesLabel.Size = new System.Drawing.Size(250, 33);
             this.NotesLabel.TabIndex = 4;
             this.NotesLabel.Text = "Notes";
             this.NotesLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // DeviceLabel
-            // 
-            this.DeviceLabel.AutoSize = true;
-            this.DeviceLabel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.DeviceLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.DeviceLabel.Location = new System.Drawing.Point(386, 2);
-            this.DeviceLabel.Margin = new System.Windows.Forms.Padding(1);
-            this.DeviceLabel.Name = "DeviceLabel";
-            this.DeviceLabel.Size = new System.Drawing.Size(109, 33);
-            this.DeviceLabel.TabIndex = 3;
-            this.DeviceLabel.Text = "Device";
-            this.DeviceLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // UserLabel
-            // 
-            this.UserLabel.AutoSize = true;
-            this.UserLabel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.UserLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.UserLabel.Location = new System.Drawing.Point(2, 2);
-            this.UserLabel.Margin = new System.Windows.Forms.Padding(1);
-            this.UserLabel.Name = "UserLabel";
-            this.UserLabel.Size = new System.Drawing.Size(120, 33);
-            this.UserLabel.TabIndex = 0;
-            this.UserLabel.Text = "User";
-            this.UserLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // tableLayoutPanel4
             // 
             this.tableLayoutPanel4.ColumnCount = 2;
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel4.Controls.Add(this.ActivityLabel, 0, 0);
+            this.tableLayoutPanel4.Controls.Add(this.UserActivityHeader, 0, 0);
             this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel4.Location = new System.Drawing.Point(124, 1);
+            this.tableLayoutPanel4.Location = new System.Drawing.Point(182, 1);
             this.tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
             this.tableLayoutPanel4.RowCount = 1;
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(260, 35);
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(236, 35);
             this.tableLayoutPanel4.TabIndex = 1;
-            // 
-            // ActivityLabel
-            // 
-            this.ActivityLabel.AutoSize = true;
-            this.ActivityLabel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ActivityLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ActivityLabel.Location = new System.Drawing.Point(0, 0);
-            this.ActivityLabel.Margin = new System.Windows.Forms.Padding(0);
-            this.ActivityLabel.Name = "ActivityLabel";
-            this.ActivityLabel.Size = new System.Drawing.Size(260, 35);
-            this.ActivityLabel.TabIndex = 2;
-            this.ActivityLabel.Text = "Activity";
-            this.ActivityLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // UserListPanel
             // 
@@ -504,12 +498,13 @@
             // 
             this.UserList.AutoSize = true;
             this.UserList.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
-            this.UserList.ColumnCount = 4;
-            this.UserList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15.54994F));
-            this.UserList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 34.26043F));
-            this.UserList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.66498F));
-            this.UserList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 35.65107F));
-            this.UserList.Controls.Add(this.label7, 1, 0);
+            this.UserList.ColumnCount = 5;
+            this.UserList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.12008F));
+            this.UserList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 9.080473F));
+            this.UserList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 31.11009F));
+            this.UserList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 13.3165F));
+            this.UserList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 32.37286F));
+            this.UserList.Controls.Add(this.label7, 2, 0);
             this.UserList.Controls.Add(this.label9, 0, 0);
             this.UserList.Dock = System.Windows.Forms.DockStyle.Top;
             this.UserList.Location = new System.Drawing.Point(0, 0);
@@ -526,10 +521,10 @@
             this.label7.BackColor = System.Drawing.SystemColors.Control;
             this.label7.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(125, 2);
+            this.label7.Location = new System.Drawing.Point(185, 2);
             this.label7.Margin = new System.Windows.Forms.Padding(1);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(267, 18);
+            this.label7.Size = new System.Drawing.Size(242, 18);
             this.label7.TabIndex = 3;
             this.label7.Text = "RECEIVING 08/20/2019 10:25 AM";
             this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -542,7 +537,7 @@
             this.label9.Location = new System.Drawing.Point(2, 2);
             this.label9.Margin = new System.Windows.Forms.Padding(1);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(120, 18);
+            this.label9.Size = new System.Drawing.Size(108, 18);
             this.label9.TabIndex = 1;
             this.label9.Text = "Richard";
             this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -613,6 +608,72 @@
             this.TransactionHeaders.Size = new System.Drawing.Size(792, 37);
             this.TransactionHeaders.TabIndex = 3;
             // 
+            // DateHeader
+            // 
+            this.DateHeader.BackColor = System.Drawing.Color.Transparent;
+            this.DateHeader.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.DateHeader.FlatAppearance.BorderSize = 0;
+            this.DateHeader.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.DateHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.DateHeader.Location = new System.Drawing.Point(617, 1);
+            this.DateHeader.Margin = new System.Windows.Forms.Padding(0);
+            this.DateHeader.Name = "DateHeader";
+            this.DateHeader.Size = new System.Drawing.Size(156, 35);
+            this.DateHeader.TabIndex = 25;
+            this.DateHeader.Tag = "bin_date";
+            this.DateHeader.Text = "Date";
+            this.DateHeader.UseVisualStyleBackColor = false;
+            this.DateHeader.Click += new System.EventHandler(this.LocationHeader_Click);
+            // 
+            // TransUserHeader
+            // 
+            this.TransUserHeader.BackColor = System.Drawing.Color.Transparent;
+            this.TransUserHeader.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TransUserHeader.FlatAppearance.BorderSize = 0;
+            this.TransUserHeader.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.TransUserHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TransUserHeader.Location = new System.Drawing.Point(463, 1);
+            this.TransUserHeader.Margin = new System.Windows.Forms.Padding(0);
+            this.TransUserHeader.Name = "TransUserHeader";
+            this.TransUserHeader.Size = new System.Drawing.Size(153, 35);
+            this.TransUserHeader.TabIndex = 24;
+            this.TransUserHeader.Tag = "bin_user";
+            this.TransUserHeader.Text = "User";
+            this.TransUserHeader.UseVisualStyleBackColor = false;
+            this.TransUserHeader.Click += new System.EventHandler(this.LocationHeader_Click);
+            // 
+            // TransactionHeader
+            // 
+            this.TransactionHeader.BackColor = System.Drawing.Color.Transparent;
+            this.TransactionHeader.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TransactionHeader.FlatAppearance.BorderSize = 0;
+            this.TransactionHeader.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.TransactionHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TransactionHeader.Location = new System.Drawing.Point(309, 1);
+            this.TransactionHeader.Margin = new System.Windows.Forms.Padding(0);
+            this.TransactionHeader.Name = "TransactionHeader";
+            this.TransactionHeader.Size = new System.Drawing.Size(153, 35);
+            this.TransactionHeader.TabIndex = 23;
+            this.TransactionHeader.Text = "Transaction";
+            this.TransactionHeader.UseVisualStyleBackColor = false;
+            // 
+            // LocationHeader
+            // 
+            this.LocationHeader.BackColor = System.Drawing.Color.Transparent;
+            this.LocationHeader.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.LocationHeader.FlatAppearance.BorderSize = 0;
+            this.LocationHeader.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.LocationHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LocationHeader.Location = new System.Drawing.Point(1, 1);
+            this.LocationHeader.Margin = new System.Windows.Forms.Padding(0);
+            this.LocationHeader.Name = "LocationHeader";
+            this.LocationHeader.Size = new System.Drawing.Size(153, 35);
+            this.LocationHeader.TabIndex = 22;
+            this.LocationHeader.Tag = "bin_name";
+            this.LocationHeader.Text = "Location";
+            this.LocationHeader.UseVisualStyleBackColor = false;
+            this.LocationHeader.Click += new System.EventHandler(this.LocationHeader_Click);
+            // 
             // tableLayoutPanel5
             // 
             this.tableLayoutPanel5.ColumnCount = 2;
@@ -627,6 +688,23 @@
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel5.Size = new System.Drawing.Size(153, 35);
             this.tableLayoutPanel5.TabIndex = 1;
+            // 
+            // PartHeader
+            // 
+            this.PartHeader.BackColor = System.Drawing.Color.Transparent;
+            this.PartHeader.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.PartHeader.FlatAppearance.BorderSize = 0;
+            this.PartHeader.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.PartHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.PartHeader.Location = new System.Drawing.Point(0, 0);
+            this.PartHeader.Margin = new System.Windows.Forms.Padding(0);
+            this.PartHeader.Name = "PartHeader";
+            this.PartHeader.Size = new System.Drawing.Size(153, 35);
+            this.PartHeader.TabIndex = 23;
+            this.PartHeader.Tag = "bin_part";
+            this.PartHeader.Text = "Part";
+            this.PartHeader.UseVisualStyleBackColor = false;
+            this.PartHeader.Click += new System.EventHandler(this.LocationHeader_Click);
             // 
             // TransactionListPanel
             // 
@@ -688,65 +766,31 @@
             // 
             // TransactionOptionTable
             // 
-            this.TransactionOptionTable.ColumnCount = 3;
-            this.TransactionOptionTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.TransactionOptionTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.TransactionOptionTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 179F));
+            this.TransactionOptionTable.ColumnCount = 4;
+            this.TransactionOptionTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.TransactionOptionTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.TransactionOptionTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.TransactionOptionTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 180F));
+            this.TransactionOptionTable.Controls.Add(this.UserGroupBox, 0, 0);
             this.TransactionOptionTable.Controls.Add(this.LocationGroup, 0, 0);
             this.TransactionOptionTable.Controls.Add(this.PartGroup, 0, 0);
-            this.TransactionOptionTable.Controls.Add(this.SearchButton, 2, 0);
+            this.TransactionOptionTable.Controls.Add(this.SearchButton, 3, 0);
             this.TransactionOptionTable.Dock = System.Windows.Forms.DockStyle.Fill;
             this.TransactionOptionTable.Location = new System.Drawing.Point(0, 0);
             this.TransactionOptionTable.Margin = new System.Windows.Forms.Padding(0);
             this.TransactionOptionTable.Name = "TransactionOptionTable";
             this.TransactionOptionTable.RowCount = 1;
-            this.TransactionOptionTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.TransactionOptionTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.TransactionOptionTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.TransactionOptionTable.Size = new System.Drawing.Size(792, 64);
             this.TransactionOptionTable.TabIndex = 18;
-            // 
-            // SearchButton
-            // 
-            this.SearchButton.BackColor = System.Drawing.SystemColors.InactiveCaption;
-            this.SearchButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SearchButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.SearchButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SearchButton.Location = new System.Drawing.Point(612, 0);
-            this.SearchButton.Margin = new System.Windows.Forms.Padding(0);
-            this.SearchButton.Name = "SearchButton";
-            this.SearchButton.Size = new System.Drawing.Size(180, 64);
-            this.SearchButton.TabIndex = 21;
-            this.SearchButton.Text = "Search";
-            this.SearchButton.UseVisualStyleBackColor = false;
-            this.SearchButton.Click += new System.EventHandler(this.SearchButton_Click);
-            // 
-            // PartGroup
-            // 
-            this.PartGroup.Controls.Add(this.PartField);
-            this.PartGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.PartGroup.Location = new System.Drawing.Point(3, 3);
-            this.PartGroup.Name = "PartGroup";
-            this.PartGroup.Size = new System.Drawing.Size(238, 58);
-            this.PartGroup.TabIndex = 23;
-            this.PartGroup.TabStop = false;
-            this.PartGroup.Text = "Part";
-            // 
-            // PartField
-            // 
-            this.PartField.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.PartField.Location = new System.Drawing.Point(3, 22);
-            this.PartField.Name = "PartField";
-            this.PartField.Size = new System.Drawing.Size(232, 26);
-            this.PartField.TabIndex = 1;
-            this.PartField.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.LocationField_KeyPress);
             // 
             // LocationGroup
             // 
             this.LocationGroup.Controls.Add(this.LocationField);
             this.LocationGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.LocationGroup.Location = new System.Drawing.Point(309, 3);
+            this.LocationGroup.Location = new System.Drawing.Point(206, 3);
             this.LocationGroup.Name = "LocationGroup";
-            this.LocationGroup.Size = new System.Drawing.Size(253, 58);
+            this.LocationGroup.Size = new System.Drawing.Size(197, 58);
             this.LocationGroup.TabIndex = 24;
             this.LocationGroup.TabStop = false;
             this.LocationGroup.Text = "Location";
@@ -756,92 +800,366 @@
             this.LocationField.Dock = System.Windows.Forms.DockStyle.Fill;
             this.LocationField.Location = new System.Drawing.Point(3, 22);
             this.LocationField.Name = "LocationField";
-            this.LocationField.Size = new System.Drawing.Size(247, 26);
+            this.LocationField.Size = new System.Drawing.Size(191, 26);
             this.LocationField.TabIndex = 1;
             this.LocationField.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.LocationField_KeyPress);
             // 
-            // LocationHeader
+            // PartGroup
             // 
-            this.LocationHeader.BackColor = System.Drawing.Color.Transparent;
-            this.LocationHeader.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.LocationHeader.FlatAppearance.BorderSize = 0;
-            this.LocationHeader.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.LocationHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.LocationHeader.Location = new System.Drawing.Point(1, 1);
-            this.LocationHeader.Margin = new System.Windows.Forms.Padding(0);
-            this.LocationHeader.Name = "LocationHeader";
-            this.LocationHeader.Size = new System.Drawing.Size(153, 35);
-            this.LocationHeader.TabIndex = 22;
-            this.LocationHeader.Tag = "bin_name";
-            this.LocationHeader.Text = "Location";
-            this.LocationHeader.UseVisualStyleBackColor = false;
-            this.LocationHeader.Click += new System.EventHandler(this.LocationHeader_Click);
+            this.PartGroup.Controls.Add(this.PartField);
+            this.PartGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.PartGroup.Location = new System.Drawing.Point(3, 3);
+            this.PartGroup.Name = "PartGroup";
+            this.PartGroup.Size = new System.Drawing.Size(197, 58);
+            this.PartGroup.TabIndex = 23;
+            this.PartGroup.TabStop = false;
+            this.PartGroup.Text = "Part";
             // 
-            // PartHeader
+            // PartField
             // 
-            this.PartHeader.BackColor = System.Drawing.Color.Transparent;
-            this.PartHeader.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.PartHeader.FlatAppearance.BorderSize = 0;
-            this.PartHeader.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.PartHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.PartHeader.Location = new System.Drawing.Point(0, 0);
-            this.PartHeader.Margin = new System.Windows.Forms.Padding(0);
-            this.PartHeader.Name = "PartHeader";
-            this.PartHeader.Size = new System.Drawing.Size(153, 35);
-            this.PartHeader.TabIndex = 23;
-            this.PartHeader.Tag = "bin_part";
-            this.PartHeader.Text = "Part";
-            this.PartHeader.UseVisualStyleBackColor = false;
-            this.PartHeader.Click += new System.EventHandler(this.LocationHeader_Click);
+            this.PartField.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.PartField.Location = new System.Drawing.Point(3, 22);
+            this.PartField.Name = "PartField";
+            this.PartField.Size = new System.Drawing.Size(191, 26);
+            this.PartField.TabIndex = 1;
+            this.PartField.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.LocationField_KeyPress);
             // 
-            // TransactionHeader
+            // SearchButton
             // 
-            this.TransactionHeader.BackColor = System.Drawing.Color.Transparent;
-            this.TransactionHeader.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.TransactionHeader.FlatAppearance.BorderSize = 0;
-            this.TransactionHeader.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.TransactionHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.TransactionHeader.Location = new System.Drawing.Point(309, 1);
-            this.TransactionHeader.Margin = new System.Windows.Forms.Padding(0);
-            this.TransactionHeader.Name = "TransactionHeader";
-            this.TransactionHeader.Size = new System.Drawing.Size(153, 35);
-            this.TransactionHeader.TabIndex = 23;
-            this.TransactionHeader.Text = "Transaction";
-            this.TransactionHeader.UseVisualStyleBackColor = false;
+            this.SearchButton.BackColor = System.Drawing.SystemColors.InactiveCaption;
+            this.SearchButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SearchButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.SearchButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SearchButton.Location = new System.Drawing.Point(609, 0);
+            this.SearchButton.Margin = new System.Windows.Forms.Padding(0);
+            this.SearchButton.Name = "SearchButton";
+            this.SearchButton.Size = new System.Drawing.Size(183, 64);
+            this.SearchButton.TabIndex = 21;
+            this.SearchButton.Text = "Search";
+            this.SearchButton.UseVisualStyleBackColor = false;
+            this.SearchButton.Click += new System.EventHandler(this.SearchButton_Click);
             // 
-            // TransUserHeader
+            // StatsTab
             // 
-            this.TransUserHeader.BackColor = System.Drawing.Color.Transparent;
-            this.TransUserHeader.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.TransUserHeader.FlatAppearance.BorderSize = 0;
-            this.TransUserHeader.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.TransUserHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.TransUserHeader.Location = new System.Drawing.Point(463, 1);
-            this.TransUserHeader.Margin = new System.Windows.Forms.Padding(0);
-            this.TransUserHeader.Name = "TransUserHeader";
-            this.TransUserHeader.Size = new System.Drawing.Size(153, 35);
-            this.TransUserHeader.TabIndex = 24;
-            this.TransUserHeader.Tag = "bin_user";
-            this.TransUserHeader.Text = "User";
-            this.TransUserHeader.UseVisualStyleBackColor = false;
-            this.TransUserHeader.Click += new System.EventHandler(this.LocationHeader_Click);
+            this.StatsTab.Controls.Add(this.calendarPanel);
+            this.StatsTab.Controls.Add(this.StatisticsTable);
+            this.StatsTab.Location = new System.Drawing.Point(4, 22);
+            this.StatsTab.Name = "StatsTab";
+            this.StatsTab.Padding = new System.Windows.Forms.Padding(3);
+            this.StatsTab.Size = new System.Drawing.Size(792, 424);
+            this.StatsTab.TabIndex = 4;
+            this.StatsTab.Text = "Statistics";
+            this.StatsTab.UseVisualStyleBackColor = true;
             // 
-            // DateHeader
+            // calendarPanel
             // 
-            this.DateHeader.BackColor = System.Drawing.Color.Transparent;
-            this.DateHeader.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.DateHeader.FlatAppearance.BorderSize = 0;
-            this.DateHeader.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.DateHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.DateHeader.Location = new System.Drawing.Point(617, 1);
-            this.DateHeader.Margin = new System.Windows.Forms.Padding(0);
-            this.DateHeader.Name = "DateHeader";
-            this.DateHeader.Size = new System.Drawing.Size(156, 35);
-            this.DateHeader.TabIndex = 25;
-            this.DateHeader.Tag = "bin_date";
-            this.DateHeader.Text = "Date";
-            this.DateHeader.UseVisualStyleBackColor = false;
-            this.DateHeader.Click += new System.EventHandler(this.LocationHeader_Click);
+            this.calendarPanel.Controls.Add(this.calendar);
+            this.calendarPanel.Location = new System.Drawing.Point(562, 43);
+            this.calendarPanel.Name = "calendarPanel";
+            this.calendarPanel.Size = new System.Drawing.Size(227, 163);
+            this.calendarPanel.TabIndex = 8;
+            this.calendarPanel.Visible = false;
+            // 
+            // calendar
+            // 
+            this.calendar.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.calendar.Location = new System.Drawing.Point(0, 0);
+            this.calendar.Name = "calendar";
+            this.calendar.TabIndex = 0;
+            this.calendar.DateSelected += new System.Windows.Forms.DateRangeEventHandler(this.calendar_DateSelected);
+            // 
+            // StatisticsTable
+            // 
+            this.StatisticsTable.ColumnCount = 1;
+            this.StatisticsTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.StatisticsTable.Controls.Add(this.label2, 0, 1);
+            this.StatisticsTable.Controls.Add(this.StatsHeaderTable, 0, 0);
+            this.StatisticsTable.Controls.Add(this.StatsListPanel, 0, 2);
+            this.StatisticsTable.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.StatisticsTable.Location = new System.Drawing.Point(3, 3);
+            this.StatisticsTable.Name = "StatisticsTable";
+            this.StatisticsTable.RowCount = 3;
+            this.StatisticsTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
+            this.StatisticsTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 5F));
+            this.StatisticsTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.StatisticsTable.Size = new System.Drawing.Size(786, 418);
+            this.StatisticsTable.TabIndex = 7;
+            // 
+            // label2
+            // 
+            this.label2.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.label2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label2.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label2.Location = new System.Drawing.Point(0, 40);
+            this.label2.Margin = new System.Windows.Forms.Padding(0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(786, 3);
+            this.label2.TabIndex = 16;
+            // 
+            // StatsHeaderTable
+            // 
+            this.StatsHeaderTable.ColumnCount = 6;
+            this.StatsHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 22F));
+            this.StatsHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12F));
+            this.StatsHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12F));
+            this.StatsHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 18F));
+            this.StatsHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 36F));
+            this.StatsHeaderTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 48F));
+            this.StatsHeaderTable.Controls.Add(this.label15, 3, 0);
+            this.StatsHeaderTable.Controls.Add(this.CalendarButton, 6, 0);
+            this.StatsHeaderTable.Controls.Add(this.label3, 4, 0);
+            this.StatsHeaderTable.Controls.Add(this.label4, 2, 0);
+            this.StatsHeaderTable.Controls.Add(this.label5, 0, 0);
+            this.StatsHeaderTable.Controls.Add(this.tableLayoutPanel6, 1, 0);
+            this.StatsHeaderTable.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.StatsHeaderTable.Location = new System.Drawing.Point(0, 0);
+            this.StatsHeaderTable.Margin = new System.Windows.Forms.Padding(0);
+            this.StatsHeaderTable.Name = "StatsHeaderTable";
+            this.StatsHeaderTable.RowCount = 1;
+            this.StatsHeaderTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.StatsHeaderTable.Size = new System.Drawing.Size(786, 40);
+            this.StatsHeaderTable.TabIndex = 3;
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label15.Location = new System.Drawing.Point(339, 1);
+            this.label15.Margin = new System.Windows.Forms.Padding(1);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(130, 38);
+            this.label15.TabIndex = 21;
+            this.label15.Text = "Parts Per Minute(Pulling)";
+            this.label15.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // CalendarButton
+            // 
+            this.CalendarButton.BackColor = System.Drawing.SystemColors.InactiveCaption;
+            this.CalendarButton.BackgroundImage = global::OrderValidation.Properties.Resources.calendarimg;
+            this.CalendarButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.CalendarButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.CalendarButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.CalendarButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CalendarButton.Location = new System.Drawing.Point(735, 0);
+            this.CalendarButton.Margin = new System.Windows.Forms.Padding(0);
+            this.CalendarButton.Name = "CalendarButton";
+            this.CalendarButton.Size = new System.Drawing.Size(51, 40);
+            this.CalendarButton.TabIndex = 20;
+            this.CalendarButton.UseVisualStyleBackColor = false;
+            this.CalendarButton.Click += new System.EventHandler(this.CalendarButton_Click);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(471, 1);
+            this.label3.Margin = new System.Windows.Forms.Padding(1);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(263, 38);
+            this.label3.TabIndex = 4;
+            this.label3.Text = "Notes";
+            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(251, 1);
+            this.label4.Margin = new System.Windows.Forms.Padding(1);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(86, 38);
+            this.label4.TabIndex = 3;
+            this.label4.Text = "# Packed";
+            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Location = new System.Drawing.Point(1, 1);
+            this.label5.Margin = new System.Windows.Forms.Padding(1);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(160, 38);
+            this.label5.TabIndex = 0;
+            this.label5.Text = "User";
+            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // tableLayoutPanel6
+            // 
+            this.tableLayoutPanel6.ColumnCount = 2;
+            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel6.Controls.Add(this.label12, 0, 0);
+            this.tableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel6.Location = new System.Drawing.Point(162, 0);
+            this.tableLayoutPanel6.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanel6.Name = "tableLayoutPanel6";
+            this.tableLayoutPanel6.RowCount = 1;
+            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel6.Size = new System.Drawing.Size(88, 40);
+            this.tableLayoutPanel6.TabIndex = 1;
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label12.Location = new System.Drawing.Point(1, 1);
+            this.label12.Margin = new System.Windows.Forms.Padding(1);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(86, 38);
+            this.label12.TabIndex = 2;
+            this.label12.Text = "# Pulled";
+            this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // StatsListPanel
+            // 
+            this.StatsListPanel.AutoScroll = true;
+            this.StatsListPanel.Controls.Add(this.StatsList);
+            this.StatsListPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.StatsListPanel.Location = new System.Drawing.Point(0, 45);
+            this.StatsListPanel.Margin = new System.Windows.Forms.Padding(0);
+            this.StatsListPanel.Name = "StatsListPanel";
+            this.StatsListPanel.Size = new System.Drawing.Size(786, 373);
+            this.StatsListPanel.TabIndex = 17;
+            // 
+            // StatsList
+            // 
+            this.StatsList.AutoSize = true;
+            this.StatsList.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
+            this.StatsList.ColumnCount = 5;
+            this.StatsList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 21F));
+            this.StatsList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12F));
+            this.StatsList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12F));
+            this.StatsList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 18F));
+            this.StatsList.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 37F));
+            this.StatsList.Controls.Add(this.label13, 1, 0);
+            this.StatsList.Controls.Add(this.label14, 0, 0);
+            this.StatsList.Dock = System.Windows.Forms.DockStyle.Top;
+            this.StatsList.Location = new System.Drawing.Point(0, 0);
+            this.StatsList.Name = "StatsList";
+            this.StatsList.RowCount = 1;
+            this.StatsList.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.StatsList.Size = new System.Drawing.Size(786, 22);
+            this.StatsList.TabIndex = 18;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.BackColor = System.Drawing.SystemColors.Control;
+            this.label13.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label13.Location = new System.Drawing.Point(166, 2);
+            this.label13.Margin = new System.Windows.Forms.Padding(1);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(91, 18);
+            this.label13.TabIndex = 3;
+            this.label13.Text = "20";
+            this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label14.Location = new System.Drawing.Point(2, 2);
+            this.label14.Margin = new System.Windows.Forms.Padding(1);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(161, 18);
+            this.label14.TabIndex = 1;
+            this.label14.Text = "Richard";
+            this.label14.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // UserGroupBox
+            // 
+            this.UserGroupBox.Controls.Add(this.UserText);
+            this.UserGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UserGroupBox.Location = new System.Drawing.Point(409, 3);
+            this.UserGroupBox.Name = "UserGroupBox";
+            this.UserGroupBox.Size = new System.Drawing.Size(197, 58);
+            this.UserGroupBox.TabIndex = 25;
+            this.UserGroupBox.TabStop = false;
+            this.UserGroupBox.Text = "User";
+            // 
+            // UserText
+            // 
+            this.UserText.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.UserText.Location = new System.Drawing.Point(3, 22);
+            this.UserText.Name = "UserText";
+            this.UserText.Size = new System.Drawing.Size(191, 26);
+            this.UserText.TabIndex = 1;
+            // 
+            // IDHeaderButton
+            // 
+            this.IDHeaderButton.BackColor = System.Drawing.Color.Transparent;
+            this.IDHeaderButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.IDHeaderButton.FlatAppearance.BorderSize = 0;
+            this.IDHeaderButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.IDHeaderButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.IDHeaderButton.Location = new System.Drawing.Point(112, 1);
+            this.IDHeaderButton.Margin = new System.Windows.Forms.Padding(0);
+            this.IDHeaderButton.Name = "IDHeaderButton";
+            this.IDHeaderButton.Size = new System.Drawing.Size(69, 35);
+            this.IDHeaderButton.TabIndex = 20;
+            this.IDHeaderButton.Tag = "user_id";
+            this.IDHeaderButton.Text = "ID";
+            this.IDHeaderButton.UseVisualStyleBackColor = false;
+            this.IDHeaderButton.Click += new System.EventHandler(this.UserNameHeader_Click);
+            // 
+            // UserNameHeader
+            // 
+            this.UserNameHeader.BackColor = System.Drawing.Color.Transparent;
+            this.UserNameHeader.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.UserNameHeader.FlatAppearance.BorderSize = 0;
+            this.UserNameHeader.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.UserNameHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UserNameHeader.Location = new System.Drawing.Point(1, 1);
+            this.UserNameHeader.Margin = new System.Windows.Forms.Padding(0);
+            this.UserNameHeader.Name = "UserNameHeader";
+            this.UserNameHeader.Size = new System.Drawing.Size(110, 35);
+            this.UserNameHeader.TabIndex = 21;
+            this.UserNameHeader.Tag = "user_name";
+            this.UserNameHeader.Text = "User";
+            this.UserNameHeader.UseVisualStyleBackColor = false;
+            this.UserNameHeader.Click += new System.EventHandler(this.UserNameHeader_Click);
+            // 
+            // UserActivityHeader
+            // 
+            this.UserActivityHeader.BackColor = System.Drawing.Color.Transparent;
+            this.UserActivityHeader.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.UserActivityHeader.FlatAppearance.BorderSize = 0;
+            this.UserActivityHeader.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.UserActivityHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UserActivityHeader.Location = new System.Drawing.Point(0, 0);
+            this.UserActivityHeader.Margin = new System.Windows.Forms.Padding(0);
+            this.UserActivityHeader.Name = "UserActivityHeader";
+            this.UserActivityHeader.Size = new System.Drawing.Size(236, 35);
+            this.UserActivityHeader.TabIndex = 21;
+            this.UserActivityHeader.Tag = "user_activity_time";
+            this.UserActivityHeader.Text = "Activity";
+            this.UserActivityHeader.UseVisualStyleBackColor = false;
+            this.UserActivityHeader.Click += new System.EventHandler(this.UserNameHeader_Click);
+            // 
+            // UserDeviceHeader
+            // 
+            this.UserDeviceHeader.BackColor = System.Drawing.Color.Transparent;
+            this.UserDeviceHeader.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.UserDeviceHeader.FlatAppearance.BorderSize = 0;
+            this.UserDeviceHeader.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.UserDeviceHeader.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UserDeviceHeader.Location = new System.Drawing.Point(419, 1);
+            this.UserDeviceHeader.Margin = new System.Windows.Forms.Padding(0);
+            this.UserDeviceHeader.Name = "UserDeviceHeader";
+            this.UserDeviceHeader.Size = new System.Drawing.Size(101, 35);
+            this.UserDeviceHeader.TabIndex = 22;
+            this.UserDeviceHeader.Tag = "user_last_device";
+            this.UserDeviceHeader.Text = "Device";
+            this.UserDeviceHeader.UseVisualStyleBackColor = false;
+            this.UserDeviceHeader.Click += new System.EventHandler(this.UserNameHeader_Click);
             // 
             // ManagerMonitor
             // 
@@ -874,7 +1192,6 @@
             this.UserHeaderTable.ResumeLayout(false);
             this.UserHeaderTable.PerformLayout();
             this.tableLayoutPanel4.ResumeLayout(false);
-            this.tableLayoutPanel4.PerformLayout();
             this.UserListPanel.ResumeLayout(false);
             this.UserListPanel.PerformLayout();
             this.UserList.ResumeLayout(false);
@@ -888,10 +1205,23 @@
             this.TransactionList.ResumeLayout(false);
             this.TransactionList.PerformLayout();
             this.TransactionOptionTable.ResumeLayout(false);
-            this.PartGroup.ResumeLayout(false);
-            this.PartGroup.PerformLayout();
             this.LocationGroup.ResumeLayout(false);
             this.LocationGroup.PerformLayout();
+            this.PartGroup.ResumeLayout(false);
+            this.PartGroup.PerformLayout();
+            this.StatsTab.ResumeLayout(false);
+            this.calendarPanel.ResumeLayout(false);
+            this.StatisticsTable.ResumeLayout(false);
+            this.StatsHeaderTable.ResumeLayout(false);
+            this.StatsHeaderTable.PerformLayout();
+            this.tableLayoutPanel6.ResumeLayout(false);
+            this.tableLayoutPanel6.PerformLayout();
+            this.StatsListPanel.ResumeLayout(false);
+            this.StatsListPanel.PerformLayout();
+            this.StatsList.ResumeLayout(false);
+            this.StatsList.PerformLayout();
+            this.UserGroupBox.ResumeLayout(false);
+            this.UserGroupBox.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -904,12 +1234,6 @@
         private System.Windows.Forms.Panel UsersPanel;
         private System.Windows.Forms.TableLayoutPanel UsersTable;
         private System.Windows.Forms.Label UsersLine;
-        private System.Windows.Forms.TableLayoutPanel UserHeaderTable;
-        private System.Windows.Forms.Label NotesLabel;
-        private System.Windows.Forms.Label DeviceLabel;
-        private System.Windows.Forms.Label UserLabel;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
-        private System.Windows.Forms.Label ActivityLabel;
         private System.Windows.Forms.Panel UserListPanel;
         private System.Windows.Forms.TableLayoutPanel UserList;
         private System.Windows.Forms.Label label7;
@@ -949,5 +1273,31 @@
         private System.Windows.Forms.Button TransactionHeader;
         private System.Windows.Forms.Button LocationHeader;
         private System.Windows.Forms.Button PartHeader;
+        private System.Windows.Forms.TabPage StatsTab;
+        private System.Windows.Forms.TableLayoutPanel StatisticsTable;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TableLayoutPanel StatsHeaderTable;
+        private System.Windows.Forms.Button CalendarButton;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel6;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Panel StatsListPanel;
+        private System.Windows.Forms.TableLayoutPanel StatsList;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Panel calendarPanel;
+        private System.Windows.Forms.MonthCalendar calendar;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.TableLayoutPanel UserHeaderTable;
+        private System.Windows.Forms.Label NotesLabel;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
+        private System.Windows.Forms.GroupBox UserGroupBox;
+        private System.Windows.Forms.TextBox UserText;
+        private System.Windows.Forms.Button IDHeaderButton;
+        private System.Windows.Forms.Button UserDeviceHeader;
+        private System.Windows.Forms.Button UserNameHeader;
+        private System.Windows.Forms.Button UserActivityHeader;
     }
 }

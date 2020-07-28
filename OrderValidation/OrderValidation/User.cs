@@ -13,6 +13,10 @@ namespace OrderValidation
         public string device;
         public string activity;
         public string notes;
+        public double ppm;
+        public int packed;
+        public int pulled;
+        public bool active;
 
         public User()
         {
