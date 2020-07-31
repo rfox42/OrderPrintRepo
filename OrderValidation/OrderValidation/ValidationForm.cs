@@ -238,9 +238,10 @@ namespace OrderValidation
                 }
 
                 //get unprocessed invoices from database
-                cmdString = "SELECT invoice_num, validated, packed_by, pulled_by, user_id " +
-                                    "from wmsOrders left join wmsUsers on user_activity_notes like '%invoice_num%' and user_loc = '"+location+"'" +
-                                    "where invoice_num = "+ invoiceNum;
+                cmdString = "SELECT o.invoice_num, o.validated, o.packed_by, o.pulled_by, u.user_id, x.TRACKING_NUM " +
+                                    "from wmsOrders o left join wmsUsers u on u.user_activity_notes like '%o.invoice_num%' and u.user_loc = '"+location+"' " +
+                                    "left join TRACKING x on x.INVOICE_NUM = o.invoice_num " +
+                                    "where o.invoice_num = "+ invoiceNum;
 
                 using (OdbcCommand cmd = new OdbcCommand(cmdString, pSqlConn))
                 {
@@ -254,7 +255,9 @@ namespace OrderValidation
                         if (invoiceReader["packed_by"] != DBNull.Value)
                             order.packed = ((string)invoiceReader["packed_by"]).TrimEnd();
                         if (invoiceReader["user_id"] != DBNull.Value)
-                            order.notes = ((string)invoiceReader["user_id"]).TrimEnd();
+                            order.puller = ((string)invoiceReader["user_id"]).TrimEnd();
+                        if (invoiceReader["tracking_num"] != DBNull.Value)
+                            order.tracking = ((string)invoiceReader["tracking_num"]).TrimEnd();
                     }
                     else
                     {
@@ -575,16 +578,20 @@ namespace OrderValidation
 
                 if (currentOrder != null)
                 {
+                    if (currentOrder.tracking != null)
+                        if (MessageBox.Show("Invoice " + currentOrder.invoiceNumber + " has already been shipped with tracking: " + currentOrder.tracking + ". Are you sure you want to reprint it?", "", MessageBoxButtons.YesNo) == DialogResult.No)
+                            throw new Exception("Reprint cancelled.");
+
                     if (currentOrder.packed != null)
-                        if (MessageBox.Show("Invoice " + currentOrder.invoiceNumber + " has already been processed by " + currentOrder.packed + " are you sure you want to reprint it?", "", MessageBoxButtons.YesNo) == DialogResult.No)
+                        if (MessageBox.Show("Invoice " + currentOrder.invoiceNumber + " has already been processed by " + currentOrder.packed + ". Are you sure you want to reprint it?", "", MessageBoxButtons.YesNo) == DialogResult.No)
                             throw new Exception("Reprint cancelled.");
 
                     if (currentOrder.pulled != null)
-                        if (MessageBox.Show("Invoice "+currentOrder.invoiceNumber+" is currently being processed by "+currentOrder.pulled+" are you sure you want to reprint it?", "", MessageBoxButtons.YesNo) == DialogResult.No)
+                        if (MessageBox.Show("Invoice "+currentOrder.invoiceNumber+" is currently being processed by "+currentOrder.pulled+". Are you sure you want to reprint it?", "", MessageBoxButtons.YesNo) == DialogResult.No)
                             throw new Exception("Reprint cancelled.");
 
-                    if (currentOrder.notes != null)
-                        if (MessageBox.Show("Invoice " + currentOrder.invoiceNumber + " is currently being processed by " + currentOrder.notes + " are you sure you want to reprint it?", "", MessageBoxButtons.YesNo) == DialogResult.No)
+                    if (currentOrder.puller != null)
+                        if (MessageBox.Show("Invoice " + currentOrder.invoiceNumber + " is currently being processed by " + currentOrder.puller + ". Are you sure you want to reprint it?", "", MessageBoxButtons.YesNo) == DialogResult.No)
                             throw new Exception("Reprint cancelled.");
 
 

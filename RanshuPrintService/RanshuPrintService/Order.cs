@@ -113,6 +113,7 @@ namespace RanshuPrintService
         /// order reprint flag
         /// </summary>
         public bool reprint;
+        internal string reprintLoc;
 
         /// <summary>
         /// class constructor
@@ -123,6 +124,7 @@ namespace RanshuPrintService
             posted = false;
             postCred = false;
             reprint = false;
+            reprintLoc = null;
             invoiceNumber = invNum;
             items = new List<Item>();
             shipAddress = new Address();

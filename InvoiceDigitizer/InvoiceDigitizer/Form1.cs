@@ -748,10 +748,10 @@ namespace InvoiceDigitizer
                                 document.AddPage(page);
 
                             document.Save(document.FullPath);
-                            SendEmail("shippingNV@ranshu.com", 
-                                "Duplicate stub detected for invoice: " + reviewStub.invoiceNum, 
-                                "A duplicate stub was appended to the file for invoice " + reviewStub.invoiceNum + ". A copy of the file is attached to this email.", 
-                                new Attachment(document.FullPath), new List<string>() { "ryan@ranshu.com", "jeremy@ranshu.com"});
+                            SendEmail("shippingNV@ranshu.com",
+                                "Duplicate stub detected for invoice: " + reviewStub.invoiceNum,
+                                "A duplicate stub was appended to the file for invoice " + reviewStub.invoiceNum + ". A copy of the file is attached to this email.",
+                                new Attachment(document.FullPath), new List<string>() { "ryan@ranshu.com", "jeremy@ranshu.com" });
                             document.Dispose();
                         }
                         else if(File.Exists(successPath + "\\" + date + "\\" + reviewStub.invoiceNum + ".pdf"))
@@ -878,7 +878,7 @@ namespace InvoiceDigitizer
         /// <param name="cc">
         /// email cc list
         /// </param>
-        public static void SendEmail(string recipient, string subject, string msgText, Attachment attachment = null, List<string> cc = null)
+        public static void SendEmail( string recipient, string subject, string msgText, Attachment attachment = null, List<string> cc = null)
         {
             ///set email credentials
             SmtpClient mailClient = new SmtpClient("secure.emailsrvr.com");
@@ -905,7 +905,15 @@ namespace InvoiceDigitizer
             msgMail.Attachments.Add(attachment);
 
             ///send message
-            mailClient.Send(msgMail);
+            try
+            {
+                mailClient.Send(msgMail);
+            }
+            catch
+            {
+                mailClient.Port = 465;
+                mailClient.Send(msgMail);
+            }
 
             ///garbage collect
             msgMail.Dispose();

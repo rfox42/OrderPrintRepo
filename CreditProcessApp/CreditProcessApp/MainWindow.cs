@@ -1483,7 +1483,15 @@ namespace CreditProcessApp
             msgMail.IsBodyHtml = true;
 
             ///send message
-            mailClient.Send(msgMail);
+            try
+            {
+                mailClient.Send(msgMail);
+            }
+            catch
+            {
+                mailClient.Port = 465;
+                mailClient.Send(msgMail);
+            }
 
             ///garbage collect
             msgMail.Dispose();

@@ -208,17 +208,7 @@ namespace MeridianFtpService
                             destPath = "/outbound/Archive/" + file.Replace(".csv", strTimeStamp + ".csv");
 
                             // FILE ALREADY EXISTS
-                            MailMessage mail = new MailMessage("orders@ranshu.com", "jeremy@ranshu.com");
-                            SmtpClient client = new SmtpClient();
-                            client.EnableSsl = true;
-                            client.Port = 587;
-                            client.DeliveryMethod = SmtpDeliveryMethod.Network;
-                            client.UseDefaultCredentials = false;
-                            client.Credentials = new System.Net.NetworkCredential("orders@ranshu.com", "%Ranshu525252");
-                            client.Host = "secure.emailsrvr.com";
-                            mail.Subject = "Duplicate EDI file Received";
-                            mail.Body = "Duplicate EDI file received from " + file.ToString();
-                            client.Send(mail);
+                            SendEmail("jeremy@ranshu.com", "Duplicate EDI file Received", "Duplicate EDI file received from " + file.ToString());
                         }
 
                         //move file to archive
@@ -294,17 +284,8 @@ namespace MeridianFtpService
                 writeToFile(error);
 
                 // REPORT ERROR TO IT
-                MailMessage mail = new MailMessage("orders@ranshu.com", "ryan@ranshu.com");
-                SmtpClient client = new SmtpClient();
-                client.EnableSsl = true;
-                client.Port = 587;
-                client.DeliveryMethod = SmtpDeliveryMethod.Network;
-                client.UseDefaultCredentials = false;
-                client.Credentials = new System.Net.NetworkCredential("orders@ranshu.com", "%Ranshu525252");
-                client.Host = "secure.emailsrvr.com";
-                mail.Subject = "FTP Service error";
-                mail.Body = error;
-                client.Send(mail);
+                SendEmail("ryan@ranshu.com", "FTP Service error", error);
+                toggle = !toggle;
             }
             timer.Start();
         }
@@ -463,17 +444,7 @@ namespace MeridianFtpService
                             moveRequest = null;
 
                             // FILE ALREADY EXISTS
-                            MailMessage mail = new MailMessage("orders@ranshu.com", "jeremy@ranshu.com");
-                            SmtpClient client = new SmtpClient();
-                            client.EnableSsl = true;
-                            client.Port = 587;
-                            client.DeliveryMethod = SmtpDeliveryMethod.Network;
-                            client.UseDefaultCredentials = false;
-                            client.Credentials = new System.Net.NetworkCredential("orders@ranshu.com", "%Ranshu525252");
-                            client.Host = "secure.emailsrvr.com";
-                            mail.Subject = "Duplicate EDI file Received";
-                            mail.Body = "Duplicate EDI file received from " + directories[i].ToString();
-                            client.Send(mail);
+                            SendEmail("jeremy@ranshu.com", "Duplicate EDI file Received", "Duplicate EDI file received from " + directories[i].ToString());
                         }
                         else
                         {
@@ -574,17 +545,7 @@ namespace MeridianFtpService
                         newFileName = strDateTimeStamp + "_" + label;
 
                         // FILE ALREADY EXISTS
-                        MailMessage mail = new MailMessage("orders@ranshu.com", "ryan@ranshu.com");
-                        SmtpClient client = new SmtpClient();
-                        client.EnableSsl = true;
-                        client.Port = 587;
-                        client.DeliveryMethod = SmtpDeliveryMethod.Network;
-                        client.UseDefaultCredentials = false;
-                        client.Credentials = new System.Net.NetworkCredential("orders@ranshu.com", "%Ranshu525252");
-                        client.Host = "secure.emailsrvr.com";
-                        mail.Subject = "Duplicate SFP label Received";
-                        mail.Body = "Duplicate SFP label received " + label;
-                        client.Send(mail);
+                        SendEmail("ryan@ranshu.com", "Duplicate SFP label Received", "Duplicate SFP label received " + label);
                     }
                     else
                     {
@@ -784,17 +745,7 @@ namespace MeridianFtpService
                             moveRequest = null;
 
                             // FILE ALREADY EXISTS
-                            MailMessage mail = new MailMessage("orders@ranshu.com", "jeremy@ranshu.com");
-                            SmtpClient client = new SmtpClient();
-                            client.EnableSsl = true;
-                            client.Port = 587;
-                            client.DeliveryMethod = SmtpDeliveryMethod.Network;
-                            client.UseDefaultCredentials = false;
-                            client.Credentials = new System.Net.NetworkCredential("orders@ranshu.com", "%Ranshu525252");
-                            client.Host = "secure.emailsrvr.com";
-                            mail.Subject = "Duplicate EDI file Received";
-                            mail.Body = "Duplicate EDI file received from " + directories[i].ToString();
-                            client.Send(mail);
+                            SendEmail("jeremy@ranshu.com", "Duplicate EDI file Received", "Duplicate EDI file received from " + directories[i].ToString());
                         }
                         else
                         {
@@ -864,6 +815,58 @@ namespace MeridianFtpService
         protected override void OnStop()
         {
             writeToFile("Service Stopped");
+        }
+
+
+        /// <summary>
+        /// create and send error emails
+        /// </summary>
+        /// <param name="subject">
+        /// email subject
+        /// </param>
+        /// <param name="msgText">
+        /// email text
+        /// </param>
+        /// <param name="cc">
+        /// email cc list
+        /// </param>
+        static void SendEmail(string recipient, string subject, string msgText, List<string> cc = null)
+        {
+            ///set email credentials
+            SmtpClient mailClient = new SmtpClient("secure.emailsrvr.com");
+            mailClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+            mailClient.UseDefaultCredentials = false;
+            mailClient.Credentials = new System.Net.NetworkCredential("orders@ranshu.com", "%Ranshu525252");
+            mailClient.Port = 587;
+            mailClient.EnableSsl = true;
+
+            ///create message
+            MailMessage msgMail;
+            msgMail = new MailMessage(new MailAddress("orders@ranshu.com"), new MailAddress(recipient));
+            if (cc != null)
+            {
+                foreach (string address in cc)
+                {
+                    msgMail.CC.Add(new MailAddress(address));
+                }
+            }
+            msgMail.Subject = subject;
+            msgMail.Body = msgText;
+            msgMail.IsBodyHtml = true;
+
+            ///send message
+            try
+            {
+                mailClient.Send(msgMail);
+            }
+            catch
+            {
+                mailClient.Port = 465;
+                mailClient.Send(msgMail);
+            }
+
+            ///garbage collect
+            msgMail.Dispose();
         }
     }
 }

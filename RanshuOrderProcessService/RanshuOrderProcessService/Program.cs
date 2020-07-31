@@ -30,6 +30,7 @@ namespace RanshuOrderProcessService
             catch(Exception ex)
             {
                 writeToFile(ex.StackTrace + ex.Message);
+                SendEmail("ryan@ranshu.com", "URGENT FAILURE: PO Process Service. ERROR: " + ex.Message, ex.StackTrace + " " + ex.Message);
             }
         }
 
@@ -148,7 +149,15 @@ namespace RanshuOrderProcessService
             msgMail.IsBodyHtml = true;
 
             ///send message
-            mailClient.Send(msgMail);
+            try
+            {
+                mailClient.Send(msgMail);
+            }
+            catch
+            {
+                mailClient.Port = 465;
+                mailClient.Send(msgMail);
+            }
 
             ///garbage collect
             msgMail.Dispose();

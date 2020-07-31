@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30320.27
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "RanshuAppWebService", "RanshuAppWebService\", "{EBD92575-51C1-4D5E-A72D-CE81E3157569}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.7.2"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_55146"
+		Debug.AspNetCompiler.PhysicalPath = "RanshuAppWebService\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_55146\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_55146"
+		Release.AspNetCompiler.PhysicalPath = "RanshuAppWebService\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_55146\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "55146"
+		DefaultWebSiteLanguage = "Visual C#"
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EBD92575-51C1-4D5E-A72D-CE81E3157569}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBD92575-51C1-4D5E-A72D-CE81E3157569}.Debug|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {15121424-6D5E-4595-868D-6CF85AF0256E}
+	EndGlobalSection
+EndGlobal

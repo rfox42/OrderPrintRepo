@@ -37,6 +37,7 @@ namespace OrderValidation
 
         public int qty;
         public string packed, pulled;
+        public string tracking, puller;
 
         /// <summary>
         /// holds customer code/company name

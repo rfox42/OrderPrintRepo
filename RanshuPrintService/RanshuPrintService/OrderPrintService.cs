@@ -301,7 +301,8 @@ namespace RanshuPrintService
                 if (currentOrder != null)
                 {
                     SendEmail("ryan@ranshu.com", "Ranshu print service error: Failure on invoice: " + currentOrder.invoiceNumber, error);
-                    if(pSqlConn.State == ConnectionState.Open)
+
+                    if (pSqlConn.State == ConnectionState.Open)
                         pSqlConn.Close();
                     string strConnection = "DSN=RANSHU";
                     pSqlConn = null;
@@ -421,6 +422,7 @@ namespace RanshuPrintService
                             ///report error to IT
                             string error = new StackTrace(ex, true).ToString() + " " + ex.Message;
                             writeToFile(error);
+
                             SendEmail("ryan@ranshu.com", "Ranshu print service error: Error printing SFP Label", error, new List<string> { "della@ranshu.com", "jeff@ranshu.com" });
                         }
 
@@ -840,8 +842,10 @@ namespace RanshuPrintService
                         {
                             ///note to shipping
                             notes.Add("PLEASE APPLY CREDITS");
-                            if(currentOrder.location == "RENO")
+                            if (currentOrder.location == "RENO")
+                            {
                                 SendEmail("ar@ranshu.com", "APPLY CREDITS " + currentOrder.invoiceNumber, "Please apply credits to invoice " + currentOrder.invoiceNumber + " on account " + currentOrder.customerCode);
+                            }
                         }
                     }
 
@@ -1578,7 +1582,8 @@ namespace RanshuPrintService
                                                     cc.Add("Jeremy@ranshu.com");
                                                     break;
                                             }
-                                            SendEmail("ryan@ranshu.com", "Ranshu print service error: Print Failure on " + pq.Name, text, cc);
+
+                                            SendEmail( "ryan@ranshu.com", "Ranshu print service error: Print Failure on " + pq.Name, text, cc);
                                         }
 
                                         heldPrinters.Add(pq.Name);
@@ -1648,7 +1653,7 @@ namespace RanshuPrintService
         /// <param name="cc">
         /// email cc list
         /// </param>
-        static void SendEmail(string recipient, string subject, string msgText, List<string> cc = null)
+        static void SendEmail( string recipient, string subject, string msgText, List<string> cc = null)
         {
             ///set email credentials
             SmtpClient mailClient = new SmtpClient("secure.emailsrvr.com");
@@ -1673,7 +1678,15 @@ namespace RanshuPrintService
             msgMail.IsBodyHtml = true;
 
             ///send message
-            mailClient.Send(msgMail);
+            try
+            {
+                mailClient.Send(msgMail);
+            }
+            catch
+            {
+                mailClient.Port = 465;
+                mailClient.Send(msgMail);
+            }
 
             ///garbage collect
             msgMail.Dispose();
