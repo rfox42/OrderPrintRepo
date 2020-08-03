@@ -33,6 +33,7 @@
             this.ProcessButton = new System.Windows.Forms.Button();
             this.ReviewButton = new System.Windows.Forms.Button();
             this.LeftTable = new System.Windows.Forms.TableLayoutPanel();
+            this.CalendarButton = new System.Windows.Forms.Button();
             this.ClearQueueButton = new System.Windows.Forms.Button();
             this.RefreshButton = new System.Windows.Forms.Button();
             this.ReviewCounterBox = new System.Windows.Forms.GroupBox();
@@ -50,7 +51,6 @@
             this.ReviewSubmitButton = new System.Windows.Forms.Button();
             this.ReviewBox = new System.Windows.Forms.GroupBox();
             this.ReviewInput = new System.Windows.Forms.TextBox();
-            this.CalendarButton = new System.Windows.Forms.Button();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.CalendarPanel = new System.Windows.Forms.Panel();
             this.Calendar = new System.Windows.Forms.MonthCalendar();
@@ -127,6 +127,22 @@
             this.LeftTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.LeftTable.Size = new System.Drawing.Size(200, 678);
             this.LeftTable.TabIndex = 2;
+            // 
+            // CalendarButton
+            // 
+            this.CalendarButton.BackColor = System.Drawing.Color.LightBlue;
+            this.CalendarButton.BackgroundImage = global::InvoiceDigitizer.Properties.Resources.calendarimg;
+            this.CalendarButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.CalendarButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.CalendarButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.CalendarButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CalendarButton.Location = new System.Drawing.Point(143, 0);
+            this.CalendarButton.Margin = new System.Windows.Forms.Padding(0);
+            this.CalendarButton.Name = "CalendarButton";
+            this.CalendarButton.Size = new System.Drawing.Size(57, 50);
+            this.CalendarButton.TabIndex = 7;
+            this.CalendarButton.UseVisualStyleBackColor = false;
+            this.CalendarButton.Click += new System.EventHandler(this.CalendarButton_Click);
             // 
             // ClearQueueButton
             // 
@@ -356,22 +372,6 @@
             this.ReviewInput.Size = new System.Drawing.Size(242, 26);
             this.ReviewInput.TabIndex = 0;
             this.ReviewInput.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ReviewInput_KeyPress);
-            // 
-            // CalendarButton
-            // 
-            this.CalendarButton.BackColor = System.Drawing.Color.LightBlue;
-            this.CalendarButton.BackgroundImage = global::InvoiceDigitizer.Properties.Resources.calendarimg;
-            this.CalendarButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.CalendarButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.CalendarButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.CalendarButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CalendarButton.Location = new System.Drawing.Point(143, 0);
-            this.CalendarButton.Margin = new System.Windows.Forms.Padding(0);
-            this.CalendarButton.Name = "CalendarButton";
-            this.CalendarButton.Size = new System.Drawing.Size(57, 50);
-            this.CalendarButton.TabIndex = 7;
-            this.CalendarButton.UseVisualStyleBackColor = false;
-            this.CalendarButton.Click += new System.EventHandler(this.CalendarButton_Click);
             // 
             // CalendarPanel
             // 
